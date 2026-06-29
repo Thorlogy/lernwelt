@@ -621,9 +621,9 @@ export default function StationMathQuiz({
   const renderGroessenHilfe = () => {
     if (stationId !== 9) return null;
 
-    const isMoneyTask = exercise.question.includes('€') || exercise.question.includes('Geld');
-    const isWeightTask = exercise.question.includes('g') || exercise.question.includes('kg');
-    const isTimeTask = exercise.question.includes('Uhr') || exercise.question.includes('Minuten');
+    const isMoneyTask = exercise.question.includes('€') || exercise.question.includes('Geld') || exercise.question.includes('bezahlen');
+    const isWeightTask = exercise.question.includes('wiegt') || exercise.question.includes(' g') || exercise.question.includes(' kg') || exercise.question.includes('Gramm') || exercise.question.includes('wiegen');
+    const isTimeTask = exercise.question.includes('Uhr') || exercise.question.includes('Minuten') || exercise.question.includes('Stunde') || exercise.question.includes('zeit');
 
     let illustrationText = "💼 Alltagsgröße";
     let illustration = <Coins className="w-10 h-10 text-emerald-500 animate-bounce" />;
