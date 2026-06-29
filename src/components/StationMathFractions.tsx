@@ -204,7 +204,7 @@ export default function StationMathFractions({
               didacticMethod === 'A' ? 'bg-white text-orange-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
             }`}
           >
-            Method A (Pizza)
+            Methode A (Pizza)
           </button>
           <button
             type="button"
@@ -213,7 +213,7 @@ export default function StationMathFractions({
               didacticMethod === 'B' ? 'bg-white text-orange-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
             }`}
           >
-            Method B (Balken)
+            Methode B (Balken)
           </button>
         </div>
       </div>

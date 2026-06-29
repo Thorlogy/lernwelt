@@ -335,7 +335,7 @@ export default function StationMathQuiz({
                 didacticMethod === 'A' ? 'bg-white text-cyan-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
               }`}
             >
-              Method A (Punkte)
+              Methode A (Punkte)
             </button>
             <button
               type="button"
@@ -344,7 +344,7 @@ export default function StationMathQuiz({
                 didacticMethod === 'B' ? 'bg-white text-indigo-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
               }`}
             >
-              Method B (Singapur)
+              Methode B (Singapur)
             </button>
           </div>
         </div>
