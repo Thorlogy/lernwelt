@@ -624,33 +624,95 @@ export default function StationMathQuiz({
     const isMoneyTask = exercise.question.includes('€') || exercise.question.includes('Geld') || exercise.question.includes('bezahlen');
     const isWeightTask = exercise.question.includes('wiegt') || exercise.question.includes(' g') || exercise.question.includes(' kg') || exercise.question.includes('Gramm') || exercise.question.includes('wiegen');
     const isTimeTask = exercise.question.includes('Uhr') || exercise.question.includes('Minuten') || exercise.question.includes('Stunde') || exercise.question.includes('zeit');
+    const isLengthTask = exercise.question.includes('cm') || exercise.question.includes('m ') || exercise.question.includes('lang') || exercise.question.includes('Lineal');
 
     let illustrationText = "💼 Alltagsgröße";
-    let illustration = <Coins className="w-10 h-10 text-emerald-500 animate-bounce" />;
+    let illustration: React.ReactNode = null;
 
     if (isMoneyTask) {
       illustrationText = "🪙 Geld-Rechnen";
-      illustration = (
-        <div className="flex gap-2 justify-center items-center">
-          <span className="w-10 h-10 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-sm flex items-center justify-center shadow-md select-none">2€</span>
-          <span className="w-8 h-8 rounded-full bg-slate-300 border-2 border-slate-400 text-slate-800 font-black text-xs flex items-center justify-center shadow-md select-none">50c</span>
-          <span className="w-7 h-7 rounded-full bg-yellow-600 border-2 border-yellow-700 text-yellow-100 font-black text-[9px] flex items-center justify-center shadow-md select-none">10c</span>
-        </div>
-      );
+      
+      if (exercise.id === "9_1") {
+        // Book 3 € + Pen 1,50 €
+        illustration = (
+          <div className="flex flex-col gap-2 items-center py-1">
+            <div className="flex gap-2 items-center text-xs font-bold text-slate-700">
+              <span className="w-18">Buch (3 €):</span>
+              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">2 €</span>
+              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">1 €</span>
+            </div>
+            <div className="flex gap-2 items-center text-xs font-bold text-slate-700">
+              <span className="w-18">Stift (1,50 €):</span>
+              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">1 €</span>
+              <span className="w-7 h-7 rounded-full bg-slate-300 border-2 border-slate-400 text-slate-800 font-black text-[10px] flex items-center justify-center shadow-xs select-none">50c</span>
+            </div>
+          </div>
+        );
+      } else if (exercise.id === "9_4") {
+        // 10 € wallet, buys 2 € ice cream and 1,50 € pretzel. Wechselgeld = 6,50 €
+        illustration = (
+          <div className="flex flex-col gap-2.5 items-center py-1">
+            <div className="flex gap-1.5 items-center text-xs font-bold text-slate-700">
+              <span>Startgeld:</span>
+              <span className="px-2.5 py-1 rounded bg-blue-100 border border-blue-300 text-blue-900 font-black text-[10px] shadow-xs select-none">10 € Schein</span>
+            </div>
+            <div className="flex gap-1.5 items-center text-xs font-bold text-slate-700">
+              <span>Einkauf (3,50 €):</span>
+              <span className="w-7 h-7 rounded-full bg-yellow-400 border border-yellow-500 text-yellow-950 font-black text-[10px] flex items-center justify-center shadow-xs select-none">2 €</span>
+              <span className="w-7 h-7 rounded-full bg-yellow-400 border border-yellow-500 text-yellow-950 font-black text-[10px] flex items-center justify-center shadow-xs select-none">1 €</span>
+              <span className="w-6.5 h-6.5 rounded-full bg-slate-300 border border-slate-400 text-slate-800 font-black text-[9px] flex items-center justify-center shadow-xs select-none">50c</span>
+            </div>
+          </div>
+        );
+      } else {
+        illustration = (
+          <div className="flex gap-2 justify-center items-center py-1">
+            <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">2 €</span>
+            <span className="w-7 h-7 rounded-full bg-slate-300 border-2 border-slate-400 text-slate-800 font-black text-[10px] flex items-center justify-center shadow-xs select-none">50c</span>
+            <span className="w-6.5 h-6.5 rounded-full bg-yellow-600 border-2 border-yellow-700 text-yellow-100 font-black text-[9px] flex items-center justify-center shadow-xs select-none">10c</span>
+          </div>
+        );
+      }
     } else if (isWeightTask) {
       illustrationText = "⚖️ Gewichte (g / kg)";
-      illustration = <span className="text-4xl">⚖️ Packung Mehl & Zucker</span>;
+      illustration = (
+        <div className="flex items-center gap-4 justify-center py-2">
+          <span className="text-4xl">⚖️</span>
+          <div className="text-left font-bold text-xs text-slate-700 leading-tight">
+            Mehl: 500 g<br/>
+            Zucker: 250 g
+          </div>
+        </div>
+      );
     } else if (isTimeTask) {
       illustrationText = "⏰ Uhrzeit & Dauer";
-      illustration = <span className="text-4xl">🕒 🕓 🕗</span>;
+      illustration = <span className="text-3xl py-2 inline-block">🕒 🕒 🕒 (60 Min = 1 Std)</span>;
+    } else if (isLengthTask) {
+      illustrationText = "📏 Längen (cm)";
+      illustration = (
+        <div className="flex flex-col items-center gap-1.5 py-2">
+          <div className="relative w-44 h-7 bg-amber-50 border border-amber-300 rounded flex items-end px-1 shadow-xs">
+            {Array(11).fill(null).map((_, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                <div className="w-0.5 bg-amber-700 h-1.5"></div>
+                <span className="text-[7px] font-bold text-amber-800 leading-none mb-0.5">{i * 5}</span>
+              </div>
+            ))}
+          </div>
+          <span className="text-[10px] font-bold text-slate-500">Lineal: 30 cm • Heft: 20 cm</span>
+        </div>
+      );
+    } else {
+      illustrationText = "💡 Alltagsgröße";
+      illustration = <span className="text-3xl py-2 inline-block">📐 ⚖️ 🕒</span>;
     }
 
     return (
-      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto text-center">
-        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-2 font-sans">
+      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto text-center font-body">
+        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-2">
           {illustrationText}
         </span>
-        <div className="py-2 flex justify-center">{illustration}</div>
+        <div className="flex justify-center">{illustration}</div>
       </div>
     );
   };
