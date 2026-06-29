@@ -494,54 +494,59 @@ export const STATIONEN: Station[] = [
     title: "Station 4: Bruchteile-Forscher",
     subtitle: "Einführung in Bruchteile",
     grade: 4,
-    description: "Bestimme den gefärbten Bruchteil der Pizza! Zähle die Stücke genau.",
+    description: "Stelle verschiedene Bruchteile mit Pizza, Schokolade, Messbechern und Sternen dar!",
     icon: "Percent",
     color: "orange",
     exercises: [
       {
         id: "10_1",
-        question: "Welcher Bruchteil der Pizza ist gefärbt?",
+        question: "Stelle 3/8 der leckeren Salami-Pizza fertig!",
         mathFractionSegments: 8,
         mathFractionColored: 3,
         options: ["3/8", "5/8", "1/2", "1/4"],
         correctAnswer: "3/8",
-        hint: "Die Pizza ist in 8 gleiche Teile geschnitten (Nenner unten). 3 Teile davon sind gefärbt (Zähler oben)."
+        imagePlaceholder: "pizza",
+        hint: "Zerschneide die Pizza in 8 gleiche Stücke (Nenner). Tippe dann 3 Teile an, um sie rot mit Salami zu belegen."
       },
       {
         id: "10_2",
-        question: "Welcher Bruchteil der Pizza ist gefärbt?",
+        question: "Stelle 1/4 der runden Honig-Waffel dar!",
         mathFractionSegments: 4,
         mathFractionColored: 1,
         options: ["1/4", "3/4", "1/2", "2/4"],
         correctAnswer: "1/4",
-        hint: "Die Pizza hat 4 gleich große Stücke. Genau 1 Stück ist gefärbt."
+        imagePlaceholder: "waffle",
+        hint: "Zerschneide die Waffel in 4 Stücke. Färbe genau 1 Stück gelb ein!"
       },
       {
         id: "10_3",
-        question: "Welcher Bruchteil der Pizza ist gefärbt?",
+        question: "Teile die Schokolade und gib Lumi 4/6 ab!",
         mathFractionSegments: 6,
         mathFractionColored: 4,
         options: ["4/6", "2/6", "2/3", "5/6"],
         correctAnswer: "4/6",
-        hint: "Die Pizza ist in 6 Stücke geteilt. 4 Stücke davon sind gefärbt."
+        imagePlaceholder: "chocolate",
+        hint: "Teile den Schokoriegel in 6 Stücke und färbe 4 Stücke braun ein."
       },
       {
         id: "10_4",
-        question: "Welcher Bruchteil der Pizza ist gefärbt?",
+        question: "Fülle den Messbecher zu genau 4/8 mit grünem Zaubertrank!",
         mathFractionSegments: 8,
         mathFractionColored: 4,
         options: ["4/8", "2/8", "3/8", "5/8"],
         correctAnswer: "4/8",
-        hint: "Die Hälfte der Pizza (4 von 8 Stücken) ist gefärbt."
+        imagePlaceholder: "cup",
+        hint: "Teile den Becher in 8 Stufen auf. Fülle den Becher von unten bis zur 4. Stufe mit grünem Trank (das entspricht genau der Hälfte)."
       },
       {
         id: "10_5",
-        question: "Welcher Bruchteil der Pizza ist gefärbt?",
+        question: "Lass genau 2/5 der Sterne am Abendhimmel leuchten!",
         mathFractionSegments: 5,
         mathFractionColored: 2,
         options: ["2/5", "3/5", "1/5", "4/5"],
         correctAnswer: "2/5",
-        hint: "Es sind 5 gleich große Stücke insgesamt, 2 davon sind eingefärbt."
+        imagePlaceholder: "stars",
+        hint: "Wir haben 5 Sterne am Himmel. Tippe genau 2 Sterne an, damit sie gelb leuchten."
       }
     ]
   }
