@@ -11,6 +11,7 @@ import StationSingularPlural from './components/StationSingularPlural';
 import StationVerbTenses from './components/StationVerbTenses';
 import StationMathQuiz from './components/StationMathQuiz';
 import StationMathFractions from './components/StationMathFractions';
+import ResearchDashboard from './components/ResearchDashboard';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
@@ -44,6 +45,7 @@ export default function App() {
   const [tempName, setTempName] = useState('');
   const [selectedAvatarId, setSelectedAvatarId] = useState('dragon');
   const [showCompletionCelebration, setShowCompletionCelebration] = useState(false);
+  const [showResearch, setShowResearch] = useState(false);
 
   // Load progress from localStorage on boot
   useEffect(() => {
@@ -119,7 +121,47 @@ export default function App() {
     setIsNewUser(true);
     setActiveStationId(null);
     setShowCertificate(false);
+    setShowResearch(false);
     setShowCompletionCelebration(false);
+  };
+
+  // Performance A/B metrics save handler
+  const handleSaveMetrics = (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => {
+    const currentMetrics = progress.experimentMetrics || {
+      methodA: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
+      methodB: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
+    };
+
+    const targetKey = method === 'A' ? 'methodA' : 'methodB';
+    const target = currentMetrics[targetKey];
+
+    const updatedMetrics = {
+      ...currentMetrics,
+      [targetKey]: {
+        correctFirstTry: target.correctFirstTry + (isFirstTryCorrect ? 1 : 0),
+        totalAttempts: target.totalAttempts + attemptsCount,
+        totalTimeSeconds: target.totalTimeSeconds + timeSeconds,
+        questionsAnswered: target.questionsAnswered + 1,
+      }
+    };
+
+    const updatedProgress = {
+      ...progress,
+      experimentMetrics: updatedMetrics,
+    };
+    saveProgress(updatedProgress);
+  };
+
+  // Reset performance metrics
+  const handleResetMetrics = () => {
+    const resetProgress = {
+      ...progress,
+      experimentMetrics: {
+        methodA: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
+        methodB: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
+      }
+    };
+    saveProgress(resetProgress);
   };
 
   // Station exercise interactions
@@ -345,6 +387,15 @@ export default function App() {
               )}
             </div>
           </div>
+        ) : showResearch ? (
+          /* 2b. RESEARCH DASHBOARD ROUTE */
+          <div className="space-y-6">
+            <ResearchDashboard
+              progress={progress}
+              onClose={() => { playPop(); setShowResearch(false); }}
+              onResetMetrics={handleResetMetrics}
+            />
+          </div>
         ) : showCertificate ? (
           /* 2. CERTIFICATE PAGE ROUTE */
           <div className="space-y-6">
@@ -365,23 +416,48 @@ export default function App() {
                 setCurrentExerciseIndex(0);
                 setMascotExpression('idle');
               }}
+              onOpenResearch={() => {
+                setActiveStationId(null);
+                setShowResearch(true);
+                setShowCertificate(false);
+              }}
             />
 
-            {/* Certificate Quicklink Ribbon */}
-            <div className="bg-white p-5 rounded-2xl border-2 border-dashed border-amber-300 shadow-soft-tactile max-w-md mx-auto flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="text-3xl">📜</div>
-                <div>
-                  <h4 className="font-sans font-extrabold text-sm text-slate-800">Umsichtiger Lernkönig</h4>
-                  <p className="text-xs text-slate-500 font-body">Schalte deine Urkunde an, sobald du fertig bist!</p>
+            {/* Quicklink Ribbons Container */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {/* Certificate Quicklink Ribbon */}
+              <div className="bg-white p-5 rounded-2xl border-2 border-dashed border-amber-300 shadow-soft-tactile flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">📜</div>
+                  <div className="min-w-0">
+                    <h4 className="font-sans font-extrabold text-sm text-slate-800 truncate">Lernkönig Urkunde</h4>
+                    <p className="text-xs text-slate-500 font-body">Schalte deine Urkunde frei!</p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => { playPop(); setShowCertificate(true); }}
+                  className="btn-tactile-secondary text-xs font-extrabold text-[#735d00] px-4 py-2 rounded-xl cursor-pointer shrink-0"
+                >
+                  Ansehen ⭐
+                </button>
               </div>
-              <button
-                onClick={() => { playPop(); setShowCertificate(true); }}
-                className="btn-tactile-secondary text-xs font-extrabold text-[#735d00] px-4 py-2 rounded-xl cursor-pointer shrink-0"
-              >
-                Ansehen ⭐
-              </button>
+
+              {/* Research Dashboard Quicklink Ribbon */}
+              <div className="bg-white p-5 rounded-2xl border-2 border-dashed border-cyan-300 shadow-soft-tactile flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">📊</div>
+                  <div className="min-w-0">
+                    <h4 className="font-sans font-extrabold text-sm text-slate-800 truncate">Forschungs-Daten</h4>
+                    <p className="text-xs text-slate-500 font-body">A/B Didaktik auswerten</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { playPop(); setShowResearch(true); }}
+                  className="btn-tactile-secondary text-xs font-extrabold text-cyan-900 bg-cyan-50 border-cyan-300 hover:bg-cyan-100 px-4 py-2 rounded-xl cursor-pointer shrink-0"
+                >
+                  Ansehen 📊
+                </button>
+              </div>
             </div>
           </div>
         ) : (
@@ -487,6 +563,7 @@ export default function App() {
                 progress={progress}
                 isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
                 stationId={activeStationId}
+                onSaveMetrics={handleSaveMetrics}
               />
             )}
 
@@ -498,6 +575,7 @@ export default function App() {
                 onNext={handleNextExercise}
                 progress={progress}
                 isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+                onSaveMetrics={handleSaveMetrics}
               />
             )}
           </div>

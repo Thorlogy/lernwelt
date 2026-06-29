@@ -10,6 +10,7 @@ interface StationMathFractionsProps {
   onNext: () => void;
   progress: UserProgress;
   isLastExercise: boolean;
+  onSaveMetrics: (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => void;
 }
 
 export default function StationMathFractions({
@@ -19,6 +20,7 @@ export default function StationMathFractions({
   onNext,
   progress,
   isLastExercise,
+  onSaveMetrics,
 }: StationMathFractionsProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasChecked, setHasChecked] = useState(false);
@@ -26,12 +28,21 @@ export default function StationMathFractions({
   const [shakeTrigger, setShakeTrigger] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
+  // A/B Didactic Method selection ('A' = Germany: Pizza, 'B' = Singapore: Fraction Bar)
+  const [didacticMethod, setDidacticMethod] = useState<'A' | 'B'>('A');
+
+  // Performance tracking states
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [attempts, setAttempts] = useState<number>(0);
+
   useEffect(() => {
     setSelectedOption(null);
     setHasChecked(false);
     setIsCorrect(null);
     setShakeTrigger(false);
     setShowHint(false);
+    setStartTime(Date.now());
+    setAttempts(0);
   }, [exercise]);
 
   const handleOptionSelect = (option: string) => {
@@ -43,6 +54,9 @@ export default function StationMathFractions({
   const handleCheck = () => {
     if (!selectedOption || hasChecked) return;
 
+    const currentAttempts = attempts + 1;
+    setAttempts(currentAttempts);
+
     const correct = selectedOption.trim() === exercise.correctAnswer.toString().trim();
     setIsCorrect(correct);
     setHasChecked(true);
@@ -50,6 +64,11 @@ export default function StationMathFractions({
     if (correct) {
       playSuccess();
       onCorrectAnswer(15);
+
+      // Save A/B metrics
+      const timeTaken = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+      const firstTry = currentAttempts === 1;
+      onSaveMetrics(didacticMethod, timeTaken, currentAttempts, firstTry);
     } else {
       playFailure();
       setShakeTrigger(true);
@@ -66,7 +85,7 @@ export default function StationMathFractions({
     setSelectedOption(null);
   };
 
-  // Helper to generate SVG pie slices for the pizza representation
+  // 1. Didaktisches Hilfsmittel Methode A: Pizza (Kreismodell)
   const renderPizza = () => {
     const totalSegments = exercise.mathFractionSegments || 8;
     const coloredSegments = exercise.mathFractionColored || 3;
@@ -76,20 +95,15 @@ export default function StationMathFractions({
     const slices = [];
 
     for (let i = 0; i < totalSegments; i++) {
-      // Angles in radians
       const startAngle = (2 * Math.PI * i) / totalSegments - Math.PI / 2;
       const endAngle = (2 * Math.PI * (i + 1)) / totalSegments - Math.PI / 2;
 
-      // Start and end coordinates
       const x1 = center + r * Math.cos(startAngle);
       const y1 = center + r * Math.sin(startAngle);
       const x2 = center + r * Math.cos(endAngle);
       const y2 = center + r * Math.sin(endAngle);
 
-      // Flag for arc greater than 180 degrees (never true since totalSegments >= 2)
       const largeArcFlag = 0;
-
-      // SVG path
       const pathData = `
         M ${center} ${center}
         L ${x1} ${y1}
@@ -105,7 +119,7 @@ export default function StationMathFractions({
           d={pathData}
           className={`transition-all duration-300 stroke-amber-950 stroke-1.5 ${
             isColored 
-              ? 'fill-amber-300 hover:fill-amber-400 saturate-120 filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]' 
+              ? 'fill-amber-300 hover:fill-amber-400 saturate-120' 
               : 'fill-slate-100 hover:fill-slate-200'
           }`}
         />
@@ -114,22 +128,51 @@ export default function StationMathFractions({
 
     return (
       <div className="flex flex-col items-center mb-6">
-        <div className="relative w-44 h-44 sm:w-52 sm:h-52 bg-amber-50 rounded-full border-4 border-amber-900/10 p-2 shadow-soft-tactile">
+        <div className="relative w-44 h-44 sm:w-48 sm:h-48 bg-amber-50 rounded-full border-4 border-amber-900/10 p-2 shadow-soft-tactile">
           <svg className="w-full h-full drop-shadow-md overflow-visible" viewBox="0 0 100 100">
-            {/* Outer Crust */}
             <circle cx="50" cy="50" r="41" className="fill-amber-700/20 stroke-amber-800/40 stroke-2" />
-            
-            {/* Slices */}
             {slices}
-
-            {/* Central Pizza Point dot */}
             <circle cx="50" cy="50" r="2.5" className="fill-amber-950" />
           </svg>
         </div>
-
-        {/* Informative text below visual */}
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
-          🍕 Didaktisches Anschauungsmittel: Kreismodell (Pizza)
+          🍕 Methode A: Kreismodell (Pizza)
+        </p>
+      </div>
+    );
+  };
+
+  // 1b. Didaktisches Hilfsmittel Methode B: Fraction Bar (Balkenmodell - Singapur)
+  const renderFractionBar = () => {
+    const totalSegments = exercise.mathFractionSegments || 8;
+    const coloredSegments = exercise.mathFractionColored || 3;
+
+    const segments = Array(totalSegments).fill(null);
+
+    return (
+      <div className="flex flex-col items-center mb-6">
+        <div className="w-full max-w-sm px-4 pt-4 pb-2">
+          {/* Main Bar */}
+          <div className="flex border-3 border-orange-950 rounded-xl overflow-hidden shadow-sm h-12">
+            {segments.map((_, idx) => {
+              const isColored = idx < coloredSegments;
+              return (
+                <div
+                  key={idx}
+                  className={`flex-1 border-r last:border-r-0 border-orange-950/70 transition-colors duration-300 ${
+                    isColored
+                      ? 'bg-amber-300 saturate-110 border-b-4 border-b-amber-400'
+                      : 'bg-slate-100'
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Legend descriptor */}
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans mt-2">
+          📊 Methode B: Strecken-/Balkenmodell (Singapur Math)
         </p>
       </div>
     );
@@ -150,13 +193,38 @@ export default function StationMathFractions({
 
   return (
     <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>
+      
+      {/* A/B Method Switcher */}
+      <div className="flex justify-end mb-4">
+        <div className="flex p-0.5 bg-slate-100 rounded-xl border border-slate-200 text-[10px] font-bold">
+          <button
+            type="button"
+            onClick={() => { playPop(); setDidacticMethod('A'); }}
+            className={`px-2.5 py-1 rounded-lg cursor-pointer ${
+              didacticMethod === 'A' ? 'bg-white text-orange-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
+            }`}
+          >
+            Method A (Pizza)
+          </button>
+          <button
+            type="button"
+            onClick={() => { playPop(); setDidacticMethod('B'); }}
+            className={`px-2.5 py-1 rounded-lg cursor-pointer ${
+              didacticMethod === 'B' ? 'bg-white text-orange-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
+            }`}
+          >
+            Method B (Balken)
+          </button>
+        </div>
+      </div>
+
       {/* Title */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
           <Percent className="w-6 h-6 text-[#00639a]" />
           <span>Bruchteile-Forscher!</span>
         </h3>
-        <p className="text-xs text-brand-secondary font-bold uppercase mt-1">
+        <p className="text-xs text-brand-secondary font-bold uppercase mt-0.5">
           Klasse 4 • Bruchrechnen
         </p>
       </div>
@@ -169,7 +237,7 @@ export default function StationMathFractions({
       </div>
 
       {/* Visual representation */}
-      {renderPizza()}
+      {didacticMethod === 'A' ? renderPizza() : renderFractionBar()}
 
       {/* Tactile fraction selection cards */}
       <div className="grid grid-cols-4 gap-3 mb-8">
@@ -207,13 +275,13 @@ export default function StationMathFractions({
       <div className="space-y-4">
         {hasChecked && isCorrect === true && (
           <div className="bg-emerald-100 text-emerald-800 p-3 rounded-2xl border-2 border-emerald-300 text-center font-bold text-sm sm:text-base flex items-center justify-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Absolut richtig! Du hast die Stücke perfekt abgezählt! 🍕⭐
+            <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Absolut richtig! Du hast die Stücke perfekt abgezählt! 🌟
           </div>
         )}
 
         {hasChecked && isCorrect === false && (
           <div className="bg-yellow-50 text-yellow-800 p-3 rounded-2xl border-2 border-yellow-200 text-center font-bold text-sm sm:text-base">
-            Das war leider die falsche Teilung. Schau dir die Pizza noch einmal genau an! 🤔
+            Das war leider die falsche Teilung. Schau dir das Modell noch einmal genau an! 🤔
           </div>
         )}
 

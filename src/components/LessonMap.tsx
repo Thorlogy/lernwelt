@@ -8,6 +8,7 @@ interface LessonMapProps {
   progress: UserProgress;
   onSelectStation: (stationId: number) => void;
   activeStationId: number | null;
+  onOpenResearch: () => void;
 }
 
 const ICON_MAP: Record<string, any> = {
@@ -21,7 +22,7 @@ const ICON_MAP: Record<string, any> = {
   Coins: Coins,
 };
 
-export default function LessonMap({ progress, onSelectStation, activeStationId }: LessonMapProps) {
+export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch }: LessonMapProps) {
   const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
   
   const handleStationClick = (station: Station, isLocked: boolean) => {
@@ -214,6 +215,17 @@ export default function LessonMap({ progress, onSelectStation, activeStationId }
         <span className="text-3xl">🏆</span>
         <h4 className="text-sm font-bold text-yellow-800 font-sans mt-1">Lernkönig Urkunde</h4>
         <p className="text-xs text-slate-500 font-body">Schließe alle 6 Deutsch-Stationen oder alle 4 Mathe-Stationen ab, um deine goldene Urkunde freizuschalten!</p>
+      </div>
+
+      {/* A/B Test Dashboard shortcut */}
+      <div className="mt-6 text-center">
+        <button
+          type="button"
+          onClick={() => { playPop(); onOpenResearch(); }}
+          className="text-xs font-extrabold text-cyan-600 hover:text-cyan-800 underline hover:no-underline cursor-pointer flex items-center gap-1 justify-center mx-auto transition-colors"
+        >
+          <span>📊 Didaktik A/B-Test auswerten</span>
+        </button>
       </div>
     </div>
   );

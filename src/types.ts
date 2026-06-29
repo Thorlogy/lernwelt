@@ -58,4 +58,8 @@ export interface UserProgress {
   starsCount: number; // collected stars
   stationTrophies: Record<number, boolean>; // stationId -> completed
   score: number;
+  experimentMetrics?: {
+    methodA: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };
+    methodB: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };
+  };
 }

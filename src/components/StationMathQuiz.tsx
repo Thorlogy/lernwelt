@@ -11,6 +11,7 @@ interface StationMathQuizProps {
   progress: UserProgress;
   isLastExercise: boolean;
   stationId: number; // 7 = Grade 1, 8 = Grade 2, 9 = Grade 3
+  onSaveMetrics: (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => void;
 }
 
 export default function StationMathQuiz({
@@ -21,6 +22,7 @@ export default function StationMathQuiz({
   progress,
   isLastExercise,
   stationId,
+  onSaveMetrics,
 }: StationMathQuizProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasChecked, setHasChecked] = useState(false);
@@ -28,12 +30,21 @@ export default function StationMathQuiz({
   const [shakeTrigger, setShakeTrigger] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
+  // A/B Didactic Method selection ('A' = Germany, 'B' = Singapore)
+  const [didacticMethod, setDidacticMethod] = useState<'A' | 'B'>('A');
+
+  // Performance tracking states
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [attempts, setAttempts] = useState<number>(0);
+
   useEffect(() => {
     setSelectedOption(null);
     setHasChecked(false);
     setIsCorrect(null);
     setShakeTrigger(false);
     setShowHint(false);
+    setStartTime(Date.now());
+    setAttempts(0);
   }, [exercise]);
 
   const handleOptionSelect = (option: string) => {
@@ -45,6 +56,9 @@ export default function StationMathQuiz({
   const handleCheck = () => {
     if (!selectedOption || hasChecked) return;
 
+    const currentAttempts = attempts + 1;
+    setAttempts(currentAttempts);
+
     const correct = selectedOption.trim() === exercise.correctAnswer.toString().trim();
     setIsCorrect(correct);
     setHasChecked(true);
@@ -52,6 +66,11 @@ export default function StationMathQuiz({
     if (correct) {
       playSuccess();
       onCorrectAnswer(15); // Award 15 stars
+
+      // Save A/B metrics
+      const timeTaken = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+      const firstTry = currentAttempts === 1;
+      onSaveMetrics(didacticMethod, timeTaken, currentAttempts, firstTry);
     } else {
       playFailure();
       setShakeTrigger(true);
@@ -68,7 +87,7 @@ export default function StationMathQuiz({
     setSelectedOption(null);
   };
 
-  // 1. Didaktisches Hilfsmittel für Klasse 1: Zwanzigerfeld
+  // 1. Didaktisches Hilfsmittel für Klasse 1: Zwanzigerfeld (Methode A)
   const renderZwanzigerfeld = () => {
     if (stationId !== 7 || exercise.mathNum1 === undefined) return null;
 
@@ -79,35 +98,31 @@ export default function StationMathQuiz({
     const cells: ('empty' | 'red' | 'blue')[] = Array(20).fill('empty');
 
     if (op === '+') {
-      // First number in red
       for (let i = 0; i < Math.min(num1, 20); i++) {
         cells[i] = 'red';
       }
-      // Second number in blue
       for (let i = 0; i < Math.min(num2, 20 - num1); i++) {
         cells[num1 + i] = 'blue';
       }
     } else if (op === '-') {
-      // First number in red, but we cross out/dull the subtracted ones
       for (let i = 0; i < Math.min(num1, 20); i++) {
-        cells[i] = i < num1 - num2 ? 'red' : 'empty'; // subtracted ones are represented as empty or we show them as crossed out
+        cells[i] = i < num1 - num2 ? 'red' : 'empty';
       }
     }
 
     return (
       <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto">
         <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-2 font-sans text-center">
-          🏫 Ikonische Rechenhilfe: Zwanzigerfeld
+          🏫 Methode A: Zwanzigerfeld (Punktebild)
         </span>
         
-        {/* The 2x10 Grid */}
         <div className="grid grid-cols-10 gap-1.5 bg-white p-2 rounded-xl border border-slate-300 shadow-inner">
           {cells.map((cell, idx) => {
             let cellStyle = 'bg-slate-100 border-slate-200';
             if (cell === 'red') {
-              cellStyle = 'bg-red-500 border-red-600 scale-102 shadow-sm animate-pop';
+              cellStyle = 'bg-red-500 border-red-600 scale-102';
             } else if (cell === 'blue') {
-              cellStyle = 'bg-blue-500 border-blue-600 scale-102 shadow-sm animate-pop';
+              cellStyle = 'bg-blue-500 border-blue-600 scale-102';
             }
 
             return (
@@ -115,7 +130,6 @@ export default function StationMathQuiz({
                 key={idx}
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center transition-all ${cellStyle}`}
               >
-                {/* Visual marker if subtracted in minus tasks */}
                 {op === '-' && idx >= num1 - num2 && idx < num1 && (
                   <span className="text-red-500 font-black text-xs select-none">❌</span>
                 )}
@@ -143,42 +157,128 @@ export default function StationMathQuiz({
     );
   };
 
-  // 2. Didaktisches Hilfsmittel für Klasse 2: Punktefeld (Multiplikationsraster)
+  // 1b. Didaktisches Hilfsmittel für Klasse 1: Number Bonds (Methode B - Singapur)
+  const renderNumberBonds = () => {
+    if (stationId !== 7 || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
+
+    const num1 = exercise.mathNum1;
+    const num2 = exercise.mathNum2;
+    const op = exercise.mathOp;
+
+    let wholeLabel = '?';
+    let part1Label = num1.toString();
+    let part2Label = num2.toString();
+
+    if (op === '+') {
+      wholeLabel = hasChecked && isCorrect ? exercise.correctAnswer.toString() : '?';
+    } else if (op === '-') {
+      wholeLabel = num1.toString();
+      part1Label = num2.toString();
+      part2Label = hasChecked && isCorrect ? exercise.correctAnswer.toString() : '?';
+    }
+
+    return (
+      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto">
+        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-2 font-sans text-center">
+          🏫 Methode B: Number Bonds (Zahlbeziehungen)
+        </span>
+        
+        {/* Render simple SVG of Number Bonds (Whole & Parts) */}
+        <div className="flex justify-center py-2">
+          <svg className="w-40 h-32" viewBox="0 0 100 80">
+            {/* Lines */}
+            <line x1="50" y1="20" x2="25" y2="60" stroke="#64748b" strokeWidth="2.5" />
+            <line x1="50" y1="20" x2="75" y2="60" stroke="#64748b" strokeWidth="2.5" />
+
+            {/* Whole Circle */}
+            <circle cx="50" cy="20" r="13" className="fill-indigo-100 stroke-indigo-500 stroke-2" />
+            <text x="50" y="24" textAnchor="middle" className="text-[9px] font-black fill-indigo-900 font-sans">{wholeLabel}</text>
+            <text x="50" y="5" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Ganzes</text>
+
+            {/* Part 1 Circle */}
+            <circle cx="25" cy="60" r="11" className="fill-amber-50 stroke-amber-500 stroke-2" />
+            <text x="25" y="63.5" textAnchor="middle" className="text-[8px] font-bold fill-amber-900 font-sans">{part1Label}</text>
+            <text x="25" y="78" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Teil 1</text>
+
+            {/* Part 2 Circle */}
+            <circle cx="75" cy="60" r="11" className="fill-blue-50 stroke-blue-500 stroke-2" />
+            <text x="75" y="63.5" textAnchor="middle" className="text-[8px] font-bold fill-blue-900 font-sans">{part2Label}</text>
+            <text x="75" y="78" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Teil 2</text>
+          </svg>
+        </div>
+      </div>
+    );
+  };
+
+  // 2. Didaktisches Hilfsmittel für Klasse 2: Punktefeld (Methode A)
   const renderPunktefeld = () => {
     if (stationId !== 8 || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
 
     const rows = exercise.mathNum1;
     const cols = exercise.mathNum2;
 
-    // Create rows x cols grid
     const dotRows = Array(rows).fill(null);
     const dotCols = Array(cols).fill(null);
 
     return (
       <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto">
         <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-3 font-sans text-center">
-          🏫 Ikonische Rechenhilfe: Punktefeld ({rows} • {cols})
+          🏫 Methode A: Punktefeld (Multiplikationsraster)
         </span>
 
-        {/* The Grid layout */}
         <div className="flex flex-col items-center gap-2 bg-white p-3 rounded-xl border border-slate-300 shadow-inner">
           {dotRows.map((_, rIdx) => (
             <div key={rIdx} className="flex gap-2">
               {dotCols.map((_, cIdx) => (
                 <div
                   key={cIdx}
-                  className="w-5 h-5 rounded-full bg-amber-400 border border-amber-500 shadow-inner animate-pulse"
-                  style={{ animationDelay: `${(rIdx * cols + cIdx) * 50}ms`, animationDuration: '2s' }}
+                  className="w-5 h-5 rounded-full bg-amber-400 border border-amber-500 shadow-inner"
                 />
               ))}
             </div>
           ))}
         </div>
+      </div>
+    );
+  };
 
-        {/* Repeated Addition Explanation */}
-        <p className="text-center text-xs font-bold text-amber-800 font-sans mt-3">
-          Verbindung zur Addition: <span className="underline">{Array(rows).fill(cols).join(' + ')} = {rows * cols}</span>
-        </p>
+  // 2b. Didaktisches Hilfsmittel für Klasse 2: Bar Model (Methode B - Singapur)
+  const renderBarModel = () => {
+    if (stationId !== 8 || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
+
+    const blocksCount = exercise.mathNum1;
+    const blockSize = exercise.mathNum2;
+
+    const blocks = Array(blocksCount).fill(blockSize);
+
+    return (
+      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-sm mx-auto text-center">
+        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block mb-3 font-sans text-center">
+          🏫 Methode B: Bar Model (Balkenmodell)
+        </span>
+
+        {/* Render a single bar divided into blocks */}
+        <div className="relative pt-2 pb-6 px-4">
+          <div className="flex border-2 border-emerald-700 rounded-lg overflow-hidden shadow-sm h-10">
+            {blocks.map((val, idx) => (
+              <div
+                key={idx}
+                className="flex-1 bg-emerald-100/50 border-r last:border-r-0 border-emerald-700 flex items-center justify-center font-black text-emerald-800 text-sm font-sans"
+              >
+                {val}
+              </div>
+            ))}
+          </div>
+
+          {/* Under brace connector */}
+          <div className="absolute inset-x-4 bottom-0 flex flex-col items-center">
+            {/* Draw a brackets bracket */}
+            <div className="w-[96%] h-1.5 border-x border-b border-slate-500 rounded-b-md"></div>
+            <span className="text-xs font-black text-slate-700 mt-1 font-sans">
+              Gesamt: {hasChecked && isCorrect ? exercise.correctAnswer : '?'}
+            </span>
+          </div>
+        </div>
       </div>
     );
   };
@@ -223,13 +323,40 @@ export default function StationMathQuiz({
 
   return (
     <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>
+      
+      {/* A/B Method Switcher (only for classes 1 and 2 where we compare A and B) */}
+      {(stationId === 7 || stationId === 8) && (
+        <div className="flex justify-end mb-4">
+          <div className="flex p-0.5 bg-slate-100 rounded-xl border border-slate-200 text-[10px] font-bold">
+            <button
+              type="button"
+              onClick={() => { playPop(); setDidacticMethod('A'); }}
+              className={`px-2.5 py-1 rounded-lg cursor-pointer ${
+                didacticMethod === 'A' ? 'bg-white text-cyan-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
+              }`}
+            >
+              Method A (Punkte)
+            </button>
+            <button
+              type="button"
+              onClick={() => { playPop(); setDidacticMethod('B'); }}
+              className={`px-2.5 py-1 rounded-lg cursor-pointer ${
+                didacticMethod === 'B' ? 'bg-white text-indigo-950 shadow-xs border-b border-slate-200' : 'text-slate-400'
+              }`}
+            >
+              Method B (Singapur)
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Title */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
-          <Calculator className="w-6 h-6 text-[#00639a] animate-pulse" />
+          <Calculator className="w-6 h-6 text-[#00639a]" />
           <span>Mathe-Rätsel lösen!</span>
         </h3>
-        <p className="text-xs text-brand-secondary font-bold uppercase mt-1">
+        <p className="text-xs text-brand-secondary font-bold uppercase mt-0.5">
           Klasse {stationId === 7 ? '1' : stationId === 8 ? '2' : '3'} • {stationId === 7 ? 'Rechen-König' : stationId === 8 ? 'Einmaleins' : 'Größen'}
         </p>
       </div>
@@ -245,9 +372,11 @@ export default function StationMathQuiz({
       </div>
 
       {/* Dynamic Didactical Visual Aid */}
-      {renderZwanzigerfeld()}
-      {renderPunktefeld()}
-      {renderGroessenHilfe()}
+      {stationId === 7 && didacticMethod === 'A' && renderZwanzigerfeld()}
+      {stationId === 7 && didacticMethod === 'B' && renderNumberBonds()}
+      {stationId === 8 && didacticMethod === 'A' && renderPunktefeld()}
+      {stationId === 8 && didacticMethod === 'B' && renderBarModel()}
+      {stationId === 9 && renderGroessenHilfe()}
 
       {/* Options grid */}
       <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
@@ -336,7 +465,7 @@ export default function StationMathQuiz({
 
         {showHint && (
           <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-3 text-xs sm:text-sm text-cyan-950 leading-relaxed font-semibold">
-            💡 <strong>Didaktischer Tipp:</strong> {exercise.hint}
+            💡 <strong>Tipp:</strong> {exercise.hint}
           </div>
         )}
       </div>
