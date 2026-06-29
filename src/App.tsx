@@ -9,6 +9,8 @@ import StationWordTypes from './components/StationWordTypes';
 import StationSpellingDetective from './components/StationSpellingDetective';
 import StationSingularPlural from './components/StationSingularPlural';
 import StationVerbTenses from './components/StationVerbTenses';
+import StationMathQuiz from './components/StationMathQuiz';
+import StationMathFractions from './components/StationMathFractions';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
@@ -28,6 +30,11 @@ const INITIAL_PROGRESS: UserProgress = {
 export default function App() {
   // Application state
   const [progress, setProgress] = useState<UserProgress>(INITIAL_PROGRESS);
+
+  const isDeutschDone = [1, 2, 3, 4, 5, 6].every(id => progress.completedStations.includes(id));
+  const isMatheDone = [7, 8, 9, 10].every(id => progress.completedStations.includes(id));
+  const hasWonSubject = isDeutschDone || isMatheDone;
+
   const [activeStationId, setActiveStationId] = useState<number | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number>(0);
   const [mascotText, setMascotText] = useState<string>('');
@@ -69,12 +76,12 @@ export default function App() {
       setMascotText(`Phänomenal, ${progress.childName}! Du hast alle Stationen geschafft und bist ein echter Lernkönig! Hier ist deine glänzende Urkunde.`);
       setMascotExpression('cheering');
     } else if (activeStationId === null) {
-      const allDone = progress.completedStations.length === STATIONEN.length;
+      const allDone = hasWonSubject;
       if (allDone) {
-        setMascotText(`Wahnsinn, ${progress.childName}! Du hast die gesamte Lernwelt gemeistert! Klicke unten, um dir deine goldene Auszeichnung anzusehen!`);
+        setMascotText(`Wahnsinn, ${progress.childName}! Du hast ein Fach vollständig gemeistert! Klicke auf die Trophäe, um dir deine goldene Urkunde anzusehen!`);
         setMascotExpression('cheering');
       } else {
-        setMascotText(`Willkommen zurück in der Lernwelt, ${progress.childName}! Such dir eine runden Block auf der Landkarte aus und lass uns spielend lernen!`);
+        setMascotText(`Willkommen zurück in der Lernwelt, ${progress.childName}! Such dir eine Station auf der Landkarte aus und lass uns spielend lernen!`);
         setMascotExpression('idle');
       }
     } else {
@@ -226,7 +233,7 @@ export default function App() {
               title="Urkunde ansehen"
             >
               <Trophy className="w-4 h-4 text-yellow-600" />
-              {progress.completedStations.length === STATIONEN.length && (
+              {hasWonSubject && (
                 <span className="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 text-[8px] text-white font-black items-center justify-center">✓</span>
@@ -462,6 +469,29 @@ export default function App() {
 
             {activeStationId === 6 && currentExercise && (
               <StationVerbTenses
+                exercise={currentExercise as any}
+                onCorrectAnswer={handleCorrectAnswer}
+                onIncorrectAnswer={handleIncorrectAnswer}
+                onNext={handleNextExercise}
+                progress={progress}
+                isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+              />
+            )}
+
+            {(activeStationId === 7 || activeStationId === 8 || activeStationId === 9) && currentExercise && (
+              <StationMathQuiz
+                exercise={currentExercise as any}
+                onCorrectAnswer={handleCorrectAnswer}
+                onIncorrectAnswer={handleIncorrectAnswer}
+                onNext={handleNextExercise}
+                progress={progress}
+                isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+                stationId={activeStationId}
+              />
+            )}
+
+            {activeStationId === 10 && currentExercise && (
+              <StationMathFractions
                 exercise={currentExercise as any}
                 onCorrectAnswer={handleCorrectAnswer}
                 onIncorrectAnswer={handleIncorrectAnswer}

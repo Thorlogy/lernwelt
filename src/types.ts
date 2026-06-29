@@ -7,6 +7,11 @@ export interface Exercise {
   correctAnswer: any; // could be array of syllable parts, correct letters, corrected word, or category
   hint: string;
   correctAnswerText?: string; // e.g. target wrong word in detective exercise
+  mathNum1?: number; // first operand (e.g. 8)
+  mathNum2?: number; // second operand (e.g. 5)
+  mathOp?: '+' | '-' | '*' | '/'; // operator
+  mathFractionSegments?: number; // visual segments for fractions (denominator)
+  mathFractionColored?: number; // colored segments for fractions (numerator)
 }
 
 export type WordType = 'NOMEN' | 'VERB' | 'ADJEKTIV';
@@ -35,6 +40,7 @@ export interface DetectiveExercise extends Exercise {
 
 export interface Station {
   id: number;
+  subject: 'deutsch' | 'mathe';
   title: string;
   subtitle: string;
   grade: number; // Klasse 1-4

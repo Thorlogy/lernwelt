@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -16,9 +16,13 @@ const ICON_MAP: Record<string, any> = {
   FolderGit: Layers,
   Search: Search,
   Award: Award,
+  Calculator: Calculator,
+  Percent: Percent,
+  Coins: Coins,
 };
 
 export default function LessonMap({ progress, onSelectStation, activeStationId }: LessonMapProps) {
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
   
   const handleStationClick = (station: Station, isLocked: boolean) => {
     playPop();
@@ -40,7 +44,7 @@ export default function LessonMap({ progress, onSelectStation, activeStationId }
       <div className="absolute top-1/2 left-4 text-2xl opacity-15 select-none text-brand-secondary">🌈</div>
 
       {/* Map Header */}
-      <div className="text-center mb-8 relative z-10">
+      <div className="text-center mb-6 relative z-10">
         <span className="inline-block bg-[#fdd758] text-[#725c00] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 border border-yellow-400">
           Dein Abenteuer-Pfad
         </span>
@@ -48,8 +52,34 @@ export default function LessonMap({ progress, onSelectStation, activeStationId }
           Lern-Landkarte
         </h2>
         <p className="text-xs text-slate-500 font-body mt-1">
-          Klicke auf eine Station, um dein Lernspiel zu starten!
+          Wähle ein Fach und starte dein Lernspiel!
         </p>
+      </div>
+
+      {/* Subject Switcher Tabs */}
+      <div className="flex gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 max-w-[280px] mx-auto">
+        <button
+          type="button"
+          onClick={() => { playPop(); setActiveSubject('deutsch'); }}
+          className={`flex-1 py-2 px-3 rounded-xl font-sans font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            activeSubject === 'deutsch'
+              ? 'bg-white text-[#00639a] shadow-sm scale-102 border-b-2 border-slate-200'
+              : 'text-slate-500 hover:bg-slate-100/50'
+          }`}
+        >
+          <span>Deutsch 🎒</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => { playPop(); setActiveSubject('mathe'); }}
+          className={`flex-1 py-2 px-3 rounded-xl font-sans font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            activeSubject === 'mathe'
+              ? 'bg-white text-emerald-700 shadow-sm scale-102 border-b-2 border-slate-200'
+              : 'text-slate-500 hover:bg-slate-100/50'
+          }`}
+        >
+          <span>Mathe 🧮</span>
+        </button>
       </div>
 
       {/* SVG S-Curve Connection Path Line running behind the stations */}
@@ -68,16 +98,16 @@ export default function LessonMap({ progress, onSelectStation, activeStationId }
 
       {/* Stations Stack */}
       <div className="flex flex-col gap-10 relative z-10">
-        {STATIONEN.map((station, index) => {
+        {STATIONEN.filter(s => s.subject === activeSubject).map((station, index) => {
           const isCompleted = progress.completedStations.includes(station.id);
-          // Unlock condition: first station is always unlocked, others if previous is completed.
-          // Note: for convenience we allow playing anything, but visually lock it.
-          const isLocked = index > 0 && !progress.completedStations.includes(STATIONEN[index - 1].id);
+          // Unlock condition based on subject-filtered list
+          const subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
+          const isLocked = index > 0 && !progress.completedStations.includes(subjectStations[index - 1].id);
           const isActive = activeStationId === station.id;
 
           const StationIcon = ICON_MAP[station.icon] || HelpCircle;
 
-          // Alignment layout for S-curve: index 0 center/left, 1 center/right, 2 center/left, 3 center/right
+          // Alignment layout for S-curve
           const alignClass = 
             index % 2 === 0
               ? 'self-start ml-2 sm:ml-6'
@@ -183,7 +213,7 @@ export default function LessonMap({ progress, onSelectStation, activeStationId }
       <div className="mt-12 text-center p-4 bg-yellow-50 rounded-2xl border-2 border-dashed border-yellow-300">
         <span className="text-3xl">🏆</span>
         <h4 className="text-sm font-bold text-yellow-800 font-sans mt-1">Lernkönig Urkunde</h4>
-        <p className="text-xs text-slate-500 font-body">Schließe alle 6 Stationen ab, um deine goldene Urkunde freizuschalten!</p>
+        <p className="text-xs text-slate-500 font-body">Schließe alle 6 Deutsch-Stationen oder alle 4 Mathe-Stationen ab, um deine goldene Urkunde freizuschalten!</p>
       </div>
     </div>
   );
