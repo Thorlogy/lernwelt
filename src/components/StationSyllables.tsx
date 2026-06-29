@@ -12,6 +12,14 @@ interface StationSyllablesProps {
   isLastExercise: boolean;
 }
 
+const EMOJI_MAP: Record<string, string> = {
+  water: '💧',
+  school: '🏫',
+  tulip: '🌷',
+  rainbow: '🌈',
+  tomato: '🍅',
+};
+
 export default function StationSyllables({
   exercise,
   onCorrectAnswer,
@@ -115,6 +123,14 @@ export default function StationSyllables({
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
             <path fill="#0288d1" d="M0,160 C320,240 640,80 960,200 C1280,320 1440,120 1440,160 L1440,320 L0,320 Z"></path>
           </svg>
+        </div>
+
+        {/* Floating object emoji illustration */}
+        <div className="absolute top-3 left-4 bg-white/90 backdrop-blur-xs border border-cyan-200/50 rounded-2xl px-3 py-1.5 flex items-center gap-2 shadow-xs text-sm font-extrabold text-cyan-900 select-none animate-wiggle-soft">
+          <span className="text-2xl filter drop-shadow-sm leading-none">
+            {EMOJI_MAP[exercise.imagePlaceholder] || '❓'}
+          </span>
+          <span className="hidden sm:inline font-sans text-[10px] font-black tracking-wider uppercase text-cyan-700">Gesucht</span>
         </div>
 
         {/* Floating lilypads or river stones container */}
