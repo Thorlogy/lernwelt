@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Quicksand:wght@500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Quicksand", sans-serif;
+
+  /* Custom Color Palette reflecting the German School Brand Spec */
+  --color-brand-bg: #f7f9fc;
+  --color-brand-surface-lowest: #ffffff;
+  --color-brand-surface-low: #f2f4f7;
+  --color-brand-surface: #eceef1;
+  --color-brand-surface-high: #e6e8eb;
+  --color-brand-surface-highest: #e0e3e6;
+  
+  --color-brand-primary: #00639a;
+  --color-brand-primary-hover: #004e7a;
+  --color-brand-primary-container: #5ca9e9;
+  --color-brand-on-primary-container: #003c60;
+
+  --color-brand-secondary: #725c00;
+  --color-brand-secondary-container: #fdd758;
+  --color-brand-on-secondary-container: #ffd000;
+
+  --color-brand-tertiary: #286c2d;
+  --color-brand-tertiary-container: #abf4a5;
+  --color-brand-on-tertiary-container: #002204;
+
+  --color-brand-error: #ba1a1a;
+  --color-brand-error-container: #ffdad6;
+  --color-brand-orange: #e06000;
+  --color-brand-orange-container: #ffdcc8;
+
+  --color-on-surface: #191c1e;
+  --color-on-surface-variant: #404750;
+  --color-outline: #707881;
+  --color-outline-variant: #c0c7d1;
+}
+
+/* Custom styling rules for the Soft Tactile theme */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-brand-bg);
+  color: var(--color-on-surface);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Custom shadow with low opacity primary color for physical soft appearance */
+.shadow-soft-tactile {
+  box-shadow: 0 12px 24px -6px rgba(0, 99, 154, 0.08), 
+              0 0 1px 0 rgba(0, 99, 154, 0.1);
+}
+
+.shadow-high-tactile {
+  box-shadow: 0 16px 32px -4px rgba(0, 99, 154, 0.12), 
+              0 4px 8px -2px rgba(0, 99, 154, 0.05);
+}
+
+/* Chunky Tactile Buttons and Blocks */
+.btn-tactile-primary {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-bottom: 5px solid #004a75;
+  background-color: #00639a;
+}
+.btn-tactile-primary:active {
+  transform: translateY(3px);
+  border-bottom: 2px solid #004a75;
+}
+
+.btn-tactile-secondary {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-bottom: 5px solid #b28a00;
+  background-color: #fdd758;
+}
+.btn-tactile-secondary:active {
+  transform: translateY(3px);
+  border-bottom: 2px solid #b28a00;
+}
+
+.btn-tactile-tertiary {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-bottom: 5px solid #144b1c;
+  background-color: #6db36b;
+}
+.btn-tactile-tertiary:active {
+  transform: translateY(3px);
+  border-bottom: 2px solid #144b1c;
+}
+
+.btn-tactile-outline {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-bottom: 4px solid var(--color-brand-surface-high);
+  background-color: var(--color-brand-surface-lowest);
+}
+.btn-tactile-outline:active {
+  transform: translateY(2px);
+  border-bottom: 2px solid var(--color-brand-surface-high);
+}
+
+/* Tactile Letter Blocks */
+.letter-block {
+  font-family: var(--font-body);
+  font-weight: 700;
+  box-shadow: 0 4px 0 0 rgba(0, 99, 154, 0.15);
+  border: 2px solid var(--color-brand-surface-highest);
+  transition: all 0.1s ease;
+}
+
+.letter-block:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 rgba(0, 99, 154, 0.15);
+}
+
+/* Wiggle animations for mascot and feedback */
+@keyframes soft-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes double-wiggle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(-3px) rotate(-4deg); }
+  45% { transform: translateY(-1px) rotate(3deg); }
+  65% { transform: translateY(-3px) rotate(-2deg); }
+  80% { transform: translateY(0) rotate(1deg); }
+}
+
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-6px); }
+  30%, 60%, 90% { transform: translateX(6px); }
+}
+
+.animate-wiggle-soft {
+  animation: soft-wiggle 3s ease-in-out infinite;
+}
+
+.animate-wiggle-double {
+  animation: double-wiggle 1.2s ease-in-out;
+}
+
+.animate-shake {
+  animation: error-shake 0.4s ease-in-out;
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
