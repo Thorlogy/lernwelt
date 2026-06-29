@@ -3,12 +3,28 @@ import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
 
+/**
+ * @file StationSingularPlural.tsx
+ * @description Station 5 component of Lernwelt. Focuses on Singular and Plural formations.
+ *
+ * Curriculum Alignment:
+ * Aligns with the "Lehrplan Deutsch Grundschule NRW" (Competency area: "Sprache und Sprachgebrauch untersuchen").
+ * Specifically targets Plural building, umlaut changes (Umlautung/Ableitung, e.g., Baum -> Bäume)
+ * and inflection rules commonly taught in Grade 2.
+ */
+
 interface StationSingularPluralProps {
+  /** The current exercise containing options, hint, word, and correctAnswer */
   exercise: Exercise;
+  /** Callback fired when the child selects the correct answer */
   onCorrectAnswer: (starsGained: number) => void;
+  /** Callback fired when the child selects an incorrect answer */
   onIncorrectAnswer: () => void;
+  /** Callback fired to proceed to the next exercise */
   onNext: () => void;
+  /** The current user progression state */
   progress: UserProgress;
+  /** Whether this is the final exercise of the current station */
   isLastExercise: boolean;
 }
 
