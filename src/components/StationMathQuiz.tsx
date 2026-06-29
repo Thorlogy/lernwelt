@@ -54,7 +54,11 @@ export default function StationMathQuiz({
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [socraticChecked, setSocraticChecked] = useState(false);
 
+  // Interactive coin selection states (Grade 3 money tasks)
+  const [selectedCoinIndices, setSelectedCoinIndices] = useState<number[]>([]);
+
   const isPartitioningTask = stationId === 8 && exercise.question.includes('aufteilen');
+  const isCoinTask = stationId === 9 && (exercise.id === "9_1" || exercise.id === "9_4");
 
   useEffect(() => {
     setSelectedOption(null);
@@ -72,6 +76,9 @@ export default function StationMathQuiz({
       setFamilyCount(3);
       setBasketItems([0, 0, 0]);
     }
+
+    // Reset coin selection
+    setSelectedCoinIndices([]);
   }, [exercise]);
 
   // Handle family count change in interactive division
@@ -158,6 +165,30 @@ export default function StationMathQuiz({
       return;
     }
 
+    if (isCoinTask) {
+      const pool = coinPools[exercise.id] || [];
+      const sum = selectedCoinIndices.reduce((acc, idx) => acc + pool[idx].val, 0);
+      const target = parseFloat(exercise.correctAnswer.replace('€', '').replace(',', '.').trim());
+      correct = Math.abs(sum - target) < 0.01;
+      
+      const currentAttempts = attempts + 1;
+      setAttempts(currentAttempts);
+      setIsCorrect(correct);
+      setHasChecked(true);
+
+      if (correct) {
+        playSuccess();
+        onCorrectAnswer(15);
+        onSaveMetrics(didacticMethod, Math.max(1, Math.round((Date.now() - startTime) / 1000)), currentAttempts, currentAttempts === 1);
+      } else {
+        playFailure();
+        setShakeTrigger(true);
+        onIncorrectAnswer();
+        setTimeout(() => setShakeTrigger(false), 800);
+      }
+      return;
+    }
+
     if (!selectedOption || hasChecked) return;
 
     const currentAttempts = attempts + 1;
@@ -191,6 +222,9 @@ export default function StationMathQuiz({
     setSelectedOption(null);
     if (isPartitioningTask) {
       setBasketItems(Array(familyCount).fill(0));
+    }
+    if (isCoinTask) {
+      setSelectedCoinIndices([]);
     }
   };
 
@@ -617,6 +651,105 @@ export default function StationMathQuiz({
     );
   };
 
+  // Coin pools definition
+  const coinPools: Record<string, { label: string; val: number; isBill?: boolean }[]> = {
+    "9_1": [
+      { label: "2 €", val: 2 },
+      { label: "2 €", val: 2 },
+      { label: "1 €", val: 1 },
+      { label: "1 €", val: 1 },
+      { label: "50c", val: 0.5 },
+      { label: "20c", val: 0.2 },
+      { label: "10c", val: 0.1 }
+    ],
+    "9_4": [
+      { label: "5 €", val: 5, isBill: true },
+      { label: "2 €", val: 2 },
+      { label: "1 €", val: 1 },
+      { label: "1 €", val: 1 },
+      { label: "50c", val: 0.5 },
+      { label: "20c", val: 0.2 },
+      { label: "10c", val: 0.1 }
+    ]
+  };
+
+  const handleCoinToggle = (idx: number) => {
+    if (hasChecked) return;
+    playPop();
+    setSelectedCoinIndices(prev => {
+      if (prev.includes(idx)) {
+        return prev.filter(i => i !== idx);
+      } else {
+        return [...prev, idx];
+      }
+    });
+  };
+
+  const renderInteractiveCoins = () => {
+    const pool = coinPools[exercise.id] || [];
+    const currentSum = selectedCoinIndices.reduce((acc, idx) => acc + pool[idx].val, 0);
+    const sumString = currentSum.toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €';
+
+    return (
+      <div className="bg-slate-50 border-2 border-slate-200/80 p-5 rounded-2xl max-w-sm mx-auto text-center font-body my-6">
+        <span className="text-xs font-extrabold uppercase text-[#00639a] tracking-widest block mb-4">
+          👛 Bezahle den passenden Betrag:
+        </span>
+
+        {/* Coins & Bills selector */}
+        <div className="flex flex-wrap justify-center items-center gap-3.5 mb-5 min-h-[70px]">
+          {pool.map((coin, idx) => {
+            const isSelected = selectedCoinIndices.includes(idx);
+            
+            let coinStyle = "";
+            if (coin.isBill) {
+              coinStyle = `w-18 h-10 bg-blue-100 border-2 text-blue-900 font-extrabold text-xs rounded-lg flex items-center justify-center ${
+                isSelected 
+                  ? 'border-blue-600 ring-4 ring-blue-300 scale-105 shadow-md -translate-y-1' 
+                  : 'border-blue-300 hover:bg-blue-50/50'
+              }`;
+            } else if (coin.label.includes('€')) {
+              coinStyle = `w-12 h-12 rounded-full font-black text-sm flex items-center justify-center border-2 ${
+                coin.label === '2 €' 
+                  ? 'bg-yellow-400 border-yellow-500 text-yellow-950' 
+                  : 'bg-slate-300 border-yellow-500 text-slate-800'
+              } ${
+                isSelected 
+                  ? 'ring-4 ring-yellow-300 border-yellow-600 scale-105 shadow-md -translate-y-1' 
+                  : 'hover:brightness-105'
+              }`;
+            } else {
+              const size = coin.label === '50c' ? 'w-10 h-10 text-[10px]' : coin.label === '20c' ? 'w-9 h-9 text-[9px]' : 'w-8.5 h-8.5 text-[8px]';
+              coinStyle = `${size} rounded-full bg-yellow-600 border-2 border-yellow-700 text-yellow-100 font-black flex items-center justify-center ${
+                isSelected 
+                  ? 'ring-4 ring-yellow-200 border-yellow-800 scale-105 shadow-md -translate-y-1' 
+                  : 'hover:brightness-105'
+              }`;
+            }
+
+            return (
+              <button
+                key={idx}
+                type="button"
+                disabled={hasChecked}
+                onClick={() => handleCoinToggle(idx)}
+                className={`transition-all duration-150 transform cursor-pointer select-none ${coinStyle}`}
+              >
+                {coin.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Live Sum indicator */}
+        <div className="bg-white px-4 py-2.5 rounded-xl border border-slate-200 inline-flex items-center gap-1.5 shadow-xs font-sans">
+          <span className="text-xs font-bold text-slate-500">Dein gewählter Betrag:</span>
+          <span className="text-base font-black text-slate-800">{sumString}</span>
+        </div>
+      </div>
+    );
+  };
+
   // 3. Didaktisches Hilfsmittel für Klasse 3: Größen-Detektiv
   const renderGroessenHilfe = () => {
     if (stationId !== 9) return null;
@@ -630,49 +763,7 @@ export default function StationMathQuiz({
     let illustration: React.ReactNode = null;
 
     if (isMoneyTask) {
-      illustrationText = "🪙 Geld-Rechnen";
-      
-      if (exercise.id === "9_1") {
-        // Book 3 € + Pen 1,50 €
-        illustration = (
-          <div className="flex flex-col gap-2 items-center py-1">
-            <div className="flex gap-2 items-center text-xs font-bold text-slate-700">
-              <span className="w-18">Buch (3 €):</span>
-              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">2 €</span>
-              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">1 €</span>
-            </div>
-            <div className="flex gap-2 items-center text-xs font-bold text-slate-700">
-              <span className="w-18">Stift (1,50 €):</span>
-              <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">1 €</span>
-              <span className="w-7 h-7 rounded-full bg-slate-300 border-2 border-slate-400 text-slate-800 font-black text-[10px] flex items-center justify-center shadow-xs select-none">50c</span>
-            </div>
-          </div>
-        );
-      } else if (exercise.id === "9_4") {
-        // 10 € wallet, buys 2 € ice cream and 1,50 € pretzel. Wechselgeld = 6,50 €
-        illustration = (
-          <div className="flex flex-col gap-2.5 items-center py-1">
-            <div className="flex gap-1.5 items-center text-xs font-bold text-slate-700">
-              <span>Startgeld:</span>
-              <span className="px-2.5 py-1 rounded bg-blue-100 border border-blue-300 text-blue-900 font-black text-[10px] shadow-xs select-none">10 € Schein</span>
-            </div>
-            <div className="flex gap-1.5 items-center text-xs font-bold text-slate-700">
-              <span>Einkauf (3,50 €):</span>
-              <span className="w-7 h-7 rounded-full bg-yellow-400 border border-yellow-500 text-yellow-950 font-black text-[10px] flex items-center justify-center shadow-xs select-none">2 €</span>
-              <span className="w-7 h-7 rounded-full bg-yellow-400 border border-yellow-500 text-yellow-950 font-black text-[10px] flex items-center justify-center shadow-xs select-none">1 €</span>
-              <span className="w-6.5 h-6.5 rounded-full bg-slate-300 border border-slate-400 text-slate-800 font-black text-[9px] flex items-center justify-center shadow-xs select-none">50c</span>
-            </div>
-          </div>
-        );
-      } else {
-        illustration = (
-          <div className="flex gap-2 justify-center items-center py-1">
-            <span className="w-8 h-8 rounded-full bg-yellow-400 border-2 border-yellow-500 text-yellow-950 font-black text-xs flex items-center justify-center shadow-xs select-none">2 €</span>
-            <span className="w-7 h-7 rounded-full bg-slate-300 border-2 border-slate-400 text-slate-800 font-black text-[10px] flex items-center justify-center shadow-xs select-none">50c</span>
-            <span className="w-6.5 h-6.5 rounded-full bg-yellow-600 border-2 border-yellow-700 text-yellow-100 font-black text-[9px] flex items-center justify-center shadow-xs select-none">10c</span>
-          </div>
-        );
-      }
+      return null; // Will be handled by renderInteractiveCoins instead
     } else if (isWeightTask) {
       illustrationText = "⚖️ Gewichte (g / kg)";
       illustration = (
@@ -878,10 +969,11 @@ export default function StationMathQuiz({
         </>
       )}
       
-      {stationId === 9 && renderGroessenHilfe()}
+      {stationId === 9 && !isCoinTask && renderGroessenHilfe()}
+      {isCoinTask && renderInteractiveCoins()}
 
-      {/* Options grid (hidden for partitioning tasks since we evaluate the boxes directly) */}
-      {!isPartitioningTask && (
+      {/* Options grid (hidden for partitioning/coin tasks since we evaluate the inputs directly) */}
+      {!isPartitioningTask && !isCoinTask && (
         <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
           {exercise.options?.map((option, idx) => {
             const isSelected = selectedOption === option;
@@ -939,10 +1031,21 @@ export default function StationMathQuiz({
           <div className="flex gap-2">
             {!hasChecked ? (
               <button
-                disabled={!isPartitioningTask ? !selectedOption : basketItems.reduce((a, b) => a + b, 0) !== 12}
+                disabled={
+                  isPartitioningTask 
+                    ? basketItems.reduce((a, b) => a + b, 0) !== 12 
+                    : isCoinTask 
+                      ? selectedCoinIndices.length === 0 
+                      : !selectedOption
+                }
                 onClick={handleCheck}
                 className={`px-6 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer ${
-                  (!isPartitioningTask ? selectedOption : basketItems.reduce((a, b) => a + b, 0) === 12)
+                  (isPartitioningTask 
+                    ? basketItems.reduce((a, b) => a + b, 0) === 12 
+                    : isCoinTask 
+                      ? selectedCoinIndices.length > 0 
+                      : selectedOption
+                  )
                     ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500'
                     : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
                 }`}
