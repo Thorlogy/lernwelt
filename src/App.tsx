@@ -604,7 +604,7 @@ export default function App() {
               />
             )}
 
-            {(activeStationId === 11 || activeStationId === 12) && currentExercise && (
+            {(activeStationId >= 11 && activeStationId <= 18) && currentExercise && (
               <StationGenericQuiz
                 exercise={currentExercise as any}
                 onCorrectAnswer={handleCorrectAnswer}

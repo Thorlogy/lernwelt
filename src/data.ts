@@ -643,6 +643,190 @@ export const STATIONEN: Station[] = [
         hint: "Sonne - Wonne. Das klingt am Ende genau gleich!"
       }
     ]
+  },
+  {
+    id: 13,
+    subject: "mathe",
+    title: "Station 13: Zahlen-Fuchs",
+    subtitle: "Sachaufgaben & Hundertertafel",
+    grade: 2,
+    description: "Knacke kleine Textaufgaben und finde den Weg durch die Hundertertafel!",
+    icon: "Calculator",
+    color: "primary",
+    exercises: [
+      {
+        id: "13_1",
+        question: "Sachaufgabe: Lumi hat 15 Äpfel. Er isst 4 davon. Wie viele hat er noch?",
+        options: ["11", "12", "15", "19"],
+        correctAnswer: "11",
+        hint: "Das ist eine Minus-Aufgabe: 15 - 4."
+      },
+      {
+        id: "13_2",
+        question: "Sachaufgabe: Ein Eis kostet 2€. Lumi kauft 3 Stück. Wie viel zahlt er?",
+        options: ["3€", "5€", "6€", "8€"],
+        correctAnswer: "6€",
+        hint: "3 mal 2 Euro (3 • 2)."
+      },
+      {
+        id: "13_3",
+        question: "Hundertertafel: Welche Zahl steht genau über der 34?",
+        options: ["24", "33", "35", "44"],
+        correctAnswer: "24",
+        hint: "Eins nach oben gehen heißt: -10 rechnen!"
+      }
+    ]
+  },
+  {
+    id: 14,
+    subject: "deutsch",
+    title: "Station 14: Lese-Fuchs",
+    subtitle: "Lesespuren & Verben",
+    grade: 2,
+    description: "Verbinde Sätze richtig und setze Verben in die richtige Personalform!",
+    icon: "Keyboard",
+    color: "secondary",
+    exercises: [
+      {
+        id: "14_1",
+        question: "Setze ein: Ich _____ gerne ein Buch.",
+        options: ["lese", "liest", "lesen", "lest"],
+        correctAnswer: "lese",
+        hint: "Die 'Ich'-Form endet meistens auf -e."
+      },
+      {
+        id: "14_2",
+        question: "Setze ein: Du _____ sehr schnell!",
+        options: ["rennst", "renne", "rennen", "rennt"],
+        correctAnswer: "rennst",
+        hint: "Die 'Du'-Form endet meistens auf -st."
+      },
+      {
+        id: "14_3",
+        question: "Lesespur: Wer miaut und trinkt Milch?",
+        options: ["Die Katze", "Der Hund", "Der Vogel", "Das Pferd"],
+        correctAnswer: "Die Katze",
+        hint: "Ein typisches Haustier, das schnurrt."
+      }
+    ]
+  },
+  {
+    id: 15,
+    subject: "mathe",
+    title: "Station 15: Uhrzeit & Daten",
+    subtitle: "Diagramme & Zeitpunkte",
+    grade: 3,
+    description: "Lies Diagramme ab und rechne mit der Uhrzeit!",
+    icon: "Sparkles",
+    color: "tertiary",
+    exercises: [
+      {
+        id: "15_1",
+        question: "Uhrzeit: Es ist 14:15 Uhr. Der Film dauert 45 Minuten. Wann ist er zu Ende?",
+        options: ["14:45", "15:00", "15:15", "15:30"],
+        correctAnswer: "15:00",
+        hint: "15 Minuten + 45 Minuten = 60 Minuten (1 volle Stunde)."
+      },
+      {
+        id: "15_2",
+        question: "Diagramm: 5 Kinder mögen Hunde, 8 Kinder Katzen. Wie viele sind das zusammen?",
+        options: ["10", "11", "13", "15"],
+        correctAnswer: "13",
+        hint: "Eine einfache Plus-Aufgabe: 5 + 8."
+      },
+      {
+        id: "15_3",
+        question: "Symmetrie: Ein Schmetterling ist symmetrisch. Was bedeutet das?",
+        options: ["Er ist bunt.", "Beide Flügelhälften sind gleich.", "Er kann fliegen."],
+        correctAnswer: "Beide Flügelhälften sind gleich.",
+        hint: "Wenn man ihn in der Mitte faltet, passen beide Hälften genau aufeinander."
+      }
+    ]
+  },
+  {
+    id: 16,
+    subject: "deutsch",
+    title: "Station 16: Satz-Jongleur",
+    subtitle: "Umstellprobe & W-Fragen",
+    grade: 3,
+    description: "Stelle Sätze um und prüfe dein Textverständnis!",
+    icon: "FolderGit",
+    color: "orange",
+    exercises: [
+      {
+        id: "16_1",
+        question: "Umstellprobe: Mache aus 'Ich gehe heute ins Kino' einen neuen Satz!",
+        options: ["Kino gehe heute ich ins.", "Heute gehe ich ins Kino.", "Gehe heute Kino ins ich."],
+        correctAnswer: "Heute gehe ich ins Kino.",
+        hint: "Der Satz muss sich noch 'normal' und richtig anhören."
+      },
+      {
+        id: "16_2",
+        question: "W-Frage: 'Der Drache fliegt hoch am Himmel.' WO fliegt der Drache?",
+        options: ["hoch am Himmel", "Der Drache", "fliegt", "am Tag"],
+        correctAnswer: "hoch am Himmel",
+        hint: "Suche die Stelle im Satz, die den Ort (Wo?) beschreibt."
+      }
+    ]
+  },
+  {
+    id: 17,
+    subject: "mathe",
+    title: "Station 17: Mathe-Profi",
+    subtitle: "Flächen, Umfang & Römische Zahlen",
+    grade: 4,
+    description: "Berechne den Umfang und übersetze alte römische Zahlen!",
+    icon: "Calculator",
+    color: "primary",
+    exercises: [
+      {
+        id: "17_1",
+        question: "Ein Rechteck ist 4cm lang und 2cm breit. Wie lang ist der Umfang?",
+        options: ["8cm", "10cm", "12cm", "14cm"],
+        correctAnswer: "12cm",
+        hint: "Alle 4 Seiten zusammenrechnen: 4 + 2 + 4 + 2."
+      },
+      {
+        id: "17_2",
+        question: "Was bedeutet die römische Zahl X ?",
+        options: ["5", "10", "50", "100"],
+        correctAnswer: "10",
+        hint: "V = 5, X = 10, L = 50."
+      },
+      {
+        id: "17_3",
+        question: "Übersetze die römische Zahl: V I I",
+        options: ["6", "7", "8", "12"],
+        correctAnswer: "7",
+        hint: "V (5) + I (1) + I (1) = ?"
+      }
+    ]
+  },
+  {
+    id: 18,
+    subject: "deutsch",
+    title: "Station 18: Grammatik-König",
+    subtitle: "Zeiten & Wörtliche Rede",
+    grade: 4,
+    description: "Wende die Wörtliche Rede richtig an und springe in die Vergangenheitsformen!",
+    icon: "Award",
+    color: "secondary",
+    exercises: [
+      {
+        id: "18_1",
+        question: "Welcher Satz steht im PERFEKT (vollendete Vergangenheit)?",
+        options: ["Ich lerne Mathe.", "Ich habe Mathe gelernt.", "Ich lernte Mathe."],
+        correctAnswer: "Ich habe Mathe gelernt.",
+        hint: "Das Perfekt wird mit 'haben' oder 'sein' gebildet (z.B. ich HABE gelernt)."
+      },
+      {
+        id: "18_2",
+        question: "Wörtliche Rede: Wie stehen die Anführungszeichen richtig?",
+        options: ["Lumi sagt: Hallo!\"", "\"Lumi sagt: Hallo!", "Lumi sagt: \"Hallo!\""],
+        correctAnswer: "Lumi sagt: \"Hallo!\"",
+        hint: "Die Anführungszeichen umschließen genau das, was gesprochen wird."
+      }
+    ]
   }
 ];
 
