@@ -793,10 +793,10 @@ export default function StationMathQuiz({
   const renderGroessenHilfe = () => {
     if (stationId !== 9) return null;
 
-    const isMoneyTask = exercise.question.includes('€') || exercise.question.includes('Geld') || exercise.question.includes('bezahlen');
-    const isWeightTask = exercise.question.includes('wiegt') || exercise.question.includes(' g') || exercise.question.includes(' kg') || exercise.question.includes('Gramm') || exercise.question.includes('wiegen');
-    const isTimeTask = exercise.question.includes('Uhr') || exercise.question.includes('Minuten') || exercise.question.includes('Stunde') || exercise.question.includes('zeit');
-    const isLengthTask = exercise.question.includes('cm') || exercise.question.includes('m ') || exercise.question.includes('lang') || exercise.question.includes('Lineal');
+    const isMoneyTask = exercise.id === "9_1" || exercise.id === "9_4";
+    const isTimeTask = exercise.id === "9_2";
+    const isLengthTask = exercise.id === "9_3";
+    const isWeightTask = exercise.id === "9_5";
 
     let illustrationText = "💼 Alltagsgröße";
     let illustration: React.ReactNode = null;
