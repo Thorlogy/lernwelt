@@ -209,7 +209,7 @@ export const STATIONEN: Station[] = [
     title: "Station 5: Einzahl & Mehrzahl",
     subtitle: "Wortformen & Pluralbildung",
     grade: 2,
-    description: "Finde die richtige Mehrzahlform des Nomen! Achte besonders auf Umlaute.",
+    description: "Wie heißt die Mehrzahl?",
     icon: "Award",
     color: "primary",
     exercises: [
@@ -266,7 +266,7 @@ export const STATIONEN: Station[] = [
     title: "Station 6: Zeiten-Trainer",
     subtitle: "Gegenwart & Vergangenheit",
     grade: 3,
-    description: "Setze das angegebene Verb in die richtige Vergangenheitsform (Präteritum) ein!",
+    description: "Schreibe das Wort in der Vergangenheit!",
     icon: "Award",
     color: "secondary",
     exercises: [
@@ -323,7 +323,7 @@ export const STATIONEN: Station[] = [
     title: "Station 1: Rechen-König",
     subtitle: "Rechnen bis 20 & Zehnerübergang",
     grade: 1,
-    description: "Rechne die Plus- und Minusaufgaben! Nutze das Zwanzigerfeld als Rechenhilfe.",
+    description: "Rechne Plus und Minus!",
     icon: "Calculator",
     color: "primary",
     exercises: [
@@ -650,7 +650,7 @@ export const STATIONEN: Station[] = [
     title: "Station 13: Zahlen-Fuchs",
     subtitle: "Sachaufgaben & Hundertertafel",
     grade: 2,
-    description: "Knacke kleine Textaufgaben und finde den Weg durch die Hundertertafel!",
+    description: "Löse Textaufgaben!",
     icon: "Calculator",
     color: "primary",
     exercises: [
@@ -683,7 +683,7 @@ export const STATIONEN: Station[] = [
     title: "Station 14: Lese-Fuchs",
     subtitle: "Lesespuren & Verben",
     grade: 2,
-    description: "Verbinde Sätze richtig und setze Verben in die richtige Personalform!",
+    description: "Setze die Wörter richtig ein!",
     icon: "Keyboard",
     color: "secondary",
     exercises: [
@@ -716,7 +716,7 @@ export const STATIONEN: Station[] = [
     title: "Station 15: Uhrzeit & Daten",
     subtitle: "Diagramme & Zeitpunkte",
     grade: 3,
-    description: "Lies Diagramme ab und rechne mit der Uhrzeit!",
+    description: "Rechne mit der Uhrzeit!",
     icon: "Sparkles",
     color: "tertiary",
     exercises: [
@@ -749,7 +749,7 @@ export const STATIONEN: Station[] = [
     title: "Station 16: Satz-Jongleur",
     subtitle: "Umstellprobe & W-Fragen",
     grade: 3,
-    description: "Stelle Sätze um und prüfe dein Textverständnis!",
+    description: "Stelle Sätze um!",
     icon: "FolderGit",
     color: "orange",
     exercises: [
@@ -775,7 +775,7 @@ export const STATIONEN: Station[] = [
     title: "Station 17: Mathe-Profi",
     subtitle: "Flächen, Umfang & Römische Zahlen",
     grade: 4,
-    description: "Berechne den Umfang und übersetze alte römische Zahlen!",
+    description: "Rechne mit Umfang und Römerzahlen!",
     icon: "Calculator",
     color: "primary",
     exercises: [
@@ -808,7 +808,7 @@ export const STATIONEN: Station[] = [
     title: "Station 18: Grammatik-König",
     subtitle: "Zeiten & Wörtliche Rede",
     grade: 4,
-    description: "Wende die Wörtliche Rede richtig an und springe in die Vergangenheitsformen!",
+    description: "Übe die wörtliche Rede!",
     icon: "Award",
     color: "secondary",
     exercises: [
