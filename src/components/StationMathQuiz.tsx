@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
-import { Star, HelpCircle, ArrowRight, CheckCircle, Calculator, Coins } from 'lucide-react';
+import { applyPrivacyFilter } from '../utils/imageFilter';
+import { 
+  Star, HelpCircle, ArrowRight, CheckCircle, Calculator, Coins, 
+  Camera, Trash2, ShieldAlert, Award, Smile, Info 
+} from 'lucide-react';
 
 interface StationMathQuizProps {
   exercise: Exercise;
@@ -11,7 +15,7 @@ interface StationMathQuizProps {
   progress: UserProgress;
   isLastExercise: boolean;
   stationId: number; // 7 = Grade 1, 8 = Grade 2, 9 = Grade 3
-  onSaveMetrics: (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => void;
+  onSaveMetrics: (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean, photoProof?: string) => void;
 }
 
 export default function StationMathQuiz({
@@ -37,6 +41,21 @@ export default function StationMathQuiz({
   const [startTime, setStartTime] = useState<number>(Date.now());
   const [attempts, setAttempts] = useState<number>(0);
 
+  // Camera / Photo proof states (Grade 1)
+  const [photoProof, setPhotoProof] = useState<string | null>(null);
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
+
+  // Interactive Family Partitioning states (Grade 2, Exercise 4/5 division)
+  const [familyCount, setFamilyCount] = useState<2 | 3 | 4>(3);
+  const [basketItems, setBasketItems] = useState<number[]>([0, 0, 0]);
+
+  // Socratic Reflection states (triggered at the end of the station)
+  const [showSocratic, setShowSocratic] = useState(false);
+  const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
+  const [socraticChecked, setSocraticChecked] = useState(false);
+
+  const isPartitioningTask = stationId === 8 && exercise.question.includes('aufteilen');
+
   useEffect(() => {
     setSelectedOption(null);
     setHasChecked(false);
@@ -45,7 +64,34 @@ export default function StationMathQuiz({
     setShowHint(false);
     setStartTime(Date.now());
     setAttempts(0);
+    setPhotoProof(null);
+    setIsProcessingPhoto(false);
+    
+    // Reset partitioning if this is a partitioning task
+    if (isPartitioningTask) {
+      setFamilyCount(3);
+      setBasketItems([0, 0, 0]);
+    }
   }, [exercise]);
+
+  // Handle family count change in interactive division
+  const handleFamilyChange = (count: 2 | 3 | 4) => {
+    playPop();
+    setFamilyCount(count);
+    setBasketItems(Array(count).fill(0));
+  };
+
+  // Adjust item count in a basket
+  const adjustBasketItem = (basketIdx: number, delta: number) => {
+    playPop();
+    const currentTotal = basketItems.reduce((a, b) => a + b, 0);
+    if (delta > 0 && currentTotal >= 12) return; // limit to 12 total items
+    if (delta < 0 && basketItems[basketIdx] <= 0) return;
+
+    const newBaskets = [...basketItems];
+    newBaskets[basketIdx] += delta;
+    setBasketItems(newBaskets);
+  };
 
   const handleOptionSelect = (option: string) => {
     if (hasChecked) return;
@@ -53,24 +99,82 @@ export default function StationMathQuiz({
     setSelectedOption(option);
   };
 
+  // Camera upload handler with local Privacy Filter
+  const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    playPop();
+    setIsProcessingPhoto(true);
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Src = event.target?.result as string;
+      try {
+        // Apply privacy Sobel edge detector to hide faces/surroundings
+        const filteredBase64 = await applyPrivacyFilter(base64Src);
+        setPhotoProof(filteredBase64);
+      } catch (err) {
+        console.error("Error applying image filter:", err);
+        // Fallback to original image if filter fails
+        setPhotoProof(base64Src);
+      } finally {
+        setIsProcessingPhoto(false);
+      }
+    };
+    reader.onerror = () => setIsProcessingPhoto(false);
+    reader.readAsDataURL(file);
+  };
+
   const handleCheck = () => {
+    let correct = false;
+
+    if (isPartitioningTask) {
+      // Check interactive partitioning:
+      // 1. Total cookies must be exactly 12
+      // 2. All baskets must have equal cookies
+      // 3. The equal cookies count must equal correct answer (e.g. 12/3 = 4)
+      const totalPlaced = basketItems.reduce((a, b) => a + b, 0);
+      const firstVal = basketItems[0];
+      const isEveryEqual = basketItems.every(v => v === firstVal && v > 0);
+      
+      correct = totalPlaced === 12 && isEveryEqual && firstVal === Number(exercise.correctAnswer);
+      
+      const currentAttempts = attempts + 1;
+      setAttempts(currentAttempts);
+      setIsCorrect(correct);
+      setHasChecked(true);
+
+      if (correct) {
+        playSuccess();
+        onCorrectAnswer(15);
+        onSaveMetrics(didacticMethod, Math.max(1, Math.round((Date.now() - startTime) / 1000)), currentAttempts, currentAttempts === 1);
+      } else {
+        playFailure();
+        setShakeTrigger(true);
+        onIncorrectAnswer();
+        setTimeout(() => setShakeTrigger(false), 800);
+      }
+      return;
+    }
+
     if (!selectedOption || hasChecked) return;
 
     const currentAttempts = attempts + 1;
     setAttempts(currentAttempts);
 
-    const correct = selectedOption.trim() === exercise.correctAnswer.toString().trim();
+    correct = selectedOption.trim() === exercise.correctAnswer.toString().trim();
     setIsCorrect(correct);
     setHasChecked(true);
 
     if (correct) {
       playSuccess();
-      onCorrectAnswer(15); // Award 15 stars
+      onCorrectAnswer(15);
 
-      // Save A/B metrics
+      // Save metrics with photo proof thumbnail if available
       const timeTaken = Math.max(1, Math.round((Date.now() - startTime) / 1000));
       const firstTry = currentAttempts === 1;
-      onSaveMetrics(didacticMethod, timeTaken, currentAttempts, firstTry);
+      onSaveMetrics(didacticMethod, timeTaken, currentAttempts, firstTry, photoProof || undefined);
     } else {
       playFailure();
       setShakeTrigger(true);
@@ -85,6 +189,93 @@ export default function StationMathQuiz({
     setHasChecked(false);
     setIsCorrect(null);
     setSelectedOption(null);
+    if (isPartitioningTask) {
+      setBasketItems(Array(familyCount).fill(0));
+    }
+  };
+
+  // Move to next task or show Socratic reflection
+  const handleProceed = () => {
+    if (isLastExercise && !showSocratic) {
+      playPop();
+      setShowSocratic(true);
+    } else {
+      onNext();
+    }
+  };
+
+  const handleSocraticCheck = () => {
+    if (selectedStrategy === null) return;
+    playPop();
+    setSocraticChecked(true);
+  };
+
+  // Socratic tutoring options depending on the station type
+  const getSocraticDetails = () => {
+    if (stationId === 7) {
+      return {
+        question: "Halt! Bevor wir dir den Sternen-Pokal verleihen, möchte Lumi etwas lernen: Wie rechnest du eine schwere Plusaufgabe wie 8 + 5 am schlausten im Kopf?",
+        strategies: [
+          {
+            text: "Ich starte bei 8 und zähle im Kopf einzeln weiter: 9, 10, 11, 12, 13.",
+            feedback: "Das klappt, dauert aber lange und man kann sich leicht verzählen! Versuche nächstes Mal den Zehnerübergang. 👍",
+            isBest: false
+          },
+          {
+            text: "Ich mache erst den Zehnerstopp (8 + 2 = 10) und addiere dann die restlichen 3 dazu (10 + 3 = 13).",
+            feedback: "Genau! Der Zehnerübergang (Zehnerstopp) ist die sicherste und schnellste Methode, um im Kopf große Summen zu bilden! 🏆",
+            isBest: true
+          },
+          {
+            text: "Ich schätze einfach, was nah dran sein könnte.",
+            feedback: "Schätzen hilft zur Kontrolle, aber rechnen ist genauer! Probier beim nächsten Mal den Zehnerstopp. 👍",
+            isBest: false
+          }
+        ]
+      };
+    } else if (stationId === 8) {
+      return {
+        question: "Super gelöst! Bevor es den Pokal gibt, erzähl Lumi: Wie rechnest du Malaufgaben wie 6 • 7 am besten aus, wenn du das Ergebnis mal vergisst?",
+        strategies: [
+          {
+            text: "Ich nutze ein Punkte- oder Balkenmodell und zähle alle Kästchen einzeln ab.",
+            feedback: "Das hilft als Bild, dauert aber viel zu lange! Es gibt schnellere Rechentricks. 👍",
+            isBest: false
+          },
+          {
+            text: "Ich nutze eine einfache Nachbaraufgabe (z.B. 5 • 7 = 35) und rechne einfach einmal 7 dazu (35 + 7 = 42).",
+            feedback: "Klasse! Über Nachbaraufgaben (Kernaufgaben) kannst du dir jedes schwere Einmaleins-Rätsel blitzschnell herleiten! 🏆",
+            isBest: true
+          },
+          {
+            text: "Ich rate so lange herum, bis mir ein Ergebnis bekannt vorkommt.",
+            feedback: "Raten ist fehleranfällig. Nutze lieber Kernaufgaben, um das Ergebnis sicher herzuleiten! 👍",
+            isBest: false
+          }
+        ]
+      };
+    } else {
+      return {
+        question: "Klasse! Lumi möchte von dir wissen: Wie rechnest du mit Geldbeträgen wie 1,50€ + 2,30€ am einfachsten?",
+        strategies: [
+          {
+            text: "Ich rechne erst die Euros zusammen (1€ + 2€ = 3€) und dann die Cent-Münzen (50c + 30c = 80c) und lege sie zusammen.",
+            feedback: "Perfekt! Das Aufteilen in Euro und Cent (Stellenwerte) macht das Kopfrechnen mit Geld kinderleicht! 🏆",
+            isBest: true
+          },
+          {
+            text: "Ich tue so, als gäbe es keine Cents und schätze nur die großen Euro-Scheine.",
+            feedback: "Dann fehlt dir aber das Wechselgeld! Euro und Cent getrennt zu rechnen ist sicherer. 👍",
+            isBest: false
+          },
+          {
+            text: "Ich zähle alle 10-Cent-Stücke einzeln durch, bis ich beim Betrag bin.",
+            feedback: "Das dauert bei großen Beträgen viel zu lange. Teile es lieber in Euro und Cents auf! 👍",
+            isBest: false
+          }
+        ]
+      };
+    }
   };
 
   // 1. Didaktisches Hilfsmittel für Klasse 1: Zwanzigerfeld (Methode A)
@@ -120,9 +311,9 @@ export default function StationMathQuiz({
           {cells.map((cell, idx) => {
             let cellStyle = 'bg-slate-100 border-slate-200';
             if (cell === 'red') {
-              cellStyle = 'bg-red-500 border-red-600 scale-102';
+              cellStyle = 'bg-red-500 border-red-600';
             } else if (cell === 'blue') {
-              cellStyle = 'bg-blue-500 border-blue-600 scale-102';
+              cellStyle = 'bg-blue-500 border-blue-600';
             }
 
             return (
@@ -183,24 +374,19 @@ export default function StationMathQuiz({
           🏫 Methode B: Number Bonds (Zahlbeziehungen)
         </span>
         
-        {/* Render simple SVG of Number Bonds (Whole & Parts) */}
         <div className="flex justify-center py-2">
           <svg className="w-40 h-32" viewBox="0 0 100 80">
-            {/* Lines */}
             <line x1="50" y1="20" x2="25" y2="60" stroke="#64748b" strokeWidth="2.5" />
             <line x1="50" y1="20" x2="75" y2="60" stroke="#64748b" strokeWidth="2.5" />
 
-            {/* Whole Circle */}
             <circle cx="50" cy="20" r="13" className="fill-indigo-100 stroke-indigo-500 stroke-2" />
             <text x="50" y="24" textAnchor="middle" className="text-[9px] font-black fill-indigo-900 font-sans">{wholeLabel}</text>
             <text x="50" y="5" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Ganzes</text>
 
-            {/* Part 1 Circle */}
             <circle cx="25" cy="60" r="11" className="fill-amber-50 stroke-amber-500 stroke-2" />
             <text x="25" y="63.5" textAnchor="middle" className="text-[8px] font-bold fill-amber-900 font-sans">{part1Label}</text>
             <text x="25" y="78" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Teil 1</text>
 
-            {/* Part 2 Circle */}
             <circle cx="75" cy="60" r="11" className="fill-blue-50 stroke-blue-500 stroke-2" />
             <text x="75" y="63.5" textAnchor="middle" className="text-[8px] font-bold fill-blue-900 font-sans">{part2Label}</text>
             <text x="75" y="78" textAnchor="middle" className="text-[5px] font-bold fill-slate-400 uppercase font-sans">Teil 2</text>
@@ -210,12 +396,63 @@ export default function StationMathQuiz({
     );
   };
 
+  // Photo Proof Subcomponent (Grade 1)
+  const renderPhotoProofComponent = () => {
+    if (stationId !== 7) return null;
+
+    return (
+      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 max-w-sm mx-auto text-center space-y-3">
+        <div className="flex items-center justify-between text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
+          <span>📸 Haptischer Foto-Beweis</span>
+          <span className="text-emerald-600 flex items-center gap-0.5">
+            <Info className="w-3 h-3" /> Zensur-Filter aktiv
+          </span>
+        </div>
+
+        {photoProof ? (
+          <div className="relative inline-block border-2 border-indigo-200 rounded-xl overflow-hidden shadow-sm bg-white p-1">
+            <img 
+              src={photoProof} 
+              alt="Foto-Beweis stilisierte Outlines" 
+              className="w-40 h-32 object-cover bg-slate-50 rounded-lg filter saturate-50"
+            />
+            <button
+              onClick={() => { playPop(); setPhotoProof(null); }}
+              className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-sm cursor-pointer border border-white"
+              title="Foto löschen"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center py-2">
+            <label className="btn-tactile-outline bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-5 py-3 rounded-2xl flex items-center gap-2 cursor-pointer text-xs font-black select-none">
+              <Camera className="w-4 h-4 text-[#00639a]" />
+              <span>{isProcessingPhoto ? "Verfremde Foto..." : "Foto-Beweis schießen"}</span>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handlePhotoCapture}
+                disabled={isProcessingPhoto}
+                className="hidden"
+              />
+            </label>
+            <p className="text-[9px] text-slate-400 font-semibold mt-2 max-w-[240px] leading-snug">
+              Leg die Aufgabe mit echten Gegenständen (Nudeln, Steine) auf deinen Tisch! Lumi's Kamera zeichnet das Bild datenschutzsicher weich.
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // 2. Didaktisches Hilfsmittel für Klasse 2: Punktefeld (Methode A)
   const renderPunktefeld = () => {
-    if (stationId !== 8 || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
+    if (stationId !== 8 || isPartitioningTask || exercise.mathNum1 === undefined) return null;
 
     const rows = exercise.mathNum1;
-    const cols = exercise.mathNum2;
+    const cols = exercise.mathNum2 || 0;
 
     const dotRows = Array(rows).fill(null);
     const dotCols = Array(cols).fill(null);
@@ -244,7 +481,7 @@ export default function StationMathQuiz({
 
   // 2b. Didaktisches Hilfsmittel für Klasse 2: Bar Model (Methode B - Singapur)
   const renderBarModel = () => {
-    if (stationId !== 8 || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
+    if (stationId !== 8 || isPartitioningTask || exercise.mathNum1 === undefined || exercise.mathNum2 === undefined) return null;
 
     const blocksCount = exercise.mathNum1;
     const blockSize = exercise.mathNum2;
@@ -257,7 +494,6 @@ export default function StationMathQuiz({
           🏫 Methode B: Bar Model (Balkenmodell)
         </span>
 
-        {/* Render a single bar divided into blocks */}
         <div className="relative pt-2 pb-6 px-4">
           <div className="flex border-2 border-emerald-700 rounded-lg overflow-hidden shadow-sm h-10">
             {blocks.map((val, idx) => (
@@ -270,9 +506,7 @@ export default function StationMathQuiz({
             ))}
           </div>
 
-          {/* Under brace connector */}
           <div className="absolute inset-x-4 bottom-0 flex flex-col items-center">
-            {/* Draw a brackets bracket */}
             <div className="w-[96%] h-1.5 border-x border-b border-slate-500 rounded-b-md"></div>
             <span className="text-xs font-black text-slate-700 mt-1 font-sans">
               Gesamt: {hasChecked && isCorrect ? exercise.correctAnswer : '?'}
@@ -283,7 +517,107 @@ export default function StationMathQuiz({
     );
   };
 
-  // 3. Didaktisches Hilfsmittel für Klasse 3: Größen-Detektiv (Euro/Münzen & Gegenstände)
+  // 2c. Interactive Family Partitioning (Grade 2 division)
+  const renderInteractivePartitioning = () => {
+    if (!isPartitioningTask) return null;
+
+    const cookiesTotal = 12;
+    const placedTotal = basketItems.reduce((a, b) => a + b, 0);
+    const unplaced = Math.max(0, cookiesTotal - placedTotal);
+
+    return (
+      <div className="mt-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-200/80 max-w-md mx-auto text-center space-y-4">
+        <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block font-sans">
+          🥧 Interaktives Aufteilen in der Familie
+        </span>
+
+        {/* 1. People count selector */}
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wide">Ich möchte gerecht teilen:</p>
+          <div className="flex justify-center gap-2">
+            {[
+              { label: 'Zu zweit (mit Bruder)', val: 2 },
+              { label: 'Zu dritt (mit Eltern)', val: 3 },
+              { label: 'Zu viert (Bruder & Eltern)', val: 4 },
+            ].map((btn) => (
+              <button
+                key={btn.val}
+                type="button"
+                disabled={hasChecked}
+                onClick={() => handleFamilyChange(btn.val as any)}
+                className={`px-3 py-1.5 rounded-xl border text-[10px] sm:text-xs font-black cursor-pointer transition-all ${
+                  familyCount === btn.val
+                    ? 'bg-indigo-100 border-indigo-400 text-indigo-950 shadow-xs'
+                    : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. Unplaced items pool */}
+        <div className="bg-white p-3 rounded-xl border shadow-inner flex flex-wrap gap-2.5 justify-center items-center min-h-[50px]">
+          {Array(unplaced).fill(null).map((_, idx) => (
+            <span key={idx} className="text-2xl animate-pulse select-none" title="Keks">🍪</span>
+          ))}
+          {unplaced === 0 && (
+            <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">
+              Alle Kekse verteilt! 🎉
+            </span>
+          )}
+        </div>
+
+        {/* 3. Baskets rendering */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {basketItems.map((cookiesCount, bIdx) => (
+            <div 
+              key={bIdx} 
+              className={`p-3 rounded-2xl border-2 bg-white flex flex-col items-center justify-between shadow-xs transition-colors ${
+                hasChecked && isCorrect === false
+                  ? 'border-red-200 bg-red-50/20'
+                  : 'border-slate-200'
+              }`}
+            >
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
+                Korb {bIdx + 1}
+              </span>
+              
+              {/* Cookies in this basket */}
+              <div className="flex flex-wrap gap-1 justify-center items-center min-h-[44px] py-1">
+                {Array(cookiesCount).fill(null).map((_, idx) => (
+                  <span key={idx} className="text-lg select-none">🍪</span>
+                ))}
+              </div>
+
+              {/* Adjust buttons */}
+              <div className="flex gap-1.5 mt-2">
+                <button
+                  type="button"
+                  disabled={hasChecked || cookiesCount <= 0}
+                  onClick={() => adjustBasketItem(bIdx, -1)}
+                  className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 flex items-center justify-center cursor-pointer shadow-xs disabled:opacity-40"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  disabled={hasChecked || unplaced <= 0}
+                  onClick={() => adjustBasketItem(bIdx, 1)}
+                  className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 flex items-center justify-center cursor-pointer shadow-xs disabled:opacity-40"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // 3. Didaktisches Hilfsmittel für Klasse 3: Größen-Detektiv
   const renderGroessenHilfe = () => {
     if (stationId !== 9) return null;
 
@@ -320,6 +654,102 @@ export default function StationMathQuiz({
       </div>
     );
   };
+
+  // Render Socratic Metacognitive reflection view
+  if (showSocratic) {
+    const sDetails = getSocraticDetails();
+    return (
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-6 animate-wiggle-soft">
+        
+        {/* Header */}
+        <div className="text-center">
+          <span className="text-4xl animate-bounce inline-block">🎓</span>
+          <h3 className="font-sans font-black text-xl text-[#00639a] mt-2">
+            Lumis Rechenweg-Erklärer
+          </h3>
+          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            Metakognition & Reflexion
+          </p>
+        </div>
+
+        {/* Question Prompt */}
+        <div className="bg-indigo-50 border-2 border-indigo-100 p-5 rounded-2xl text-xs sm:text-sm text-indigo-950 font-bold leading-relaxed font-body">
+          {sDetails.question}
+        </div>
+
+        {/* Strategy options */}
+        <div className="space-y-3">
+          {sDetails.strategies.map((strat, idx) => {
+            const isSelected = selectedStrategy === idx;
+            
+            let btnStyle = "bg-white border-slate-200 hover:bg-slate-50 text-slate-700";
+            if (isSelected) {
+              if (socraticChecked) {
+                btnStyle = strat.isBest
+                  ? "bg-emerald-100 border-emerald-500 text-emerald-950 ring-4 ring-emerald-200 shadow-md"
+                  : "bg-amber-100 border-amber-500 text-amber-950 ring-4 ring-amber-200 shadow-md";
+              } else {
+                btnStyle = "bg-[#fdd758]/20 border-[#fdd758] text-slate-900 ring-4 ring-yellow-100 shadow-md";
+              }
+            }
+
+            return (
+              <button
+                key={idx}
+                disabled={socraticChecked}
+                onClick={() => { playPop(); setSelectedStrategy(idx); }}
+                className={`w-full text-left p-4 rounded-2xl border-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer font-body leading-relaxed flex items-start gap-2.5 ${btnStyle}`}
+              >
+                <span className="text-lg">💬</span>
+                <span>{strat.text}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Feedback display */}
+        {socraticChecked && selectedStrategy !== null && (
+          <div className="bg-slate-50 border p-4 rounded-2xl text-xs sm:text-sm text-slate-700 leading-relaxed font-semibold font-body animate-wiggle-soft">
+            {sDetails.strategies[selectedStrategy].isBest ? (
+              <p className="text-emerald-800 flex items-center gap-1.5">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <span>{sDetails.strategies[selectedStrategy].feedback}</span>
+              </p>
+            ) : (
+              <p className="text-slate-800 flex items-start gap-1.5">
+                <Award className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                <span>{sDetails.strategies[selectedStrategy].feedback}</span>
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex justify-end pt-2">
+          {!socraticChecked ? (
+            <button
+              disabled={selectedStrategy === null}
+              onClick={handleSocraticCheck}
+              className={`px-7 py-3 rounded-xl text-sm font-extrabold shadow-md ${
+                selectedStrategy !== null
+                  ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500 cursor-pointer'
+                  : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
+              }`}
+            >
+              Lumi erklären! 🎓
+            </button>
+          ) : (
+            <button
+              onClick={onNext} // Trigger actual parent station completion
+              className="btn-tactile-primary text-white px-8 py-3.5 rounded-xl text-sm sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
+            >
+              Sterne & Urkunden abholen! <ArrowRight className="w-5 h-5 animate-pulse" />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>
@@ -374,44 +804,56 @@ export default function StationMathQuiz({
       {/* Dynamic Didactical Visual Aid */}
       {stationId === 7 && didacticMethod === 'A' && renderZwanzigerfeld()}
       {stationId === 7 && didacticMethod === 'B' && renderNumberBonds()}
-      {stationId === 8 && didacticMethod === 'A' && renderPunktefeld()}
-      {stationId === 8 && didacticMethod === 'B' && renderBarModel()}
+      
+      {/* Photo Proof (Grade 1 only) */}
+      {stationId === 7 && renderPhotoProofComponent()}
+      
+      {/* Interactive Partitioning (Grade 2 division) */}
+      {isPartitioningTask ? renderInteractivePartitioning() : (
+        <>
+          {stationId === 8 && didacticMethod === 'A' && renderPunktefeld()}
+          {stationId === 8 && didacticMethod === 'B' && renderBarModel()}
+        </>
+      )}
+      
       {stationId === 9 && renderGroessenHilfe()}
 
-      {/* Options grid */}
-      <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
-        {exercise.options?.map((option, idx) => {
-          const isSelected = selectedOption === option;
-          const isOptionCorrect = option.trim() === exercise.correctAnswer.toString().trim();
-          
-          let btnClass = "bg-white border-slate-200 hover:bg-slate-50 text-slate-800";
-          if (isSelected) {
-            if (hasChecked) {
-              btnClass = isCorrect
-                ? "bg-emerald-100 border-emerald-500 text-emerald-800 ring-4 ring-emerald-200 shadow-md"
-                : "bg-red-100 border-red-500 text-red-800 ring-4 ring-red-200 shadow-md";
-            } else {
-              btnClass = "bg-cyan-100 border-cyan-500 text-cyan-800 ring-4 ring-cyan-200 shadow-md";
+      {/* Options grid (hidden for partitioning tasks since we evaluate the boxes directly) */}
+      {!isPartitioningTask && (
+        <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
+          {exercise.options?.map((option, idx) => {
+            const isSelected = selectedOption === option;
+            const isOptionCorrect = option.trim() === exercise.correctAnswer.toString().trim();
+            
+            let btnClass = "bg-white border-slate-200 hover:bg-slate-50 text-slate-800";
+            if (isSelected) {
+              if (hasChecked) {
+                btnClass = isCorrect
+                  ? "bg-emerald-100 border-emerald-500 text-emerald-800 ring-4 ring-emerald-200 shadow-md"
+                  : "bg-red-100 border-red-500 text-red-800 ring-4 ring-red-200 shadow-md";
+              } else {
+                btnClass = "bg-cyan-100 border-cyan-500 text-cyan-800 ring-4 ring-cyan-200 shadow-md";
+              }
+            } else if (hasChecked && isOptionCorrect && !isCorrect) {
+              btnClass = "bg-emerald-50 border-emerald-300 text-emerald-800";
             }
-          } else if (hasChecked && isOptionCorrect && !isCorrect) {
-            btnClass = "bg-emerald-50 border-emerald-300 text-emerald-800";
-          }
 
-          return (
-            <button
-              key={idx}
-              disabled={hasChecked}
-              onClick={() => handleOptionSelect(option)}
-              className={`py-3.5 px-4 rounded-2xl border-2 font-bold text-base sm:text-lg transition-all cursor-pointer text-center font-sans ${btnClass}`}
-            >
-              {option}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={idx}
+                disabled={hasChecked}
+                onClick={() => handleOptionSelect(option)}
+                className={`py-3.5 px-4 rounded-2xl border-2 font-bold text-base sm:text-lg transition-all cursor-pointer text-center font-sans ${btnClass}`}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Actions & Feedback */}
-      <div className="space-y-4">
+      <div className={`space-y-4 ${isPartitioningTask ? 'mt-6' : ''}`}>
         {hasChecked && isCorrect === true && (
           <div className="bg-emerald-100 text-emerald-800 p-3 rounded-2xl border-2 border-emerald-300 text-center font-bold text-sm sm:text-base flex items-center justify-center gap-2">
             <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Blitzschnell gerechnet! Das Ergebnis stimmt! ⭐
@@ -435,10 +877,10 @@ export default function StationMathQuiz({
           <div className="flex gap-2">
             {!hasChecked ? (
               <button
-                disabled={!selectedOption}
+                disabled={!isPartitioningTask ? !selectedOption : basketItems.reduce((a, b) => a + b, 0) !== 12}
                 onClick={handleCheck}
                 className={`px-6 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer ${
-                  selectedOption
+                  (!isPartitioningTask ? selectedOption : basketItems.reduce((a, b) => a + b, 0) === 12)
                     ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500'
                     : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
                 }`}
@@ -447,10 +889,10 @@ export default function StationMathQuiz({
               </button>
             ) : isCorrect === true ? (
               <button
-                onClick={onNext}
+                onClick={handleProceed}
                 className="btn-tactile-primary text-white px-7 py-3 rounded-xl text-sm sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
               >
-                Nächste Aufgabe! <ArrowRight className="w-5 h-5 animate-pulse" />
+                {isLastExercise ? "Station beenden!" : "Nächste Aufgabe!"} <ArrowRight className="w-5 h-5 animate-pulse" />
               </button>
             ) : (
               <button

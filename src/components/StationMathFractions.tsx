@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
-import { Star, HelpCircle, ArrowRight, CheckCircle, Percent } from 'lucide-react';
+import { Star, HelpCircle, ArrowRight, CheckCircle, Percent, Sliders, Check, Award } from 'lucide-react';
 
 interface StationMathFractionsProps {
   exercise: Exercise;
@@ -22,7 +22,6 @@ export default function StationMathFractions({
   isLastExercise,
   onSaveMetrics,
 }: StationMathFractionsProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasChecked, setHasChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [shakeTrigger, setShakeTrigger] = useState(false);
@@ -35,89 +34,149 @@ export default function StationMathFractions({
   const [startTime, setStartTime] = useState<number>(Date.now());
   const [attempts, setAttempts] = useState<number>(0);
 
+  // Interactive slider and coloring states
+  // We parse target values from correct answer (e.g. "3/8" -> targetNum = 3, targetDen = 8)
+  const [targetNum, targetDen] = exercise.correctAnswer.includes('/') 
+    ? exercise.correctAnswer.split('/').map(Number)
+    : [1, 2];
+
+  const [customSegments, setCustomSegments] = useState<number>(4);
+  const [coloredSlices, setColoredSlices] = useState<boolean[]>(Array(4).fill(false));
+
+  // Socratic reflection states (triggered at the end of the station)
+  const [showSocratic, setShowSocratic] = useState(false);
+  const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
+  const [socraticChecked, setSocraticChecked] = useState(false);
+
   useEffect(() => {
-    setSelectedOption(null);
     setHasChecked(false);
     setIsCorrect(null);
     setShakeTrigger(false);
     setShowHint(false);
     setStartTime(Date.now());
     setAttempts(0);
+    
+    // Default interactive slice states
+    setCustomSegments(4);
+    setColoredSlices(Array(4).fill(false));
   }, [exercise]);
 
-  const handleOptionSelect = (option: string) => {
+  // Adjust segment count dynamically
+  const handleSegmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    playPop();
+    setCustomSegments(val);
+    setColoredSlices(Array(val).fill(false)); // Reset coloring when slicing changes
+  };
+
+  // Toggle color of a slice/segment
+  const toggleSliceColor = (idx: number) => {
     if (hasChecked) return;
     playPop();
-    setSelectedOption(option);
+    const newColored = [...coloredSlices];
+    newColored[idx] = !newColored[idx];
+    setColoredSlices(newColored);
   };
 
   const handleCheck = () => {
-    if (!selectedOption || hasChecked) return;
-
     const currentAttempts = attempts + 1;
     setAttempts(currentAttempts);
 
-    const correct = selectedOption.trim() === exercise.correctAnswer.toString().trim();
-    setIsCorrect(correct);
+    // Count colored segments
+    const activeCount = coloredSlices.filter(Boolean).length;
+    
+    // Evaluate if the fraction matches the target fraction (value-wise)
+    // E.g. target is 3/8. Custom must be customSegments === 8 && activeCount === 3
+    // Or mathematically equivalent (though for primary school we want them to represent the exact numbers)
+    const matchesExact = customSegments === targetDen && activeCount === targetNum;
+    
+    setIsCorrect(matchesExact);
     setHasChecked(true);
 
-    if (correct) {
+    if (matchesExact) {
       playSuccess();
       onCorrectAnswer(15);
-
-      // Save A/B metrics
-      const timeTaken = Math.max(1, Math.round((Date.now() - startTime) / 1000));
-      const firstTry = currentAttempts === 1;
-      onSaveMetrics(didacticMethod, timeTaken, currentAttempts, firstTry);
+      onSaveMetrics(didacticMethod, Math.max(1, Math.round((Date.now() - startTime) / 1000)), currentAttempts, currentAttempts === 1);
     } else {
       playFailure();
       setShakeTrigger(true);
       onIncorrectAnswer();
-      setTimeout(() => {
-        setShakeTrigger(false);
-      }, 800);
+      setTimeout(() => setShakeTrigger(false), 800);
     }
   };
 
   const handleRetry = () => {
     setHasChecked(false);
     setIsCorrect(null);
-    setSelectedOption(null);
+    setColoredSlices(Array(customSegments).fill(false));
   };
+
+  // Proceed or show Socratic reflection
+  const handleProceed = () => {
+    if (isLastExercise && !showSocratic) {
+      playPop();
+      setShowSocratic(true);
+    } else {
+      onNext();
+    }
+  };
+
+  const handleSocraticCheck = () => {
+    if (selectedStrategy === null) return;
+    playPop();
+    setSocraticChecked(true);
+  };
+
+  // Socratic strategies for Fractions
+  const socraticQuestion = "Klasse gearbeitet! Bevor es den Pokal gibt, möchte Lumi etwas von dir lernen: Warum eignen sich Strecken-Balkenmodelle manchmal besser zum Vergleichen von Brüchen als runde Pizzamodelle?";
+  const socraticStrategies = [
+    {
+      text: "Weil runde Pizzen leckerer aussehen, und man beim Lernen nicht an Essen denken sollte.",
+      feedback: "Das lenkt in der Tat ab! Aber mathematisch gibt es noch einen viel wichtigeren Grund. 👍",
+      isBest: false
+    },
+    {
+      text: "Weil man beim Balken die Längen direkt nebeneinander vergleichen kann, während man bei runden Stücken die Winkel und Flächen im Kopf schwer schätzen kann.",
+      feedback: "Hervorragend! Das Balkenmodell reduziert die visuelle Komplexität (kognitive Belastung) im Gehirn, was Vergleiche viel einfacher macht! 🏆",
+      isBest: true
+    },
+    {
+      text: "Weil eckige Balken einfacher zu zeichnen sind als Kreise.",
+      feedback: "Das stimmt zwar beim Zeichnen, aber der Hauptgrund ist der leichtere visuelle Vergleich von Längen! 👍",
+      isBest: false
+    }
+  ];
 
   // 1. Didaktisches Hilfsmittel Methode A: Pizza (Kreismodell)
   const renderPizza = () => {
-    const totalSegments = exercise.mathFractionSegments || 8;
-    const coloredSegments = exercise.mathFractionColored || 3;
-
     const center = 50;
     const r = 40;
     const slices = [];
 
-    for (let i = 0; i < totalSegments; i++) {
-      const startAngle = (2 * Math.PI * i) / totalSegments - Math.PI / 2;
-      const endAngle = (2 * Math.PI * (i + 1)) / totalSegments - Math.PI / 2;
+    for (let i = 0; i < customSegments; i++) {
+      const startAngle = (2 * Math.PI * i) / customSegments - Math.PI / 2;
+      const endAngle = (2 * Math.PI * (i + 1)) / customSegments - Math.PI / 2;
 
       const x1 = center + r * Math.cos(startAngle);
       const y1 = center + r * Math.sin(startAngle);
       const x2 = center + r * Math.cos(endAngle);
       const y2 = center + r * Math.sin(endAngle);
 
-      const largeArcFlag = 0;
       const pathData = `
         M ${center} ${center}
         L ${x1} ${y1}
-        A ${r} ${r} 0 ${largeArcFlag} 1 ${x2} ${y2}
+        A ${r} ${r} 0 0 1 ${x2} ${y2}
         Z
       `;
 
-      const isColored = i < coloredSegments;
+      const isColored = coloredSlices[i];
 
       slices.push(
         <path
           key={i}
           d={pathData}
-          className={`transition-all duration-300 stroke-amber-950 stroke-1.5 ${
+          onClick={() => toggleSliceColor(i)}
+          className={`transition-all duration-300 stroke-amber-950 stroke-1.5 cursor-pointer ${
             isColored 
               ? 'fill-amber-300 hover:fill-amber-400 saturate-120' 
               : 'fill-slate-100 hover:fill-slate-200'
@@ -128,7 +187,7 @@ export default function StationMathFractions({
 
     return (
       <div className="flex flex-col items-center mb-6">
-        <div className="relative w-44 h-44 sm:w-48 sm:h-48 bg-amber-50 rounded-full border-4 border-amber-900/10 p-2 shadow-soft-tactile">
+        <div className="relative w-44 h-44 sm:w-48 sm:h-48 bg-amber-50 rounded-full border-4 border-amber-900/10 p-2 shadow-soft-tactile mb-4">
           <svg className="w-full h-full drop-shadow-md overflow-visible" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="41" className="fill-amber-700/20 stroke-amber-800/40 stroke-2" />
             {slices}
@@ -136,7 +195,7 @@ export default function StationMathFractions({
           </svg>
         </div>
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
-          🍕 Methode A: Kreismodell (Pizza)
+          🍕 Methode A: Kreismodell (Klicke Stücke zum Belegen)
         </p>
       </div>
     );
@@ -144,25 +203,21 @@ export default function StationMathFractions({
 
   // 1b. Didaktisches Hilfsmittel Methode B: Fraction Bar (Balkenmodell - Singapur)
   const renderFractionBar = () => {
-    const totalSegments = exercise.mathFractionSegments || 8;
-    const coloredSegments = exercise.mathFractionColored || 3;
-
-    const segments = Array(totalSegments).fill(null);
-
     return (
       <div className="flex flex-col items-center mb-6">
-        <div className="w-full max-w-sm px-4 pt-4 pb-2">
+        <div className="w-full max-w-sm px-4 pt-4 pb-2 mb-4">
           {/* Main Bar */}
           <div className="flex border-3 border-orange-950 rounded-xl overflow-hidden shadow-sm h-12">
-            {segments.map((_, idx) => {
-              const isColored = idx < coloredSegments;
+            {Array(customSegments).fill(null).map((_, idx) => {
+              const isColored = coloredSlices[idx];
               return (
                 <div
                   key={idx}
-                  className={`flex-1 border-r last:border-r-0 border-orange-950/70 transition-colors duration-300 ${
+                  onClick={() => toggleSliceColor(idx)}
+                  className={`flex-1 border-r last:border-r-0 border-orange-950/70 transition-colors duration-300 cursor-pointer ${
                     isColored
                       ? 'bg-amber-300 saturate-110 border-b-4 border-b-amber-400'
-                      : 'bg-slate-100'
+                      : 'bg-slate-100 hover:bg-slate-200'
                   }`}
                 />
               );
@@ -170,26 +225,99 @@ export default function StationMathFractions({
           </div>
         </div>
 
-        {/* Legend descriptor */}
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans mt-2">
-          📊 Methode B: Strecken-/Balkenmodell (Singapur Math)
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
+          📊 Methode B: Balkenmodell (Klicke Blöcke zum Färben)
         </p>
       </div>
     );
   };
 
-  // Helper to parse option strings like "3/8" into a nicely formatted fractions view
-  const renderFraction = (fractionStr: string) => {
-    if (!fractionStr.includes('/')) return <span>{fractionStr}</span>;
-    const parts = fractionStr.split('/');
+  if (showSocratic) {
     return (
-      <span className="flex flex-col items-center leading-none justify-center">
-        <span className="text-base font-extrabold text-slate-800">{parts[0]}</span>
-        <span className="border-t-2 border-slate-700 w-6 my-0.5"></span>
-        <span className="text-base font-extrabold text-slate-800">{parts[1]}</span>
-      </span>
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-6 animate-wiggle-soft">
+        <div className="text-center">
+          <span className="text-4xl animate-bounce inline-block">🎓</span>
+          <h3 className="font-sans font-black text-xl text-[#00639a] mt-2">
+            Lumis Rechenweg-Erklärer
+          </h3>
+          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+            Bruchrechnen reflektieren
+          </p>
+        </div>
+
+        <div className="bg-indigo-50 border-2 border-indigo-100 p-5 rounded-2xl text-xs sm:text-sm text-indigo-950 font-bold leading-relaxed font-body">
+          {socraticQuestion}
+        </div>
+
+        <div className="space-y-3">
+          {socraticStrategies.map((strat, idx) => {
+            const isSelected = selectedStrategy === idx;
+            let btnStyle = "bg-white border-slate-200 hover:bg-slate-50 text-slate-700";
+            if (isSelected) {
+              if (socraticChecked) {
+                btnStyle = strat.isBest
+                  ? "bg-emerald-100 border-emerald-500 text-emerald-950 ring-4 ring-emerald-200 shadow-md"
+                  : "bg-amber-100 border-amber-500 text-amber-950 ring-4 ring-amber-200 shadow-md";
+              } else {
+                btnStyle = "bg-[#fdd758]/20 border-[#fdd758] text-slate-900 ring-4 ring-yellow-100 shadow-md";
+              }
+            }
+
+            return (
+              <button
+                key={idx}
+                disabled={socraticChecked}
+                onClick={() => { playPop(); setSelectedStrategy(idx); }}
+                className={`w-full text-left p-4 rounded-2xl border-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer font-body leading-relaxed flex items-start gap-2.5 ${btnStyle}`}
+              >
+                <span className="text-lg">💬</span>
+                <span>{strat.text}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {socraticChecked && selectedStrategy !== null && (
+          <div className="bg-slate-50 border p-4 rounded-2xl text-xs sm:text-sm text-slate-700 leading-relaxed font-semibold font-body animate-wiggle-soft">
+            {socraticStrategies[selectedStrategy].isBest ? (
+              <p className="text-emerald-800 flex items-center gap-1.5">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <span>{socraticStrategies[selectedStrategy].feedback}</span>
+              </p>
+            ) : (
+              <p className="text-slate-800 flex items-start gap-1.5">
+                <Award className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                <span>{socraticStrategies[selectedStrategy].feedback}</span>
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="flex justify-end pt-2">
+          {!socraticChecked ? (
+            <button
+              disabled={selectedStrategy === null}
+              onClick={handleSocraticCheck}
+              className={`px-7 py-3 rounded-xl text-sm font-extrabold shadow-md ${
+                selectedStrategy !== null
+                  ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500 cursor-pointer'
+                  : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
+              }`}
+            >
+              Lumi erklären! 🎓
+            </button>
+          ) : (
+            <button
+              onClick={onNext}
+              className="btn-tactile-primary text-white px-8 py-3.5 rounded-xl text-sm sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
+            >
+              Sterne & Urkunden abholen! <ArrowRight className="w-5 h-5 animate-pulse" />
+            </button>
+          )}
+        </div>
+      </div>
     );
-  };
+  }
 
   return (
     <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>
@@ -231,57 +359,58 @@ export default function StationMathFractions({
 
       {/* Question Prompt */}
       <div className="bg-gradient-to-r from-orange-50 via-yellow-50 to-orange-50 p-5 rounded-2xl border-2 border-orange-200 shadow-sm text-center mb-6 relative">
+        <span className="text-xs font-bold text-orange-700 uppercase tracking-widest block mb-1 font-sans">
+          Bruch-Bauaufgabe
+        </span>
         <h2 className="text-base sm:text-lg font-bold text-slate-800 font-body">
-          {exercise.question}
+          Stelle den folgenden Bruch dar: <span className="text-xl font-black text-orange-800 font-sans">{targetNum}/{targetDen}</span>
         </h2>
+      </div>
+
+      {/* Segment Slider Controls */}
+      <div className="bg-slate-50 border-2 border-slate-200/80 p-4 rounded-2xl mb-6 space-y-3 max-w-sm mx-auto">
+        <div className="flex justify-between items-center text-[10px] font-extrabold uppercase text-slate-500 tracking-wider">
+          <span className="flex items-center gap-1"><Sliders className="w-3.5 h-3.5" /> Pizza zerschneiden</span>
+          <span className="bg-slate-200 px-2 py-0.5 rounded-md font-sans text-slate-700 text-xs">
+            {customSegments} Teile (Nenner)
+          </span>
+        </div>
+
+        <input
+          type="range"
+          min="2"
+          max="12"
+          value={customSegments}
+          disabled={hasChecked}
+          onChange={handleSegmentChange}
+          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+        />
+
+        <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 font-body">
+          <span>2 Teile</span>
+          <span>12 Teile</span>
+        </div>
       </div>
 
       {/* Visual representation */}
       {didacticMethod === 'A' ? renderPizza() : renderFractionBar()}
 
-      {/* Tactile fraction selection cards */}
-      <div className="grid grid-cols-4 gap-3 mb-8">
-        {exercise.options?.map((option, idx) => {
-          const isSelected = selectedOption === option;
-          const isOptionCorrect = option.trim() === exercise.correctAnswer.toString().trim();
-          
-          let btnClass = "bg-white border-slate-200 hover:bg-slate-50 text-slate-800";
-          if (isSelected) {
-            if (hasChecked) {
-              btnClass = isCorrect
-                ? "bg-emerald-100 border-emerald-500 text-emerald-800 ring-4 ring-emerald-200 shadow-md"
-                : "bg-red-100 border-red-500 text-red-800 ring-4 ring-red-200 shadow-md";
-            } else {
-              btnClass = "bg-orange-100 border-orange-400 text-orange-800 ring-4 ring-orange-200 shadow-md";
-            }
-          } else if (hasChecked && isOptionCorrect && !isCorrect) {
-            btnClass = "bg-emerald-50 border-emerald-300 text-emerald-800";
-          }
-
-          return (
-            <button
-              key={idx}
-              disabled={hasChecked}
-              onClick={() => handleOptionSelect(option)}
-              className={`py-3 px-1 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-center ${btnClass}`}
-            >
-              {renderFraction(option)}
-            </button>
-          );
-        })}
+      {/* Status Bar */}
+      <div className="text-center font-bold text-sm text-slate-600 mb-6 bg-slate-50 p-2 rounded-xl border max-w-xs mx-auto">
+        Dein eingestellter Bruch: <span className="text-base font-black text-slate-800 font-sans">{coloredSlices.filter(Boolean).length} / {customSegments}</span>
       </div>
 
       {/* Actions & Feedback */}
       <div className="space-y-4">
         {hasChecked && isCorrect === true && (
           <div className="bg-emerald-100 text-emerald-800 p-3 rounded-2xl border-2 border-emerald-300 text-center font-bold text-sm sm:text-base flex items-center justify-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Absolut richtig! Du hast die Stücke perfekt abgezählt! 🌟
+            <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Absolut richtig! Du hast die Stücke perfekt zerlegt! 🌟
           </div>
         )}
 
         {hasChecked && isCorrect === false && (
           <div className="bg-yellow-50 text-yellow-800 p-3 rounded-2xl border-2 border-yellow-200 text-center font-bold text-sm sm:text-base">
-            Das war leider die falsche Teilung. Schau dir das Modell noch einmal genau an! 🤔
+            Das stimmt leider noch nicht ganz. Kontrolliere Zähler und Nenner noch einmal! 🤔
           </div>
         )}
 
@@ -296,22 +425,17 @@ export default function StationMathFractions({
           <div className="flex gap-2">
             {!hasChecked ? (
               <button
-                disabled={!selectedOption}
                 onClick={handleCheck}
-                className={`px-6 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer ${
-                  selectedOption
-                    ? 'btn-tactile-secondary text-orange-950 border-b-4 border-yellow-500'
-                    : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
-                }`}
+                className="btn-tactile-secondary text-orange-950 border-b-4 border-yellow-500 px-6 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer"
               >
                 Überprüfen! 🎯
               </button>
             ) : isCorrect === true ? (
               <button
-                onClick={onNext}
+                onClick={handleProceed}
                 className="btn-tactile-primary text-white px-7 py-3 rounded-xl text-sm sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
               >
-                Nächste Pizza! <ArrowRight className="w-5 h-5 animate-pulse" />
+                {isLastExercise ? "Station beenden!" : "Nächste Aufgabe!"} <ArrowRight className="w-5 h-5 animate-pulse" />
               </button>
             ) : (
               <button

@@ -12,6 +12,7 @@ import StationVerbTenses from './components/StationVerbTenses';
 import StationMathQuiz from './components/StationMathQuiz';
 import StationMathFractions from './components/StationMathFractions';
 import ResearchDashboard from './components/ResearchDashboard';
+import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
@@ -128,7 +129,7 @@ export default function App() {
   };
 
   // Performance A/B metrics save handler
-  const handleSaveMetrics = (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => {
+  const handleSaveMetrics = (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean, photoProof?: string) => {
     const currentMetrics = progress.experimentMetrics || {
       methodA: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
       methodB: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
@@ -163,6 +164,7 @@ export default function App() {
         isFirstTryCorrect,
         stationId: activeStationId || 0,
         timestamp: new Date().toISOString(),
+        ...(photoProof ? { photoProof } : {}),
       });
     } catch (err) {
       console.warn("Failed to upload metric to Firestore:", err);
@@ -503,6 +505,11 @@ export default function App() {
                 {currentExerciseIndex + 1} / {activeStation?.exercises.length}
               </div>
             </div>
+
+            {/* Show Pen Grip Guide for writing/grammar exercises */}
+            {activeStationId !== null && activeStationId >= 1 && activeStationId <= 6 && (
+              <PenGripGuide />
+            )}
 
             {/* Load correct game station depending on station ID */}
             {activeStationId === 1 && currentExercise && (

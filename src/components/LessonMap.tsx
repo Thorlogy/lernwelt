@@ -24,6 +24,189 @@ const ICON_MAP: Record<string, any> = {
 
 export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch }: LessonMapProps) {
   const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
+
+  const handlePrintWorksheet = (stationId: number) => {
+    const station = STATIONEN.find(s => s.id === stationId);
+    if (!station) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert("Bitte erlaube Popups in deinem Browser, um das Arbeitsblatt zu drucken!");
+      return;
+    }
+
+    let exercisesHtml = '';
+    station.exercises.forEach((ex, idx) => {
+      let visualAid = '';
+
+      if (stationId === 7) {
+        visualAid = `
+          <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-width: 250px; margin: 12px 0; border: 1.5px solid #000; padding: 6px; border-radius: 6px;">
+            ${Array(20).fill(null).map(() => '<div style="width: 18px; height: 18px; border: 1.5px solid #000; border-radius: 50%;"></div>').join('')}
+          </div>
+        `;
+      } else if (stationId === 8) {
+        if (ex.question.includes('aufteilen')) {
+          visualAid = `
+            <div style="margin: 10px 0; font-weight: bold; font-size: 13px;">
+              Verteile die 12 Kekse gerecht auf die Körbe:<br>
+              🍪 🍪 🍪 🍪 🍪 🍪 🍪 🍪 🍪 🍪 🍪 🍪
+              <div style="display: flex; gap: 15px; margin-top: 8px;">
+                <div style="flex: 1; border: 1.5px dashed #000; border-radius: 8px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555;">Bruder</div>
+                <div style="flex: 1; border: 1.5px dashed #000; border-radius: 8px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555;">Eltern (Teil 1)</div>
+                <div style="flex: 1; border: 1.5px dashed #000; border-radius: 8px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555;">Eltern (Teil 2)</div>
+              </div>
+            </div>
+          `;
+        } else {
+          const rows = ex.mathNum1 || 3;
+          const cols = ex.mathNum2 || 4;
+          let dots = '';
+          for (let r = 0; r < rows; r++) {
+            dots += '<div style="display: flex; gap: 6px; margin-bottom: 6px;">';
+            for (let c = 0; c < cols; c++) {
+              dots += '<div style="width: 14px; height: 14px; border: 1.5px solid #000; border-radius: 50%;"></div>';
+            }
+            dots += '</div>';
+          }
+          visualAid = `<div style="margin: 12px 0;">${dots}</div>`;
+        }
+      } else if (stationId === 10) {
+        const segments = ex.mathFractionSegments || 8;
+        let slices = '';
+        const center = 50;
+        const r = 40;
+        for (let i = 0; i < segments; i++) {
+          const startAngle = (2 * Math.PI * i) / segments - Math.PI / 2;
+          const endAngle = (2 * Math.PI * (i + 1)) / segments - Math.PI / 2;
+          const x1 = center + r * Math.cos(startAngle);
+          const y1 = center + r * Math.sin(startAngle);
+          const x2 = center + r * Math.cos(endAngle);
+          const y2 = center + r * Math.sin(endAngle);
+          slices += `<path d="M ${center} ${center} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z" fill="none" stroke="black" stroke-width="1" />`;
+        }
+        
+        let barBlocks = '';
+        for (let i = 0; i < segments; i++) {
+          barBlocks += `<div style="flex: 1; border-right: 1px solid black; height: 25px;"></div>`;
+        }
+
+        visualAid = `
+          <div style="display: flex; gap: 40px; align-items: center; margin: 15px 0;">
+            <svg width="80" height="80" viewBox="0 0 100 100" style="overflow: visible;">
+              <circle cx="50" cy="50" r="41" fill="none" stroke="black" stroke-width="1.5" />
+              ${slices}
+            </svg>
+            <div style="display: flex; border: 1.5px solid black; width: 180px; overflow: hidden; border-radius: 4px;">
+              ${barBlocks}
+            </div>
+          </div>
+        `;
+      }
+
+      let answerArea = '<div style="margin-top: 10px; font-weight: bold;">Antwort: ____________________________________</div>';
+
+      exercisesHtml += `
+        <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed #ccc; page-break-inside: avoid;">
+          <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">Aufgabe ${idx + 1}:</div>
+          <div style="font-size: 13px; line-height: 1.4;">${ex.question}</div>
+          ${ex.word ? `<div style="font-size: 14px; font-style: italic; margin: 8px 0; padding: 4px; border-left: 3px solid #000; background: #fafafa;">"${ex.word}"</div>` : ''}
+          ${visualAid}
+          ${answerArea}
+        </div>
+      `;
+    });
+
+    const docHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Arbeitsblatt - ${station.title}</title>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #000;
+            margin: 30px;
+            line-height: 1.3;
+          }
+          .header {
+            border-bottom: 3px double #000;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+          }
+          .metadata {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 15px;
+          }
+          .guide {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f7f9fa;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 25px;
+            font-size: 11px;
+          }
+          @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 20px; font-weight: 900; text-transform: uppercase;">🏫 Lernwelt Arbeitsblatt</span>
+            <span style="font-size: 12px; font-weight: bold; background: #eee; padding: 3px 8px; border-radius: 4px;">Klasse ${station.grade}</span>
+          </div>
+          <div style="font-size: 16px; font-weight: bold; margin-top: 5px;">${station.title}</div>
+          <div style="font-size: 11px; color: #555; margin-top: 3px;">${station.subtitle}</div>
+          
+          <div class="metadata">
+            <span>Name: _______________________________</span>
+            <span>Datum: __________________</span>
+          </div>
+        </div>
+
+        <div class="guide">
+          <svg width="50" height="50" viewBox="0 0 100 100" style="flex-shrink:0;">
+            <rect x="45" y="10" width="10" height="70" rx="1.5" fill="none" stroke="black" stroke-width="2" />
+            <path d="M 45 80 L 50 95 L 55 80 Z" fill="none" stroke="black" stroke-width="2" />
+            <circle cx="50" cy="50" r="25" fill="none" stroke="black" stroke-width="1.5" stroke-dasharray="3 3" />
+            <path d="M 68 35 Q 52 35 48 45" stroke="black" stroke-width="4" stroke-linecap="round" fill="none" />
+            <path d="M 28 55 Q 40 50 44 48" stroke="black" stroke-width="5" stroke-linecap="round" fill="none" />
+            <path d="M 52 56 Q 52 64 56 64" stroke="black" stroke-width="3" stroke-linecap="round" fill="none" />
+          </svg>
+          <div>
+            <strong style="font-size: 12px;">Lumi's Schreibmotorik-Tipp (Dreipunktgriff):</strong><br>
+            Halte den Stift locker mit Daumen und Zeigefinger. Der Mittelfinger stützt den Stift von unten wie ein Kissen. 
+            Sitze aufrecht, halte deine Schreibhand entspannt und lege das Blatt leicht schräg.
+          </div>
+        </div>
+
+        <div class="content">
+          ${exercisesHtml}
+        </div>
+
+        <div style="text-align: center; font-size: 10px; color: #777; margin-top: 30px;" class="no-print">
+          <button onclick="window.print()" style="padding: 10px 20px; font-weight: bold; font-size: 14px; cursor: pointer; border-radius: 6px; border: 2px solid #000; background: #fff;">
+            🖨️ Arbeitsblatt jetzt drucken
+          </button>
+        </div>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(docHtml);
+    printWindow.document.close();
+  };
   
   const handleStationClick = (station: Station, isLocked: boolean) => {
     playPop();
@@ -132,18 +315,21 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
               key={station.id} 
               className={`w-[85%] sm:w-[80%] ${alignClass} transition-transform duration-200`}
             >
-              <button
-                onClick={() => handleStationClick(station, isLocked)}
-                className={`w-full text-left p-4 rounded-2xl border-2 shadow-soft-tactile transition-all duration-200 cursor-pointer ${getCardColorTheme()} relative overflow-hidden`}
+              <div
+                className={`w-full p-4 rounded-2xl border-2 shadow-soft-tactile transition-all duration-200 ${getCardColorTheme()} relative overflow-hidden flex flex-col gap-3`}
                 style={{ transform: isActive ? 'scale(1.02)' : 'none' }}
               >
-                {/* Visual tactile bottom border offset if not completed nor locked */}
-                {!isLocked && !isCompleted && !isActive && (
-                  <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-200"></div>
-                )}
+                {/* Clickable Card Body */}
+                <div 
+                  onClick={() => handleStationClick(station, isLocked)}
+                  className="flex items-start gap-3.5 cursor-pointer flex-1 min-w-0"
+                >
+                  {/* Visual tactile bottom border offset if not completed nor locked */}
+                  {!isLocked && !isCompleted && !isActive && (
+                    <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-200"></div>
+                  )}
 
-                {/* Left/Right Icon container */}
-                <div className="flex items-start gap-3.5">
+                  {/* Left/Right Icon container */}
                   <div className={`p-3 rounded-xl flex-shrink-0 ${
                     isCompleted 
                       ? 'bg-emerald-500 text-white' 
@@ -188,9 +374,22 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
                   </div>
                 </div>
 
+                {/* Print button footer if not locked */}
+                {!isLocked && (
+                  <div className="flex justify-end border-t pt-2 border-slate-200/50 mt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); playPop(); handlePrintWorksheet(station.id); }}
+                      className="text-[10px] font-extrabold text-[#00639a] hover:bg-[#00639a]/5 hover:text-[#004e76] px-2.5 py-1.5 rounded-xl border border-dashed border-[#a5c4d9] flex items-center gap-1 transition-all cursor-pointer select-none"
+                    >
+                      <span>🖨️ Arbeitsblatt drucken</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Tiny Star collection summary on station if done */}
                 {isCompleted && (
-                  <div className="absolute right-2 bottom-2 flex gap-0.5 text-amber-500">
+                  <div className="absolute right-2 top-2 flex gap-0.5 text-amber-500">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -204,7 +403,7 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
                   </div>
                 )}
-              </button>
+              </div>
             </div>
           );
         })}
