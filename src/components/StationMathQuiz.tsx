@@ -1011,8 +1011,8 @@ export default function StationMathQuiz({
       {stationId === 9 && !isCoinTask && renderGroessenHilfe()}
       {isCoinTask && renderInteractiveCoins()}
 
-      {/* Options grid (hidden for partitioning/coin tasks since we evaluate the inputs directly) */}
-      {!isPartitioningTask && !isCoinTask && (
+      {/* Options grid */}
+      {!isPartitioningTask && (
         <div className="grid grid-cols-2 gap-4 mt-6 mb-8">
           {exercise.options?.map((option, idx) => {
             const isSelected = selectedOption === option;
