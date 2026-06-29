@@ -57,8 +57,8 @@ export default function StationMathFractions({
     setAttempts(0);
     
     // Default interactive slice states
-    setCustomSegments(4);
-    setColoredSlices(Array(4).fill(false));
+    setCustomSegments(targetDen);
+    setColoredSlices(Array(targetDen).fill(false));
   }, [exercise]);
 
   // Adjust segment count dynamically
@@ -194,8 +194,8 @@ export default function StationMathFractions({
             <circle cx="50" cy="50" r="2.5" className="fill-amber-950" />
           </svg>
         </div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
-          🍕 Methode A: Kreismodell (Klicke Stücke zum Belegen)
+        <p className="text-sm font-extrabold text-[#00639a] font-body tracking-wide">
+          🍕 Tippe auf die Pizzastücke, um sie zu belegen!
         </p>
       </div>
     );
@@ -225,8 +225,8 @@ export default function StationMathFractions({
           </div>
         </div>
 
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
-          📊 Methode B: Balkenmodell (Klicke Blöcke zum Färben)
+        <p className="text-sm font-extrabold text-[#00639a] font-body tracking-wide">
+          📊 Tippe auf die Blöcke, um sie bunt anzumalen!
         </p>
       </div>
     );
