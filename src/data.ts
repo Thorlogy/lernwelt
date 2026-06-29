@@ -549,6 +549,100 @@ export const STATIONEN: Station[] = [
         hint: "Wir haben 5 Sterne am Himmel. Tippe genau 2 Sterne an, damit sie gelb leuchten."
       }
     ]
+  },
+  {
+    id: 11,
+    subject: "mathe",
+    title: "Station 11: Mathe-Fuchs",
+    subtitle: "Muster, Formen & Zerlegen",
+    grade: 1,
+    description: "Trainiere dein logisches Denken mit Mustern, erkenne Formen und zerlege die Zahl 10 in der Schüttelbox!",
+    icon: "Sparkles",
+    color: "tertiary",
+    exercises: [
+      {
+        id: "11_1",
+        question: "Muster-Detektiv: Wie geht die Reihe weiter? 🔴 🔵 🔴 🔵 🔴 __",
+        options: ["🔴", "🔵", "🟡", "🟢"],
+        correctAnswer: "🔵",
+        hint: "Schau dir an, welche Farbe immer abwechselnd kommt."
+      },
+      {
+        id: "11_2",
+        question: "Muster-Detektiv: Welche Zahl fehlt? 2, 4, 6, 8, __",
+        options: ["9", "10", "11", "12"],
+        correctAnswer: "10",
+        hint: "Es kommen immer 2 dazu (+2). Was ist 8 + 2?"
+      },
+      {
+        id: "11_3",
+        question: "Formen-Zauber: Welche Form hat ein Rad (Reifen)?",
+        options: ["Kreis", "Dreieck", "Quadrat", "Rechteck"],
+        correctAnswer: "Kreis",
+        hint: "Ein Rad ist komplett rund, es hat keine Ecken."
+      },
+      {
+        id: "11_4",
+        question: "Schüttelbox: Die 10 zerlegen! 10 = 6 + __",
+        options: ["3", "4", "5", "6"],
+        correctAnswer: "4",
+        hint: "Nimm deine Finger zur Hilfe. 10 Finger, 6 klappst du ein. Wie viele stehen noch?"
+      },
+      {
+        id: "11_5",
+        question: "Schüttelbox: Die 10 zerlegen! 10 = 2 + __",
+        options: ["7", "8", "9", "10"],
+        correctAnswer: "8",
+        hint: "Wenn 2 Kugeln links in der Box sind, wie viele von den 10 Kugeln sind rechts?"
+      }
+    ]
+  },
+  {
+    id: 12,
+    subject: "deutsch",
+    title: "Station 12: Sprach-Fuchs",
+    subtitle: "Anlaute & Reime",
+    grade: 1,
+    description: "Höre genau hin! Finde Wörter, die mit dem gleichen Buchstaben anfangen oder sich reimen.",
+    icon: "Music",
+    color: "orange",
+    exercises: [
+      {
+        id: "12_1",
+        question: "Anlaut-Lauscher: Welches Wort fängt wie APFEL an?",
+        options: ["Affe", "Hund", "Maus", "Sonne"],
+        correctAnswer: "Affe",
+        hint: "Das gesuchte Wort muss mit einem 'A' beginnen."
+      },
+      {
+        id: "12_2",
+        question: "Anlaut-Lauscher: Welches Wort fängt wie TISCH an?",
+        options: ["Bär", "Tasse", "Auto", "Katze"],
+        correctAnswer: "Tasse",
+        hint: "Das Wort muss mit einem 'T' beginnen."
+      },
+      {
+        id: "12_3",
+        question: "Reim-Paare: Was reimt sich auf HAUS?",
+        options: ["Garten", "Maus", "Baum", "Katze"],
+        correctAnswer: "Maus",
+        hint: "Haus - ... Die Endung muss sich gleich anhören (-aus)."
+      },
+      {
+        id: "12_4",
+        question: "Reim-Paare: Was reimt sich auf HUND?",
+        options: ["Mund", "Katze", "Bär", "Knochen"],
+        correctAnswer: "Mund",
+        hint: "Hund - ... (Endung -und)."
+      },
+      {
+        id: "12_5",
+        question: "Reim-Paare: Was reimt sich auf SONNE?",
+        options: ["Wonne", "Mond", "Regen", "Stern"],
+        correctAnswer: "Wonne",
+        hint: "Sonne - Wonne. Das klingt am Ende genau gleich!"
+      }
+    ]
   }
 ];
 

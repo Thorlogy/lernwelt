@@ -11,6 +11,7 @@ import StationSingularPlural from './components/StationSingularPlural';
 import StationVerbTenses from './components/StationVerbTenses';
 import StationMathQuiz from './components/StationMathQuiz';
 import StationMathFractions from './components/StationMathFractions';
+import StationGenericQuiz from './components/StationGenericQuiz';
 import ResearchDashboard from './components/ResearchDashboard';
 import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
@@ -600,6 +601,17 @@ export default function App() {
                 progress={progress}
                 isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
                 onSaveMetrics={handleSaveMetrics}
+              />
+            )}
+
+            {(activeStationId === 11 || activeStationId === 12) && currentExercise && (
+              <StationGenericQuiz
+                exercise={currentExercise as any}
+                onCorrectAnswer={handleCorrectAnswer}
+                onIncorrectAnswer={handleIncorrectAnswer}
+                onNext={handleNextExercise}
+                progress={progress}
+                isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
               />
             )}
           </div>
