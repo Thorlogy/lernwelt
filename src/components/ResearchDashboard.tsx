@@ -127,7 +127,7 @@ export default function ResearchDashboard({
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-2xl mx-auto space-y-8 animate-wiggle-soft">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-2xl mx-auto space-y-8">
       
       {/* Header */}
       <div className="flex items-center justify-between border-b pb-4 border-slate-100">

@@ -659,30 +659,30 @@ export default function StationMathQuiz({
   if (showSocratic) {
     const sDetails = getSocraticDetails();
     return (
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-6 animate-wiggle-soft">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-6">
         
         {/* Header */}
-        <div className="text-center">
+        <div className="text-center font-body">
           <span className="text-4xl animate-bounce inline-block">🎓</span>
-          <h3 className="font-sans font-black text-xl text-[#00639a] mt-2">
+          <h3 className="font-black text-xl sm:text-2xl text-[#00639a] mt-2">
             Lumis Rechenweg-Erklärer
           </h3>
-          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mt-0.5">
             Metakognition & Reflexion
           </p>
         </div>
 
-        {/* Question Prompt */}
-        <div className="bg-indigo-50 border-2 border-indigo-100 p-5 rounded-2xl text-xs sm:text-sm text-indigo-950 font-bold leading-relaxed font-body">
+        {/* Question Prompt (increased font size) */}
+        <div className="bg-indigo-50 border-2 border-indigo-100 p-5 rounded-2xl text-sm sm:text-base text-indigo-950 font-black leading-relaxed font-body">
           {sDetails.question}
         </div>
 
-        {/* Strategy options */}
+        {/* Strategy options (increased font size and font weight) */}
         <div className="space-y-3">
           {sDetails.strategies.map((strat, idx) => {
             const isSelected = selectedStrategy === idx;
             
-            let btnStyle = "bg-white border-slate-200 hover:bg-slate-50 text-slate-700";
+            let btnStyle = "bg-white border-slate-200 hover:bg-slate-50 text-slate-800";
             if (isSelected) {
               if (socraticChecked) {
                 btnStyle = strat.isBest
@@ -698,7 +698,7 @@ export default function StationMathQuiz({
                 key={idx}
                 disabled={socraticChecked}
                 onClick={() => { playPop(); setSelectedStrategy(idx); }}
-                className={`w-full text-left p-4 rounded-2xl border-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer font-body leading-relaxed flex items-start gap-2.5 ${btnStyle}`}
+                className={`w-full text-left p-4 rounded-2xl border-2 text-sm sm:text-base font-extrabold transition-all cursor-pointer font-body leading-relaxed flex items-start gap-2.5 ${btnStyle}`}
               >
                 <span className="text-lg">💬</span>
                 <span>{strat.text}</span>
@@ -707,17 +707,17 @@ export default function StationMathQuiz({
           })}
         </div>
 
-        {/* Feedback display */}
+        {/* Feedback display (increased font size and weight) */}
         {socraticChecked && selectedStrategy !== null && (
-          <div className="bg-slate-50 border p-4 rounded-2xl text-xs sm:text-sm text-slate-700 leading-relaxed font-semibold font-body animate-wiggle-soft">
+          <div className="bg-slate-50 border p-4 rounded-2xl text-sm sm:text-base text-slate-800 leading-relaxed font-extrabold font-body">
             {sDetails.strategies[selectedStrategy].isBest ? (
-              <p className="text-emerald-800 flex items-center gap-1.5">
-                <CheckCircle className="w-5 h-5 text-emerald-600" />
+              <p className="text-emerald-900 flex items-center gap-1.5">
+                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
                 <span>{sDetails.strategies[selectedStrategy].feedback}</span>
               </p>
             ) : (
-              <p className="text-slate-800 flex items-start gap-1.5">
-                <Award className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+              <p className="text-slate-900 flex items-start gap-1.5">
+                <Award className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
                 <span>{sDetails.strategies[selectedStrategy].feedback}</span>
               </p>
             )}
@@ -730,7 +730,7 @@ export default function StationMathQuiz({
             <button
               disabled={selectedStrategy === null}
               onClick={handleSocraticCheck}
-              className={`px-7 py-3 rounded-xl text-sm font-extrabold shadow-md ${
+              className={`px-7 py-3 rounded-xl text-sm sm:text-base font-extrabold shadow-md ${
                 selectedStrategy !== null
                   ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500 cursor-pointer'
                   : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'

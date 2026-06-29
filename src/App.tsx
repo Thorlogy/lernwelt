@@ -322,7 +322,7 @@ export default function App() {
 
         {/* 1. NEW USER REGISTRATION SCREEN */}
         {isNewUser ? (
-          <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-8 animate-wiggle-double">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-8">
             <div className="text-center">
               <span className="bg-[#fdd758] text-[#725c00] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider block w-max mx-auto mb-2">
                 Willkommen
@@ -609,7 +609,7 @@ export default function App() {
       {/* 5. LEVEL COMPLETED CONGRATULATIONS MODAL POPUP */}
       {showCompletionCelebration && activeStation && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border-4 border-yellow-400 text-center shadow-high-tactile space-y-5 animate-wiggle-double">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border-4 border-yellow-400 text-center shadow-high-tactile space-y-5">
             <div className="text-5xl select-none filter drop-shadow">🏆</div>
             
             <div className="space-y-1.5">
