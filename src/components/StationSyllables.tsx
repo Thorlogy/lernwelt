@@ -28,7 +28,7 @@ export default function StationSyllables({
   progress,
   isLastExercise,
 }: StationSyllablesProps) {
-  const [selectedSyllables, setSelectedSyllables] = useState<string[]>([]);
+  const [selectedSyllableIndices, setSelectedSyllableIndices] = useState<number[]>([]);
   const [choicesPool, setChoicesPool] = useState<string[]>([]);
   const [hasChecked, setHasChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -47,23 +47,23 @@ export default function StationSyllables({
     
     // Shuffle combined
     setChoicesPool([...combined].sort(() => Math.random() - 0.5));
-    setSelectedSyllables([]);
+    setSelectedSyllableIndices([]);
     setHasChecked(false);
     setIsCorrect(null);
     setShakeTrigger(false);
     setShowHint(false);
   }, [exercise]);
 
-  const handleSyllableClick = (syllable: string) => {
+  const handleSyllableClick = (poolIndex: number) => {
     if (hasChecked) return;
     playPop();
 
     // If already chosen, remove it. Otherwise add it.
-    setSelectedSyllables(prev => {
-      if (prev.includes(syllable)) {
-        return prev.filter(s => s !== syllable);
+    setSelectedSyllableIndices(prev => {
+      if (prev.includes(poolIndex)) {
+        return prev.filter(idx => idx !== poolIndex);
       } else {
-        return [...prev, syllable];
+        return [...prev, poolIndex];
       }
     });
   };
@@ -71,16 +71,18 @@ export default function StationSyllables({
   const clearAnswer = () => {
     if (hasChecked) return;
     playPop();
-    setSelectedSyllables([]);
+    setSelectedSyllableIndices([]);
   };
 
   const handleCheck = () => {
     if (hasChecked) return;
     
     const correctSyllables = exercise.correctAnswer as string[];
+    const constructedSyllables = selectedSyllableIndices.map(idx => choicesPool[idx]);
+    
     const isMatched = 
-      selectedSyllables.length === correctSyllables.length &&
-      selectedSyllables.every((val, index) => val === correctSyllables[index]);
+      constructedSyllables.length === correctSyllables.length &&
+      constructedSyllables.every((val, index) => val === correctSyllables[index]);
 
     setIsCorrect(isMatched);
     setHasChecked(true);
@@ -101,8 +103,10 @@ export default function StationSyllables({
   const handleRetry = () => {
     setHasChecked(false);
     setIsCorrect(null);
-    setSelectedSyllables([]);
+    setSelectedSyllableIndices([]);
   };
+
+  const selectedSyllables = selectedSyllableIndices.map(idx => choicesPool[idx]);
 
   return (
     <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>
@@ -136,8 +140,8 @@ export default function StationSyllables({
         {/* Floating lilypads or river stones container */}
         <div className="relative z-10 flex flex-wrap justify-center items-center gap-4 sm:gap-6 px-4">
           {Array.from({ length: (exercise.correctAnswer as string[]).length }).map((_, index) => {
-            const hasSelected = selectedSyllables.length > index;
-            const piece = hasSelected ? selectedSyllables[index] : null;
+            const hasSelected = selectedSyllableIndices.length > index;
+            const piece = hasSelected ? choicesPool[selectedSyllableIndices[index]] : null;
 
             return (
               <div key={index} className="flex flex-col items-center">
@@ -191,13 +195,13 @@ export default function StationSyllables({
 
         <div className="flex flex-wrap justify-center gap-3">
           {choicesPool.map((syllable, idx) => {
-            const isChosen = selectedSyllables.includes(syllable);
+            const isChosen = selectedSyllableIndices.includes(idx);
             
             return (
               <button
                 key={idx}
                 disabled={hasChecked}
-                onClick={() => handleSyllableClick(syllable)}
+                onClick={() => handleSyllableClick(idx)}
                 className={`px-5 py-3.5 rounded-2xl text-base sm:text-lg font-black tracking-wider transition-all duration-150 letter-block transform cursor-pointer ${
                   isChosen
                     ? 'bg-slate-100 text-slate-300 opacity-40 scale-95 border-dashed pointer-events-none'
@@ -220,65 +224,61 @@ export default function StationSyllables({
         )}
 
         {hasChecked && isCorrect === false && (
-          <div className="bg-yellow-50 text-yellow-800 p-3 rounded-2xl border-2 border-yellow-200 text-center font-bold text-sm sm:text-base">
-            Noch nicht ganz richtig. Lass es uns klatschen und nochmal versuchen! 👏
+          <div className="bg-yellow-100 text-yellow-800 p-3 rounded-2xl border-2 border-yellow-300 text-center font-bold text-sm sm:text-base">
+            Das stimmt leider noch nicht ganz. Tippe auf „Zurücksetzen“, um es noch einmal zu versuchen! 🤔
           </div>
         )}
 
         <div className="flex justify-between items-center gap-3">
-          {/* Hint button */}
           <button
-            onClick={() => { playPop(); setShowHint(!showHint); }}
-            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-300 text-slate-500 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer text-xs sm:text-sm font-bold font-body"
+            onClick={() => setShowHint(!showHint)}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-300 text-slate-500 hover:text-[#00639a] hover:bg-sky-50 hover:border-sky-300 transition-colors cursor-pointer text-xs sm:text-sm font-bold font-body"
           >
             <HelpCircle className="w-4 h-4" /> Klatschtipp
           </button>
 
           <div className="flex gap-2">
-            {/* Reset */}
-            {!hasChecked && selectedSyllables.length > 0 && (
-              <button
-                onClick={clearAnswer}
-                className="btn-tactile-outline px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 cursor-pointer text-slate-600"
-              >
-                <RotateCcw className="w-4 h-4" /> Zurücksetzen
-              </button>
-            )}
-
-            {/* Actions */}
             {!hasChecked ? (
-              <button
-                disabled={selectedSyllables.length !== (exercise.correctAnswer as string[]).length}
-                onClick={handleCheck}
-                className={`px-6 py-2.5 rounded-xl text-sm sm:text-base font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer ${
-                  selectedSyllables.length === (exercise.correctAnswer as string[]).length
-                    ? 'btn-tactile-secondary text-[#725c00]'
-                    : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
-                }`}
-              >
-                Fertig! 🐸
-              </button>
+              <>
+                <button
+                  onClick={clearAnswer}
+                  className="px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer text-xs sm:text-sm font-bold font-body"
+                >
+                  Zurücksetzen
+                </button>
+                <button
+                  disabled={selectedSyllableIndices.length === 0}
+                  onClick={handleCheck}
+                  className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-md flex items-center gap-1 cursor-pointer transition-all ${
+                    selectedSyllableIndices.length > 0
+                      ? 'btn-tactile-secondary text-cyan-950 border-b-4 border-yellow-500'
+                      : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
+                  }`}
+                >
+                  Fertig! 🐸
+                </button>
+              </>
             ) : isCorrect === true ? (
               <button
                 onClick={onNext}
                 className="btn-tactile-primary text-white px-7 py-3 rounded-xl text-sm sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
               >
-                Nächstes Wort! <ArrowRight className="w-5 h-5 animate-pulse" />
+                {isLastExercise ? "Station beenden!" : "Nächste Aufgabe!"} <ArrowRight className="w-5 h-5 animate-pulse" />
               </button>
             ) : (
               <button
                 onClick={handleRetry}
                 className="btn-tactile-outline px-6 py-2.5 rounded-xl text-slate-700 text-sm font-bold cursor-pointer border border-slate-300"
               >
-                Anderer Versuch 🔄
+                Nochmal versuchen 🔄
               </button>
             )}
           </div>
         </div>
 
         {showHint && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs sm:text-sm text-amber-900 leading-relaxed font-semibold">
-             👏 <strong>Tipps zum Rhythmus:</strong> {exercise.hint}
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 text-xs sm:text-sm text-orange-900 leading-relaxed font-semibold">
+            💡 <strong>Tipp:</strong> {exercise.hint}
           </div>
         )}
       </div>
