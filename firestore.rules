@@ -1,0 +1,13 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /metrics/{document} {
+      // Allow anyone to read the aggregated metrics and write/create new results
+      allow read, create: if true;
+      
+      // Prevent editing or deleting existing research data to prevent tampering
+      allow update, delete: if false;
+    }
+  }
+}

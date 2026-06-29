@@ -15,6 +15,8 @@ import ResearchDashboard from './components/ResearchDashboard';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
+import { db } from './utils/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
 
@@ -150,6 +152,21 @@ export default function App() {
       experimentMetrics: updatedMetrics,
     };
     saveProgress(updatedProgress);
+
+    // Asynchronously write to Cloud Firestore database
+    try {
+      addDoc(collection(db, 'metrics'), {
+        childName: progress.childName || 'Anonym',
+        method,
+        timeSeconds,
+        attempts: attemptsCount,
+        isFirstTryCorrect,
+        stationId: activeStationId || 0,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.warn("Failed to upload metric to Firestore:", err);
+    }
   };
 
   // Reset performance metrics
