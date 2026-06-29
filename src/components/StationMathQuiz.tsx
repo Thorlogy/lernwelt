@@ -104,6 +104,32 @@ export default function StationMathQuiz({
     if (hasChecked) return;
     playPop();
     setSelectedOption(option);
+    
+    // Automatically select corresponding coins/bills greedy-style to provide visual feedback
+    const pool = coinPools[exercise.id];
+    if (!pool) return;
+    const targetVal = parseFloat(option.replace('€', '').replace(',', '.').trim());
+    
+    let remaining = targetVal;
+    const indices: number[] = [];
+    
+    // Sort pool by value descending to greedy match
+    const sortedPoolWithIndices = pool
+      .map((c, i) => ({ ...c, originalIndex: i }))
+      .sort((a, b) => b.val - a.val);
+
+    for (const item of sortedPoolWithIndices) {
+      if (item.val <= remaining + 0.001) {
+        indices.push(item.originalIndex);
+        remaining -= item.val;
+      }
+    }
+    
+    if (Math.abs(remaining) < 0.01) {
+      setSelectedCoinIndices(indices);
+    } else {
+      setSelectedCoinIndices([]);
+    }
   };
 
   // Camera upload handler with local Privacy Filter
@@ -677,11 +703,24 @@ export default function StationMathQuiz({
     if (hasChecked) return;
     playPop();
     setSelectedCoinIndices(prev => {
-      if (prev.includes(idx)) {
-        return prev.filter(i => i !== idx);
+      const next = prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx];
+      
+      // Auto-select corresponding multiple choice option if sum matches
+      const pool = coinPools[exercise.id] || [];
+      const sum = next.reduce((acc, cIdx) => acc + pool[cIdx].val, 0);
+      
+      const matchingOption = exercise.options?.find(opt => {
+        const optVal = parseFloat(opt.replace('€', '').replace(',', '.').trim());
+        return Math.abs(sum - optVal) < 0.01;
+      });
+      
+      if (matchingOption) {
+        setSelectedOption(matchingOption);
       } else {
-        return [...prev, idx];
+        setSelectedOption(null);
       }
+      
+      return next;
     });
   };
 
