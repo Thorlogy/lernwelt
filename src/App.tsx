@@ -38,8 +38,8 @@ export default function App() {
  // Application state
  const [progress, setProgress] = useState<UserProgress>(INITIAL_PROGRESS);
 
- const isDeutschDone = [1, 2, 3, 4, 5, 6].every(id => progress.completedStations.includes(id));
- const isMatheDone = [7, 8, 9, 10].every(id => progress.completedStations.includes(id));
+  const isDeutschDone = STATIONEN.filter(s => s.subject === 'deutsch').every(s => progress.completedStations.includes(s.id));
+  const isMatheDone = STATIONEN.filter(s => s.subject === 'mathe').every(s => progress.completedStations.includes(s.id));
  const hasWonSubject = isDeutschDone || isMatheDone;
 
  const [activeStationId, setActiveStationId] = useState<number | null>(null);
@@ -457,110 +457,66 @@ export default function App() {
  <PenGripGuide />
  )}
 
- {/* Load correct game station depending on station ID */}
- {activeStationId === 1 && currentExercise && (
- <StationLetterSpelling
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
+          {/* Load correct game station depending on station ID */}
+          {activeStationId === 103 && currentExercise && (
+            <StationLetterSpelling
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          )}
 
- {activeStationId === 2 && currentExercise && (
- <StationSyllables
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
+          {activeStationId === 102 && currentExercise && (
+            <StationSyllables
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          )}
 
- {activeStationId === 3 && currentExercise && (
- <StationWordTypes
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
+          {activeStationId === 405 && currentExercise && (
+            <StationMathFractions
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+              onSaveMetrics={handleSaveMetrics}
+            />
+          )}
 
- {activeStationId === 4 && currentExercise && (
- <StationSpellingDetective
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
+          {[104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 406].includes(activeStationId as number) && currentExercise && (
+            <StationMathQuiz
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+              stationId={activeStationId as number}
+              onSaveMetrics={handleSaveMetrics}
+            />
+          )}
 
- {activeStationId === 5 && currentExercise && (
- <StationSingularPlural
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
-
- {activeStationId === 6 && currentExercise && (
- <StationVerbTenses
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
-
- {(activeStationId === 7 || activeStationId === 8 || activeStationId === 9) && currentExercise && (
- <StationMathQuiz
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- stationId={activeStationId}
- onSaveMetrics={handleSaveMetrics}
- />
- )}
-
- {activeStationId === 10 && currentExercise && (
- <StationMathFractions
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- onSaveMetrics={handleSaveMetrics}
- />
- )}
-
- {(activeStationId >= 11 && activeStationId <= 18) && currentExercise && (
- <StationGenericQuiz
- exercise={currentExercise as any}
- onCorrectAnswer={handleCorrectAnswer}
- onIncorrectAnswer={handleIncorrectAnswer}
- onNext={handleNextExercise}
- progress={progress}
- isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
- />
- )}
- </div>
- )}
+          {![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406].includes(activeStationId as number) && currentExercise && (
+            <StationGenericQuiz
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          )}
+        </div>
+      )}
  </main>
 
  {/* 5. LEVEL COMPLETED CONGRATULATIONS MODAL POPUP */}
