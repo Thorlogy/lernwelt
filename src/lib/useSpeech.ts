@@ -1,113 +1,104 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface SpeakOptions {
-  rate?: number;   // 0.5–1.5 · kindgerecht: langsam
-  pitch?: number;  // 0–2
-  volume?: number; // 0–1
-  voice?: SpeechSynthesisVoice | null;
+  rate?: number;   
+  pitch?: number;  
+  volume?: number; 
+  voice?: any;
   onEnd?: () => void;
 }
 
-const DEFAULTS = { rate: 0.85, pitch: 1.05, volume: 1, lang: "de-DE" };
+const DEFAULTS = { rate: 1, pitch: 1, volume: 1, lang: "de-DE" };
 
-/** Beste deutsche Stimme wählen: de-DE und offline-fähige Stimmen bevorzugen. */
-function pickGermanVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
-  const de = voices.filter((v) => v.lang?.toLowerCase().startsWith("de"));
-  if (!de.length) return null;
-  const score = (v: SpeechSynthesisVoice) =>
-    (v.lang.toLowerCase() === "de-de" ? 2 : 0) + (v.localService ? 1 : 0);
-  return [...de].sort((a, b) => score(b) - score(a))[0];
+// Same slugify logic as the generate script
+function generateFilename(text: string): string {
+  let clean = text.toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]/g, '_')
+    .replace(/_+/g, '_');
+  
+  if (clean.endsWith('_')) clean = clean.slice(0, -1);
+  if (clean.startsWith('_')) clean = clean.slice(1);
+  
+  if (clean.length > 50) {
+    // Basic base64 hash function for client side
+    const hash = btoa(unescape(encodeURIComponent(text))).replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
+    clean = clean.substring(0, 40) + '_' + hash;
+  }
+  
+  return `${clean}.mp3`;
 }
 
 export function useSpeech() {
-  const supported =
-    typeof window !== "undefined" && "speechSynthesis" in window;
-
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const supported = true; // Audio is universally supported
+  const [voices] = useState<any[]>([]);
   const [speaking, setSpeaking] = useState(false);
-  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Stimmen laden – kommen in Chrome/Edge asynchron herein.
-  useEffect(() => {
-    if (!supported) return;
-    const load = () => {
-      const v = window.speechSynthesis.getVoices();
-      setVoices(v);
-      voiceRef.current = pickGermanVoice(v);
-    };
-    load();
-    window.speechSynthesis.onvoiceschanged = load;
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
-  }, [supported]);
-
-  /**
-   * iOS/Safari: Sprachausgabe muss EINMALIG aus einer echten Nutzer-Geste
-   * heraus entsperrt werden. Aus einem globalen „Los geht's"-Button aufrufen.
-   */
   const unlock = useCallback(() => {
-    if (!supported) return;
-    const u = new SpeechSynthesisUtterance(" ");
-    u.volume = 0;
-    window.speechSynthesis.speak(u);
-  }, [supported]);
+    // Play a tiny silent sound to unlock audio on iOS
+    if (!audioRef.current) {
+      audioRef.current = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    }
+    audioRef.current.play().catch(() => {});
+  }, []);
 
   const cancel = useCallback(() => {
-    if (!supported) return;
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setSpeaking(false);
-  }, [supported]);
+  }, []);
+
+  const playAudio = useCallback((filename: string, onEnd?: () => void) => {
+    cancel(); // stop current
+    
+    const audio = new Audio(`/audio/tts/${filename}`);
+    audioRef.current = audio;
+    
+    audio.onplaying = () => setSpeaking(true);
+    audio.onended = () => {
+      setSpeaking(false);
+      onEnd?.();
+    };
+    audio.onerror = () => {
+      setSpeaking(false);
+      onEnd?.();
+    };
+
+    audio.play().catch(e => {
+      console.warn("Autoplay blocked or file not found:", e);
+      setSpeaking(false);
+      onEnd?.();
+    });
+  }, [cancel]);
 
   const speak = useCallback(
     (text: string, opts: SpeakOptions = {}) => {
-      if (!supported || !text) return;
-      window.speechSynthesis.cancel(); // laufende Ausgabe stoppen, kein Stau
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = DEFAULTS.lang;
-      u.rate = opts.rate ?? DEFAULTS.rate;
-      u.pitch = opts.pitch ?? DEFAULTS.pitch;
-      u.volume = opts.volume ?? DEFAULTS.volume;
-      const voice = opts.voice ?? voiceRef.current;
-      if (voice) u.voice = voice;
-      u.onstart = () => setSpeaking(true);
-      u.onend = () => {
-        setSpeaking(false);
-        opts.onEnd?.();
-      };
-      u.onerror = () => setSpeaking(false);
-      // Tick verhindert einen Chrome-Bug (cancel + speak im selben Frame).
-      setTimeout(() => window.speechSynthesis.speak(u), 0);
+      if (!text) return;
+      const filename = generateFilename(text);
+      playAudio(filename, opts.onEnd);
     },
-    [supported]
+    [playAudio]
   );
 
-  /** Silbenweise mit kleinen Pausen vorlesen – passt zu „Silben-Hüpfen". */
   const speakSyllables = useCallback(
     (syllables: string[]) => {
-      if (!supported || !syllables.length) return;
-      window.speechSynthesis.cancel();
-      syllables.forEach((syl, i) => {
-        const u = new SpeechSynthesisUtterance(syl + ","); // Komma = natürliche Pause
-        u.lang = DEFAULTS.lang;
-        u.rate = 0.7;
-        u.pitch = DEFAULTS.pitch;
-        if (voiceRef.current) u.voice = voiceRef.current;
-        if (i === 0) u.onstart = () => setSpeaking(true);
-        if (i === syllables.length - 1) u.onend = () => setSpeaking(false);
-        setTimeout(() => window.speechSynthesis.speak(u), 0);
-      });
+      if (!syllables.length) return;
+      const syllableString = syllables.join(', ');
+      const filename = generateFilename(syllableString);
+      playAudio(filename);
     },
-    [supported]
+    [playAudio]
   );
 
-  // Beim Unmount alles stoppen.
-  useEffect(
-    () => () => {
-      if (supported) window.speechSynthesis.cancel();
-    },
-    [supported]
-  );
+  useEffect(() => {
+    return () => cancel();
+  }, [cancel]);
 
   return { supported, voices, speaking, speak, speakSyllables, cancel, unlock };
 }
