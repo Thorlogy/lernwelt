@@ -101,26 +101,29 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
       </button>
 
       <div className="text-center mb-8 relative">
-        <button 
-          onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}
-          className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full mb-4 bg-sky-100 hover:bg-sky-200 text-[#00639a] p-3 rounded-full transition-transform hover:scale-110 shadow-sm"
-          title="Vorlesen lassen"
-        >
-          <Volume2 size={24} />
-        </button>
         <h2 className="text-3xl font-black text-[#00639a] mb-2 font-sans tracking-tight mt-6">Anmelden</h2>
-        <p className="text-slate-500 font-bold cursor-pointer hover:text-slate-700" onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}>
-          Gib deinen Namen ein und wähle deinen 3-Bilder-Code!
-        </p>
+        <div className="flex items-center justify-center gap-3">
+          <p className="text-slate-500 font-bold cursor-pointer hover:text-slate-700" onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}>
+            Gib deinen Namen ein und wähle deinen 3-Bilder-Code!
+          </p>
+          <button 
+            type="button"
+            onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}
+            className="bg-sky-100 hover:bg-sky-200 text-[#00639a] p-2 rounded-full transition-transform hover:scale-110 shadow-sm shrink-0"
+            title="Vorlesen lassen"
+          >
+            <Volume2 size={20} />
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <button type="button" onClick={() => speak("Wie heißt du?")} className="text-[#00639a] hover:scale-110 transition-transform">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[#00639a] font-bold text-lg">Wie heißt du?</label>
+            <button type="button" onClick={() => speak("Wie heißt du?")} className="text-[#00639a] hover:scale-110 transition-transform bg-sky-50 hover:bg-sky-100 p-2 rounded-full shrink-0">
               <Volume2 size={20} />
             </button>
-            <label className="block text-[#00639a] font-bold text-lg">Wie heißt du?</label>
           </div>
           <input
             type="text"
@@ -134,11 +137,11 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
         </div>
 
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <button type="button" onClick={() => speak("Dein geheimer Bilder-Code:")} className="text-[#00639a] hover:scale-110 transition-transform">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-[#00639a] font-bold text-lg">Dein geheimer Bilder-Code:</label>
+            <button type="button" onClick={() => speak("Dein geheimer Bilder-Code:")} className="text-[#00639a] hover:scale-110 transition-transform bg-sky-50 hover:bg-sky-100 p-2 rounded-full shrink-0">
               <Volume2 size={20} />
             </button>
-            <label className="block text-[#00639a] font-bold text-lg">Dein geheimer Bilder-Code:</label>
           </div>
           
           {/* Selected Emojis Display */}
