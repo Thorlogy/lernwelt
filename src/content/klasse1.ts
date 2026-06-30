@@ -46,10 +46,10 @@ export const KLASSE_1: Station[] = [
     icon: "Keyboard",
     color: "tertiary",
     exercises: [
-      { id: "103_1", question: "Bilde das Wort für ein Haustier (HUND):", word: "HUND", correctAnswer: "HUND", hint: "Macht Wau." },
-      { id: "103_2", question: "Bilde das Wort (OMA):", word: "OMA", correctAnswer: "OMA", hint: "Die Mama von Mama oder Papa." },
-      { id: "103_3", question: "Bilde das Wort (TÜR):", word: "TÜR", correctAnswer: "TÜR", hint: "Damit geht man ins Zimmer." },
-      { id: "103_4", question: "Bilde das Wort (BAUM):", word: "BAUM", correctAnswer: "BAUM", hint: "Wächst im Wald." }
+      { id: "103_1", question: "Bilde das gesuchte Wort:", word: "HUND", correctAnswer: "HUND", hint: "Macht Wau." },
+      { id: "103_2", question: "Bilde das gesuchte Wort:", word: "OMA", correctAnswer: "OMA", hint: "Die Mama von Mama oder Papa." },
+      { id: "103_3", question: "Bilde das gesuchte Wort:", word: "TÜR", correctAnswer: "TÜR", hint: "Damit geht man ins Zimmer." },
+      { id: "103_4", question: "Bilde das gesuchte Wort:", word: "BAUM", correctAnswer: "BAUM", hint: "Wächst im Wald." }
     ]
   },
   {

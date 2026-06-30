@@ -4,6 +4,7 @@ import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
 import { SpeakButton } from './SpeakButton';
 import { useSpeech } from '../lib/useSpeech';
+import { getEmojiForWord } from '../utils/emojis';
 
 interface StationLetterSpellingProps {
  exercise: SpellingExercise;
@@ -101,103 +102,114 @@ export default function StationLetterSpelling({
  setSelectedLetters([]);
  };
 
- // Helper to render cute childlike vector SVGs
- const renderItemIllustration = () => {
- switch (exercise.imagePlaceholder) {
- case 'cat':
- return (
- <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
- <circle cx="50" cy="55" r="30" fill="#ffb74d" />
- {/* Ears */}
- <polygon points="20,35 32,15 40,32" fill="#e65100" />
- <polygon points="80,35 68,15 60,32" fill="#e65100" />
- {/* Eyes */}
- <circle cx="38" cy="48" r="4" fill="#212121" />
- <circle cx="62" cy="48" r="4" fill="#212121" />
- <circle cx="37" cy="46" r="1.5" fill="#ffffff" />
- <circle cx="61" cy="46" r="1.5" fill="#ffffff" />
- {/* Nose & Whiskers */}
- <polygon points="50,56 46,52 54,52" fill="#ff8a80" />
- <path d="M50,56 Q48,62 45,62 M50,56 Q52,62 55,62" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none" />
- <line x1="28" y1="56" x2="12" y2="54" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
- <line x1="28" y1="62" x2="14" y2="64" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
- <line x1="72" y1="56" x2="88" y2="54" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
- <line x1="72" y1="62" x2="86" y2="64" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
- </svg>
- );
- case 'apple':
- return (
- <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
- <ellipse cx="43" cy="54" rx="22" ry="24" fill="#e53935" />
- <ellipse cx="57" cy="54" rx="22" ry="24" fill="#e53935" />
- {/* Leaf and Stem */}
- <path d="M50,32 Q52,18 42,12" stroke="#5d4037" strokeWidth="4" strokeLinecap="round" fill="none" />
- <path d="M50,26 Q64,18 64,30 Q50,34 50,26 Z" fill="#4caf50" />
- {/* Highlight */}
- <ellipse cx="34" cy="44" rx="4" ry="8" fill="#ffffff" opacity="0.3" transform="rotate(-15 34 44)" />
- </svg>
- );
- case 'mouse':
- return (
- <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
- {/* Tail */}
- <path d="M20,68 Q10,75 5,60" stroke="#b0bec5" strokeWidth="3" strokeLinecap="round" fill="none" />
- {/* Body */}
- <ellipse cx="54" cy="58" rx="28" ry="18" fill="#90a4ae" />
- {/* Ears */}
- <circle cx="36" cy="40" r="10" fill="#78909c" />
- <circle cx="36" cy="40" r="6" fill="#ffab91" />
- <circle cx="58" cy="42" r="10" fill="#78909c" />
- {/* Eyes */}
- <circle cx="68" cy="52" r="3" fill="#212121" />
- {/* Pink Nose */}
- <ellipse cx="83" cy="58" rx="4" ry="4" fill="#ff8a80" />
- </svg>
- );
- case 'sun':
- return (
- <svg className="w-24 h-24 mx-auto animate-spin-slow" viewBox="0 0 100 100">
- {/* Sun Rays */}
- <g stroke="#ffb300" strokeWidth="5" strokeLinecap="round">
- <line x1="50" y1="10" x2="50" y2="20" />
- <line x1="50" y1="80" x2="50" y2="90" />
- <line x1="10" y1="50" x2="20" y2="50" />
- <line x1="80" y1="50" x2="90" y2="50" />
- <line x1="22" y1="22" x2="30" y2="30" />
- <line x1="70" y1="70" x2="78" y2="78" />
- <line x1="78" y1="22" x2="70" y2="30" />
- <line x1="30" y1="70" x2="22" y2="78" />
- </g>
- <circle cx="50" cy="50" r="22" fill="#ffca28" />
- {/* Rosy Cheeks */}
- <circle cx="41" cy="52" r="2" fill="#e53935" opacity="0.4" />
- <circle cx="59" cy="52" r="2" fill="#e53935" opacity="0.4" />
- {/* Eye smiles */}
- <path d="M40,46 Q43,44 45,46" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
- <path d="M55,46 Q57,44 60,46" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
- {/* Friendly mouth */}
- <path d="M46,54 Q50,58 54,54" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
- </svg>
- );
- case 'fir':
- return (
- <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
- {/* Trunk */}
- <rect x="46" y="66" width="8" height="18" rx="2" fill="#5d4037" />
- {/* Pine Layers */}
- <polygon points="50,15 25,48 75,48" fill="#2e7d32" />
- <polygon points="50,30 20,60 80,60" fill="#388e3c" />
- <polygon points="50,45 15,72 85,72" fill="#4caf50" />
- </svg>
- );
- default:
- return (
- <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-4xl shadow-inner">
- 🔍
- </div>
- );
- }
- };
+  // Helper to render cute childlike vector SVGs
+  const renderItemIllustration = () => {
+    if (exercise.imagePlaceholder) {
+      switch (exercise.imagePlaceholder) {
+        case 'cat':
+          return (
+            <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+              <circle cx="50" cy="55" r="30" fill="#ffb74d" />
+              {/* Ears */}
+              <polygon points="20,35 32,15 40,32" fill="#e65100" />
+              <polygon points="80,35 68,15 60,32" fill="#e65100" />
+              {/* Eyes */}
+              <circle cx="38" cy="48" r="4" fill="#212121" />
+              <circle cx="62" cy="48" r="4" fill="#212121" />
+              <circle cx="37" cy="46" r="1.5" fill="#ffffff" />
+              <circle cx="61" cy="46" r="1.5" fill="#ffffff" />
+              {/* Nose & Whiskers */}
+              <polygon points="50,56 46,52 54,52" fill="#ff8a80" />
+              <path d="M50,56 Q48,62 45,62 M50,56 Q52,62 55,62" stroke="#212121" strokeWidth="2" strokeLinecap="round" fill="none" />
+              <line x1="28" y1="56" x2="12" y2="54" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="28" y1="62" x2="14" y2="64" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="72" y1="56" x2="88" y2="54" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="72" y1="62" x2="86" y2="64" stroke="#e65100" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+          );
+        case 'apple':
+          return (
+            <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+              <ellipse cx="43" cy="54" rx="22" ry="24" fill="#e53935" />
+              <ellipse cx="57" cy="54" rx="22" ry="24" fill="#e53935" />
+              {/* Leaf and Stem */}
+              <path d="M50,32 Q52,18 42,12" stroke="#5d4037" strokeWidth="4" strokeLinecap="round" fill="none" />
+              <path d="M50,26 Q64,18 64,30 Q50,34 50,26 Z" fill="#4caf50" />
+              {/* Highlight */}
+              <ellipse cx="34" cy="44" rx="4" ry="8" fill="#ffffff" opacity="0.3" transform="rotate(-15 34 44)" />
+            </svg>
+          );
+        case 'mouse':
+          return (
+            <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+              {/* Tail */}
+              <path d="M20,68 Q10,75 5,60" stroke="#b0bec5" strokeWidth="3" strokeLinecap="round" fill="none" />
+              {/* Body */}
+              <ellipse cx="54" cy="58" rx="28" ry="18" fill="#90a4ae" />
+              {/* Ears */}
+              <circle cx="36" cy="40" r="10" fill="#78909c" />
+              <circle cx="36" cy="40" r="6" fill="#ffab91" />
+              <circle cx="58" cy="42" r="10" fill="#78909c" />
+              {/* Eyes */}
+              <circle cx="68" cy="52" r="3" fill="#212121" />
+              {/* Pink Nose */}
+              <ellipse cx="83" cy="58" rx="4" ry="4" fill="#ff8a80" />
+            </svg>
+          );
+        case 'sun':
+          return (
+            <svg className="w-24 h-24 mx-auto animate-spin-slow" viewBox="0 0 100 100">
+              {/* Sun Rays */}
+              <g stroke="#ffb300" strokeWidth="5" strokeLinecap="round">
+                <line x1="50" y1="10" x2="50" y2="20" />
+                <line x1="50" y1="80" x2="50" y2="90" />
+                <line x1="10" y1="50" x2="20" y2="50" />
+                <line x1="80" y1="50" x2="90" y2="50" />
+                <line x1="22" y1="22" x2="30" y2="30" />
+                <line x1="70" y1="70" x2="78" y2="78" />
+                <line x1="78" y1="22" x2="70" y2="30" />
+                <line x1="30" y1="70" x2="22" y2="78" />
+              </g>
+              <circle cx="50" cy="50" r="22" fill="#ffca28" />
+              {/* Rosy Cheeks */}
+              <circle cx="41" cy="52" r="2" fill="#e53935" opacity="0.4" />
+              <circle cx="59" cy="52" r="2" fill="#e53935" opacity="0.4" />
+              {/* Eye smiles */}
+              <path d="M40,46 Q43,44 45,46" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+              <path d="M55,46 Q57,44 60,46" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+              {/* Friendly mouth */}
+              <path d="M46,54 Q50,58 54,54" stroke="#5d4037" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+            </svg>
+          );
+        case 'fir':
+          return (
+            <svg className="w-24 h-24 mx-auto" viewBox="0 0 100 100">
+              {/* Trunk */}
+              <rect x="46" y="66" width="8" height="18" rx="2" fill="#5d4037" />
+              {/* Pine Layers */}
+              <polygon points="50,15 25,48 75,48" fill="#2e7d32" />
+              <polygon points="50,30 20,60 80,60" fill="#388e3c" />
+              <polygon points="50,45 15,72 85,72" fill="#4caf50" />
+            </svg>
+          );
+      }
+    }
+
+    const emoji = getEmojiForWord(exercise.word);
+    if (emoji) {
+      return (
+        <div className="w-24 h-24 mx-auto flex items-center justify-center text-7xl filter drop-shadow-sm">
+          {emoji}
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-4xl shadow-inner">
+        🔍
+      </div>
+    );
+  };
 
  return (
  <div className={`bg-white rounded-3xl p-6 shadow-high-tactile border border-slate-100 max-w-xl mx-auto ${shakeTrigger ? 'animate-shake' : ''}`}>

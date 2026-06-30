@@ -12,6 +12,8 @@ export const wordToEmoji: Record<string, string> = {
   "Mond": "🌙",
   "Baum": "🌳",
   "Haus": "🏠",
+  "Oma": "👵",
+  "Tür": "🚪",
   "Käse": "🧀",
   "Loch": "🕳️",
   "Kreis": "⭕",
