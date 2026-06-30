@@ -57,7 +57,8 @@ export function useSpeech() {
   const playAudio = useCallback((filename: string, onEnd?: () => void) => {
     cancel(); // stop current
     
-    const audio = new Audio(`/audio/tts/${filename}`);
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const audio = new Audio(`${baseUrl}audio/tts/${filename}`);
     audioRef.current = audio;
     
     audio.onplaying = () => setSpeaking(true);
