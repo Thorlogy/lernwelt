@@ -62,6 +62,15 @@ async function downloadTTS(text: string, filename: string) {
 async function run() {
   const uniqueTexts = new Set<string>();
 
+  const UI_STRINGS = [
+    "Wie heißt du?",
+    "Dein geheimer Bilder-Code:",
+    "Anmelden",
+    "Gib deinen Namen ein und wähle deinen 3-Bilder-Code!"
+  ];
+  
+  UI_STRINGS.forEach(str => uniqueTexts.add(str));
+
   // Extract all text
   for (const station of STATIONEN) {
     for (const ex of station.exercises) {

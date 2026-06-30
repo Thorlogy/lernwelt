@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Play, Sparkles, AlertCircle, X } from 'lucide-react';
+import { Play, Sparkles, AlertCircle, X, Volume2 } from 'lucide-react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
+import { useSpeech } from '../lib/useSpeech';
 
 const EMOJIS = ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
 
@@ -16,6 +17,8 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
   const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const { speak } = useSpeech();
 
   const handleEmojiClick = (emoji: string) => {
     playPop();
@@ -97,14 +100,28 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
         <X size={28} />
       </button>
 
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-black text-[#00639a] mb-2 font-sans tracking-tight">Anmelden</h2>
-        <p className="text-slate-500 font-bold">Gib deinen Namen ein und wähle deinen 3-Bilder-Code!</p>
+      <div className="text-center mb-8 relative">
+        <button 
+          onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}
+          className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full mb-4 bg-sky-100 hover:bg-sky-200 text-[#00639a] p-3 rounded-full transition-transform hover:scale-110 shadow-sm"
+          title="Vorlesen lassen"
+        >
+          <Volume2 size={24} />
+        </button>
+        <h2 className="text-3xl font-black text-[#00639a] mb-2 font-sans tracking-tight mt-6">Anmelden</h2>
+        <p className="text-slate-500 font-bold cursor-pointer hover:text-slate-700" onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}>
+          Gib deinen Namen ein und wähle deinen 3-Bilder-Code!
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-[#00639a] font-bold mb-2 text-lg">Wie heißt du?</label>
+          <div className="flex items-center gap-2 mb-2">
+            <button type="button" onClick={() => speak("Wie heißt du?")} className="text-[#00639a] hover:scale-110 transition-transform">
+              <Volume2 size={20} />
+            </button>
+            <label className="block text-[#00639a] font-bold text-lg">Wie heißt du?</label>
+          </div>
           <input
             type="text"
             value={name}
@@ -117,7 +134,12 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
         </div>
 
         <div>
-          <label className="block text-[#00639a] font-bold mb-3 text-lg">Dein geheimer Bilder-Code:</label>
+          <div className="flex items-center gap-2 mb-3">
+            <button type="button" onClick={() => speak("Dein geheimer Bilder-Code:")} className="text-[#00639a] hover:scale-110 transition-transform">
+              <Volume2 size={20} />
+            </button>
+            <label className="block text-[#00639a] font-bold text-lg">Dein geheimer Bilder-Code:</label>
+          </div>
           
           {/* Selected Emojis Display */}
           <div className="flex justify-center gap-4 mb-4">
