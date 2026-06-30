@@ -3,7 +3,8 @@ import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { SpeakButton } from './SpeakButton';
 import { useSpeech } from '../lib/useSpeech';
-import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
+import { Star, HelpCircle, ArrowRight, CheckCircle, Award, Volume2 } from 'lucide-react';
+import { getEmojiForWord } from '../utils/emojis';
 
 /**
  * @file StationSingularPlural.tsx
@@ -129,14 +130,27 @@ export default function StationGenericQuiz({
  }
 
  return (
- <button
- key={idx}
- disabled={hasChecked}
- onClick={() => handleOptionSelect(option)}
- className={`min-h-[80px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans ${btnClass}`}
- >
- {option}
- </button>
+    <button
+      key={idx}
+      disabled={hasChecked}
+      onClick={() => handleOptionSelect(option)}
+      className={`relative min-h-[100px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans flex flex-col items-center justify-center gap-2 ${btnClass}`}
+    >
+      <div 
+        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/5 hover:bg-black/10 text-slate-500 transition-colors"
+        onClick={(e) => {
+          e.stopPropagation();
+          speak(option);
+        }}
+        title="Vorlesen"
+      >
+        <Volume2 className="w-4 h-4" />
+      </div>
+      {getEmojiForWord(option) && (
+        <span className="text-4xl filter drop-shadow-sm">{getEmojiForWord(option)}</span>
+      )}
+      <span>{option}</span>
+    </button>
  );
  })}
  </div>
