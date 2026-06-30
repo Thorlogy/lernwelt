@@ -101,7 +101,7 @@ export default function StationGenericQuiz({
  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 font-sans ">
  {exercise.question}
  </h2>
- <SpeakButton text={exercise.question} autoSpeak size={24} />
+ <SpeakButton text={exercise.question} size={24} />
  </div>
  </div>
 

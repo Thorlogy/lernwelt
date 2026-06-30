@@ -136,7 +136,7 @@ export default function StationSyllables({
  {EMOJI_MAP[exercise.imagePlaceholder] || '❓'}
  </span>
  <span className="hidden sm:inline font-sans text-base font-black text-cyan-700">{exercise.word}</span>
- <SpeakButton text={exercise.word} syllables={exercise.correctAnswer as string[]} label="Wort in Silben vorlesen" size={20} autoSpeak />
+ <SpeakButton text={exercise.word} syllables={exercise.correctAnswer as string[]} label="Wort in Silben vorlesen" size={20} />
  </div>
 
  {/* Floating lilypads or river stones container */}
