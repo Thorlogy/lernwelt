@@ -18,7 +18,8 @@ import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
 import { db } from './utils/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import LoginScreen from './components/LoginScreen';
 import { useSpeech } from './lib/useSpeech';
 
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
@@ -70,17 +71,26 @@ export default function App() {
  }
  }, []);
 
- // Sync progress to localStorage
- const saveProgress = (newProgress: UserProgress) => {
- setProgress(newProgress);
- localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newProgress));
+ // Sync progress to localStorage and Firebase
+ const saveProgress = async (newProgress: UserProgress) => {
+   setProgress(newProgress);
+   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newProgress));
+   
+   if (newProgress.anonymousId && newProgress.anonymousId.length > 20) {
+     // It's a Firebase UID, save it to Firestore
+     try {
+       await setDoc(doc(db, 'users', newProgress.anonymousId), newProgress);
+     } catch (err) {
+       console.error("Failed to sync progress to cloud:", err);
+     }
+   }
  };
 
  // Dynamic Mascot guidance text controller
  useEffect(() => {
- if (isNewUser) {
- setMascotText("Hallo! Ich bin Lumi, dein kleiner Drache! Trage links deinen Namen ein und wähle dein Lieblings-Wappentier aus, um unser Abenteuer zu beginnen!");
- setMascotExpression('idle');
+   if (isNewUser) {
+     setMascotText("Hallo! Ich bin Lumi, dein kleiner Drache! Trage deinen Namen ein und wähle deinen geheimen 3-Bilder-Code, um zu starten!");
+     setMascotExpression('idle');
  } else if (showCertificate) {
  setMascotText(`Phänomenal, ${progress.childName}! Du hast alle Stationen geschafft und bist ein echter Lernkönig! Hier ist deine glänzende Urkunde.`);
  setMascotExpression('cheering');
@@ -103,23 +113,32 @@ export default function App() {
  }
  }, [activeStationId, currentExerciseIndex, isNewUser, showCertificate, progress.childName, progress.completedStations]);
 
- // Handle new profile registration
- const handleStartAdventure = () => {
- if (!tempName.trim()) return;
- playPop();
- unlock(); // Unlock TTS on iOS/Safari
- 
- const chosenAvatar = CHARACTER_AVATARS.find(a => a.id === selectedAvatarId) || CHARACTER_AVATARS[0];
- const newProgress: UserProgress = {
- ...INITIAL_PROGRESS,
- anonymousId: 'user-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
- childName: tempName.trim(),
- avatarId: chosenAvatar.id,
- avatarColor: chosenAvatar.color,
- };
-
- saveProgress(newProgress);
- setIsNewUser(false);
+ // Handle new profile registration or login
+ const handleLoginSuccess = async (uid: string, name: string) => {
+   unlock(); // Unlock TTS on iOS/Safari
+   
+   try {
+     const userDoc = await getDoc(doc(db, 'users', uid));
+     if (userDoc.exists()) {
+       const cloudProgress = userDoc.data() as UserProgress;
+       saveProgress(cloudProgress);
+     } else {
+       // New user
+       const chosenAvatar = CHARACTER_AVATARS[Math.floor(Math.random() * CHARACTER_AVATARS.length)];
+       const newProgress: UserProgress = {
+         ...INITIAL_PROGRESS,
+         anonymousId: uid, // Use Firebase UID
+         childName: name,
+         avatarId: chosenAvatar.id,
+         avatarColor: chosenAvatar.color,
+       };
+       await saveProgress(newProgress);
+     }
+   } catch (err) {
+     console.error("Error loading user profile:", err);
+   }
+   
+   setIsNewUser(false);
  };
 
  // Reset overall children data
@@ -320,98 +339,20 @@ export default function App() {
  </header>
 
  {/* Main Container Workspace */}
- <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-6">
+ <main className="max-w-4xl mx-auto p-4 py-6 sm:py-8 min-h-[calc(100vh-80px)]">
  
  {/* WELCOME INSTRUCTION MASCOT */}
  <Mascot expression={mascotExpression} text={mascotText} />
 
- {/* 1. NEW USER REGISTRATION SCREEN */}
- {isNewUser ? (
- <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-high-tactile border border-slate-100 max-w-xl mx-auto space-y-8">
- <div className="text-center">
- <span className="bg-[#fdd758] text-[#725c00] text-base font-bold px-3 py-1 rounded-full block w-max mx-auto mb-2">
- Willkommen
- </span>
- <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans">
- Tritt ein in die Lernwelt!
- </h2>
- <p className="text-base sm:text-lg text-slate-500 font-body mt-1">
- Lerne spielerisch Lesen, Silbenschreiben und Grammatik für die Grundschule.
- </p>
- </div>
-
- {/* Input fields */}
- <div className="space-y-4 max-w-sm mx-auto">
- <div className="space-y-1.5">
- <label className="text-base font-extrabold text-[#404750] font-sans block">
- 👦👧 Wie heißt du?
- </label>
- <input
- type="text"
- maxLength={18}
- placeholder="Dein Vorname..."
- value={tempName}
- onChange={(e) => setTempName(e.target.value)}
- className="w-full bg-[#fcfdfe] px-4 py-3 rounded-xl border-2 border-slate-200 focus:outline-none focus:border-[#00639a] text-center text-lg font-bold font-body placeholder:text-slate-300 text-[#191c1e]"
- />
- </div>
-
- {/* Character Avatar Picker */}
- <div className="space-y-3.5">
- <label className="text-base font-extrabold text-[#404750] font-sans block text-center sm:text-left">
- 🦄 Wähle dein schlaues Wappentier:
- </label>
- 
- <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
- {CHARACTER_AVATARS.map((avatar) => {
- const isSelected = selectedAvatarId === avatar.id;
- return (
- <button
- key={avatar.id}
- type="button"
- onClick={() => { playPop(); setSelectedAvatarId(avatar.id); }}
- className={`p-3 rounded-2xl border-2 text-2xl flex flex-col items-center justify-center transition-all cursor-pointer ${
- isSelected 
- ? 'bg-amber-100 border-amber-400 scale-105 ring-4 ring-amber-100' 
- : 'bg-white border-slate-200/80 hover:bg-slate-50'
- }`}
- >
- <span className="filter drop-shadow-sm select-none">{avatar.emoji}</span>
- <span className="text-sm font-bold text-slate-400 whitespace-nowrap overflow-ellipsis overflow-hidden w-full text-center mt-1">
- {avatar.name.split(' (')[0]}
- </span>
- </button>
- );
- })}
- </div>
- </div>
- </div>
-
- {/* Save trigger buttons */}
- <div className="text-center pt-2">
- <button
- disabled={!tempName.trim()}
- onClick={handleStartAdventure}
- className={`w-full max-w-xs py-3 rounded-xl text-base font-black shadow-md cursor-pointer ${
- tempName.trim()
- ? 'btn-tactile-primary text-white hover:brightness-105'
- : 'bg-slate-200 text-slate-400 border-b-4 border-slate-300 cursor-not-allowed'
- }`}
- >
- Abenteuer starten! 🧭
- </button>
-
- {!isNewUser && (
- <button
- onClick={() => setIsNewUser(false)}
- className="block mx-auto text-base font-semibold text-slate-400 hover:text-slate-600 mt-4 underline cursor-pointer"
- >
- Zurück zum Spiel
- </button>
- )}
- </div>
- </div>
- ) : showResearch ? (
+        {isNewUser ? (
+          /* 1. LOGIN / REGISTRATION SCREEN */
+          <div className="flex flex-col items-center justify-center pt-8">
+            <LoginScreen 
+              onLoginSuccess={handleLoginSuccess} 
+              onCancel={() => setIsNewUser(false)}
+            />
+          </div>
+        ) : showResearch ? (
  /* 2b. RESEARCH DASHBOARD ROUTE */
  <div className="space-y-6">
  <ResearchDashboard
