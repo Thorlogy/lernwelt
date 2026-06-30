@@ -3,6 +3,7 @@ import { SpellingExercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
 import { SpeakButton } from './SpeakButton';
+import { useSpeech } from '../lib/useSpeech';
 
 interface StationLetterSpellingProps {
  exercise: SpellingExercise;
@@ -27,6 +28,8 @@ export default function StationLetterSpelling({
  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
  const [shakeTrigger, setShakeTrigger] = useState(false);
  const [showHint, setShowHint] = useState(false);
+
+ const { speak } = useSpeech();
 
  // Initialize and scramble letters
  useEffect(() => {
@@ -202,12 +205,16 @@ export default function StationLetterSpelling({
  <div className="text-center mb-4">
  <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
  <span>{exercise.question}</span>
- <SpeakButton text={exercise.word} size={24} label="Gesuchtes Wort vorlesen" />
+ <SpeakButton text={exercise.question} size={24} label="Aufgabe vorlesen" />
  </h3>
  </div>
 
  {/* Picture Frame */}
- <div className="bg-gradient-to-b from-sky-50 to-white/60 p-4 rounded-2xl border-2 border-sky-100 shadow-inner mb-6 relative">
+ <div 
+ onClick={() => speak(exercise.word)}
+ className="bg-gradient-to-b from-sky-50 to-white/60 p-4 rounded-2xl border-2 border-sky-100 shadow-inner mb-6 relative cursor-pointer hover:border-sky-300 transition-colors"
+ title="Gesuchtes Wort vorlesen"
+ >
  {renderItemIllustration()}
  
  {/* Floating Stars reward count preview */}

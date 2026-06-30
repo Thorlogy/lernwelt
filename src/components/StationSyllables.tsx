@@ -3,6 +3,7 @@ import { SyllableExercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
 import { SpeakButton } from './SpeakButton';
+import { useSpeech } from '../lib/useSpeech';
 
 interface StationSyllablesProps {
  exercise: SyllableExercise;
@@ -35,6 +36,8 @@ export default function StationSyllables({
  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
  const [shakeTrigger, setShakeTrigger] = useState(false);
  const [showHint, setShowHint] = useState(false);
+
+ const { speakSyllables } = useSpeech();
 
  // Load choices and shuffle
  useEffect(() => {
@@ -115,6 +118,7 @@ export default function StationSyllables({
  <div className="text-center mb-4">
  <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
  <span>{exercise.question}</span>
+ <SpeakButton text={exercise.question} size={24} label="Aufgabe vorlesen" />
  </h3>
  <p className="text-base text-[#725c00] font-sans font-bold mt-1">
  🗣️ Klatsche den Rhythmus mit!
@@ -131,12 +135,15 @@ export default function StationSyllables({
  </div>
 
  {/* Floating object emoji illustration */}
- <div className="absolute top-3 left-4 bg-white/90 backdrop-blur-xs border border-cyan-200/50 rounded-2xl px-3 py-1.5 flex items-center gap-2 shadow-xs text-lg font-extrabold text-cyan-900 select-none animate-wiggle-soft">
+ <div 
+ onClick={() => speakSyllables(exercise.correctAnswer as string[])}
+ className="absolute top-3 left-4 bg-white/90 backdrop-blur-xs border border-cyan-200/50 rounded-2xl px-3 py-1.5 flex items-center gap-2 shadow-xs text-lg font-extrabold text-cyan-900 select-none animate-wiggle-soft cursor-pointer hover:bg-white transition-colors"
+ title="Wort vorlesen"
+ >
  <span className="text-2xl filter drop-shadow-sm leading-none">
  {EMOJI_MAP[exercise.imagePlaceholder] || '❓'}
  </span>
  <span className="hidden sm:inline font-sans text-base font-black text-cyan-700">{exercise.word}</span>
- <SpeakButton text={exercise.word} syllables={exercise.correctAnswer as string[]} label="Wort in Silben vorlesen" size={20} />
  </div>
 
  {/* Floating lilypads or river stones container */}

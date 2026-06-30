@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { SpeakButton } from './SpeakButton';
+import { useSpeech } from '../lib/useSpeech';
 import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
 
 /**
@@ -42,6 +43,7 @@ export default function StationGenericQuiz({
  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
  const [shakeTrigger, setShakeTrigger] = useState(false);
  const [showHint, setShowHint] = useState(false);
+ const { speak } = useSpeech();
 
  useEffect(() => {
  setSelectedOption(null);
@@ -55,6 +57,7 @@ export default function StationGenericQuiz({
  if (hasChecked) return;
  playPop();
  setSelectedOption(option);
+ speak(option);
  };
 
  const handleCheck = () => {
@@ -130,10 +133,9 @@ export default function StationGenericQuiz({
  key={idx}
  disabled={hasChecked}
  onClick={() => handleOptionSelect(option)}
- className={`min-h-[80px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans flex items-center justify-center gap-3 ${btnClass}`}
+ className={`min-h-[80px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans ${btnClass}`}
  >
- <span>{option}</span>
- <SpeakButton text={option} size={22} className="shrink-0 opacity-80 hover:opacity-100 bg-white/40 border-none shadow-none text-current" />
+ {option}
  </button>
  );
  })}
