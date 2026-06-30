@@ -351,7 +351,7 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
  ? 'text-slate-400' 
  : 'text-[#00639a]'
  }`}>
- Klasse {station.grade}
+ Klasse {station.grade} • {station.difficulty === 'leicht' ? '🟢 Leicht' : station.difficulty === 'mittel' ? '🟡 Mittel' : '🔴 Schwer'}
  </span>
  {isCompleted && (
  <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
@@ -413,7 +413,7 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
  <div className="mt-12 text-center p-4 bg-yellow-50 rounded-2xl border-2 border-dashed border-yellow-300">
  <span className="text-3xl">🏆</span>
  <h4 className="text-lg font-bold text-yellow-800 font-sans mt-1">Lernkönig Urkunde</h4>
- <p className="text-base text-slate-500 font-body">Schließe alle 6 Deutsch-Stationen oder alle 4 Mathe-Stationen ab, um deine goldene Urkunde freizuschalten!</p>
+ <p className="text-base text-slate-500 font-body">Schließe alle 12 Deutsch-Stationen oder alle 12 Mathe-Stationen ab, um deine goldene Urkunde freizuschalten!</p>
  </div>
 
  {/* A/B Test Dashboard shortcut */}

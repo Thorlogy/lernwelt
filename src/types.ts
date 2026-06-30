@@ -44,6 +44,7 @@ export interface Station {
   title: string;
   subtitle: string;
   grade: number; // Klasse 1-4
+  difficulty: 'leicht' | 'mittel' | 'schwer';
   description: string;
   icon: string; // Lucide icon identifier
   color: 'primary' | 'secondary' | 'tertiary' | 'orange';
