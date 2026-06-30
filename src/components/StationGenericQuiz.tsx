@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
+import { SpeakButton } from './SpeakButton';
 import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
 
 /**
@@ -92,13 +93,16 @@ export default function StationGenericQuiz({
  </div>
 
  {/* Promoted question */}
- <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-sm text-center mb-8 relative">
- <span className="text-base font-bold text-cyan-700 block mb-2 font-sans">
+ <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-sm text-center mb-8 relative flex flex-col items-center gap-3">
+ <span className="text-base font-bold text-cyan-700 block font-sans">
  Finde die richtige Antwort
  </span>
+ <div className="flex items-center gap-3">
  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 font-sans ">
  {exercise.question}
  </h2>
+ <SpeakButton text={exercise.question} autoSpeak size={24} />
+ </div>
  </div>
 
  {/* Options grid */}
@@ -126,9 +130,10 @@ export default function StationGenericQuiz({
  key={idx}
  disabled={hasChecked}
  onClick={() => handleOptionSelect(option)}
- className={`min-h-[80px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans ${btnClass}`}
+ className={`min-h-[80px] py-4 px-6 rounded-2xl border-4 font-bold text-xl sm:text-2xl transition-all cursor-pointer text-center font-sans flex items-center justify-center gap-3 ${btnClass}`}
  >
- {option}
+ <span>{option}</span>
+ <SpeakButton text={option} size={22} className="shrink-0 opacity-80 hover:opacity-100 bg-white/40 border-none shadow-none text-current" />
  </button>
  );
  })}

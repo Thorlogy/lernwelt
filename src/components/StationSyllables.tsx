@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SyllableExercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 interface StationSyllablesProps {
  exercise: SyllableExercise;
@@ -134,7 +135,8 @@ export default function StationSyllables({
  <span className="text-2xl filter drop-shadow-sm leading-none">
  {EMOJI_MAP[exercise.imagePlaceholder] || '❓'}
  </span>
- <span className="hidden sm:inline font-sans text-base font-black text-cyan-700">Gesucht</span>
+ <span className="hidden sm:inline font-sans text-base font-black text-cyan-700">{exercise.word}</span>
+ <SpeakButton text={exercise.word} syllables={exercise.correctAnswer as string[]} label="Wort in Silben vorlesen" size={20} autoSpeak />
  </div>
 
  {/* Floating lilypads or river stones container */}

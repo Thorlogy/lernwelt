@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SpellingExercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 interface StationLetterSpellingProps {
  exercise: SpellingExercise;
@@ -201,6 +202,7 @@ export default function StationLetterSpelling({
  <div className="text-center mb-4">
  <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
  <span>{exercise.question}</span>
+ <SpeakButton text={exercise.word} autoSpeak size={24} label="Gesuchtes Wort vorlesen" />
  </h3>
  </div>
 

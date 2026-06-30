@@ -19,6 +19,7 @@ import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
 import { db } from './utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { useSpeech } from './lib/useSpeech';
 
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
 
@@ -50,6 +51,8 @@ export default function App() {
  const [selectedAvatarId, setSelectedAvatarId] = useState('dragon');
  const [showCompletionCelebration, setShowCompletionCelebration] = useState(false);
  const [showResearch, setShowResearch] = useState(false);
+
+ const { unlock } = useSpeech();
 
  // Load progress from localStorage on boot
  useEffect(() => {
@@ -104,6 +107,7 @@ export default function App() {
  const handleStartAdventure = () => {
  if (!tempName.trim()) return;
  playPop();
+ unlock(); // Unlock TTS on iOS/Safari
  
  const chosenAvatar = CHARACTER_AVATARS.find(a => a.id === selectedAvatarId) || CHARACTER_AVATARS[0];
  const newProgress: UserProgress = {
