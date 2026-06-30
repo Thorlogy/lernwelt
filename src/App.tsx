@@ -112,6 +112,7 @@ export default function App() {
  const chosenAvatar = CHARACTER_AVATARS.find(a => a.id === selectedAvatarId) || CHARACTER_AVATARS[0];
  const newProgress: UserProgress = {
  ...INITIAL_PROGRESS,
+ anonymousId: 'user-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
  childName: tempName.trim(),
  avatarId: chosenAvatar.id,
  avatarColor: chosenAvatar.color,
@@ -134,7 +135,7 @@ export default function App() {
  };
 
  // Performance A/B metrics save handler
- const handleSaveMetrics = (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean, photoProof?: string) => {
+ const handleSaveMetrics = (method: 'A' | 'B', timeSeconds: number, attemptsCount: number, isFirstTryCorrect: boolean) => {
  const currentMetrics = progress.experimentMetrics || {
  methodA: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
  methodB: { correctFirstTry: 0, totalAttempts: 0, totalTimeSeconds: 0, questionsAnswered: 0 },
@@ -162,14 +163,13 @@ export default function App() {
  // Asynchronously write to Cloud Firestore database
  try {
  addDoc(collection(db, 'metrics'), {
- childName: progress.childName || 'Anonym',
+ anonymousId: progress.anonymousId || 'Anonym',
  method,
  timeSeconds,
  attempts: attemptsCount,
  isFirstTryCorrect,
  stationId: activeStationId || 0,
  timestamp: new Date().toISOString(),
- ...(photoProof ? { photoProof } : {}),
  });
  } catch (err) {
  console.warn("Failed to upload metric to Firestore:", err);

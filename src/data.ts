@@ -1,4 +1,9 @@
-import { Station } from './types';
+import { Station, UserProgress } from './types';
+
+export const INITIAL_PROGRESS: UserProgress = {
+  anonymousId: '',
+  childName: '',
+};
 
 export const STATIONEN: Station[] = [
   {

@@ -51,6 +51,7 @@ export interface Station {
 }
 
 export interface UserProgress {
+  anonymousId: string;
   childName: string;
   avatarId: string; // e.g. "unicorn", "dragon", "rocket", "star"
   avatarColor: string;
