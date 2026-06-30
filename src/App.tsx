@@ -389,41 +389,41 @@ export default function App() {
  />
 
  {/* Quicklink Ribbons Container */}
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
- {/* Certificate Quicklink Ribbon */}
- <div className="bg-white p-5 rounded-2xl border-2 border-dashed border-amber-300 shadow-soft-tactile flex items-center justify-between gap-4">
- <div className="flex items-center gap-3">
- <div className="text-3xl">📜</div>
- <div className="min-w-0">
- <h4 className="font-sans font-extrabold text-lg text-slate-800 truncate">Lernkönig Urkunde</h4>
- <p className="text-base text-slate-500 font-body">Schalte deine Urkunde frei!</p>
- </div>
- </div>
- <button
- onClick={() => { playPop(); setShowCertificate(true); }}
- className="btn-tactile-secondary text-base font-extrabold text-[#735d00] px-4 py-2 rounded-xl cursor-pointer shrink-0"
- >
- Ansehen ⭐
- </button>
- </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mt-4 px-2">
+    {/* Certificate Quicklink Ribbon */}
+    <div className="bg-white p-4 rounded-2xl border-2 border-dashed border-amber-300 shadow-soft-tactile flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="text-3xl">📜</div>
+        <div className="min-w-0">
+          <h4 className="font-sans font-extrabold text-lg text-slate-800">Lernkönig Urkunde</h4>
+          <p className="text-sm sm:text-base text-slate-500 font-body">Schalte deine Urkunde frei!</p>
+        </div>
+      </div>
+      <button
+        onClick={() => { playPop(); setShowCertificate(true); }}
+        className="btn-tactile-secondary text-sm sm:text-base font-extrabold text-[#735d00] px-4 py-2 rounded-xl cursor-pointer shrink-0 w-full sm:w-auto"
+      >
+        Ansehen ⭐
+      </button>
+    </div>
 
- {/* Research Dashboard Quicklink Ribbon */}
- <div className="bg-white p-5 rounded-2xl border-2 border-dashed border-cyan-300 shadow-soft-tactile flex items-center justify-between gap-4">
- <div className="flex items-center gap-3">
- <div className="text-3xl">📊</div>
- <div className="min-w-0">
- <h4 className="font-sans font-extrabold text-lg text-slate-800 truncate">Forschungs-Daten</h4>
- <p className="text-base text-slate-500 font-body">A/B Didaktik auswerten</p>
- </div>
- </div>
- <button
- onClick={() => { playPop(); setShowResearch(true); }}
- className="btn-tactile-secondary text-base font-extrabold text-cyan-900 bg-cyan-50 border-cyan-300 hover:bg-cyan-100 px-4 py-2 rounded-xl cursor-pointer shrink-0"
- >
- Ansehen 📊
- </button>
- </div>
- </div>
+    {/* Research Dashboard Quicklink Ribbon */}
+    <div className="bg-white p-4 rounded-2xl border-2 border-dashed border-cyan-300 shadow-soft-tactile flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="text-3xl">📊</div>
+        <div className="min-w-0">
+          <h4 className="font-sans font-extrabold text-lg text-slate-800">Forschungs-Daten</h4>
+          <p className="text-sm sm:text-base text-slate-500 font-body">A/B Didaktik auswerten</p>
+        </div>
+      </div>
+      <button
+        onClick={() => { playPop(); setShowResearch(true); }}
+        className="btn-tactile-secondary text-sm sm:text-base font-extrabold text-cyan-900 bg-cyan-50 border-cyan-300 hover:bg-cyan-100 px-4 py-2 rounded-xl cursor-pointer shrink-0 w-full sm:w-auto"
+      >
+        Ansehen 📊
+      </button>
+    </div>
+  </div>
  </div>
  ) : (
  /* 4. ACTIVE EXERCISE GAME ZONE */
