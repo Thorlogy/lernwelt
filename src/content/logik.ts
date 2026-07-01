@@ -14,14 +14,22 @@ export const LOGIK: Station[] = [
     exercises: [
       {
         id: "801_1",
-        question: "Lumi (🦖) möchte zum Stern (🌟). Er steht direkt darunter:\n\n[🌳]  [🌟]  [🌳]\n[🌳]  [🦖]  [🌳]\n\nWelchen Befehl muss Lumi ausführen?",
+        question: "Lumi (🦖) möchte zum Stern (🌟). Welchen Befehl muss Lumi ausführen?",
+        grid2D: [
+          ["🌳", "🌟", "🌳"],
+          ["🌳", "🦖", "🌳"]
+        ],
         options: ["Gehe 1 Schritt nach oben", "Gehe 1 Schritt nach rechts", "Gehe 1 Schritt nach unten"],
         correctAnswer: "Gehe 1 Schritt nach oben",
         hint: "Schau dir an, wo der Stern im Vergleich zu Lumi liegt!"
       },
       {
         id: "801_2",
-        question: "Lumi startet bei [🦖]. Er läuft erst nach links (⬅️) und dann nach oben (⬆️). Wo kommt er an?\n\n[💎]  [🌳]\n[🌻]  [🦖]",
+        question: "Lumi (🦖) läuft erst nach links (⬅️) und dann nach oben (⬆️). Wo kommt er an?",
+        grid2D: [
+          ["💎", "🌳"],
+          ["🌻", "🦖"]
+        ],
         options: ["Beim Diamant 💎", "Bei der Sonnenblume 🌻", "Beim Baum 🌳"],
         correctAnswer: "Beim Diamant 💎",
         hint: "Gehe gedanklich erst einen Schritt nach links zur Blume, und von dort einen Schritt nach oben."

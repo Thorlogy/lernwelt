@@ -13,6 +13,7 @@ export interface Exercise {
   mathFractionSegments?: number; // visual segments for fractions (denominator)
   mathFractionColored?: number; // colored segments for fractions (numerator)
   isAnalog?: boolean; // flag for offline tasks (Medienbruch)
+  grid2D?: string[][]; // e.g. [["🌳", "🌟", "🌳"], ["🌳", "🦖", "🌳"]]
 }
 
 export type WordType = 'NOMEN' | 'VERB' | 'ADJEKTIV';

@@ -98,15 +98,33 @@ export default function StationGenericQuiz({
 
  {/* Promoted question */}
  <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-sm text-center mb-8 relative flex flex-col items-center gap-3">
- <span className="text-base font-bold text-cyan-700 block font-sans">
- Finde die richtige Antwort
- </span>
- <div className="flex items-center gap-3">
- <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 font-sans ">
- {exercise.question}
- </h2>
- <SpeakButton text={exercise.question} size={24} />
- </div>
+   <span className="text-base font-bold text-cyan-700 block font-sans">
+     Finde die richtige Antwort
+   </span>
+   <div className="flex items-center justify-center gap-3">
+     <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 font-sans leading-snug">
+       {exercise.question}
+     </h2>
+     <SpeakButton text={exercise.question} size={24} />
+   </div>
+
+   {/* Render 2D Grid if available */}
+   {exercise.grid2D && (
+     <div className="mt-4 bg-white/70 backdrop-blur-xs p-3 rounded-2xl border border-slate-200/50 shadow-inner flex flex-col gap-1.5 w-fit mx-auto">
+       {exercise.grid2D.map((row, rIdx) => (
+         <div key={rIdx} className="flex justify-center gap-1.5">
+           {row.map((cell, cIdx) => (
+             <div 
+               key={cIdx} 
+               className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl border border-slate-200/80 flex items-center justify-center text-2xl sm:text-3xl shadow-sm transition-all hover:scale-105"
+             >
+               {cell}
+             </div>
+           ))}
+         </div>
+       ))}
+     </div>
+   )}
  </div>
 
  {/* Options grid */}
