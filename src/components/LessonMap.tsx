@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -22,8 +22,16 @@ const ICON_MAP: Record<string, any> = {
  Coins: Coins,
 };
 
-export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch }: LessonMapProps) {
- const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
+ export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch }: LessonMapProps) {
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
+  const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
+
+  const toggleGrade = (grade: number) => {
+    playPop();
+    setExpandedGrades(prev => 
+      prev.includes(grade) ? prev.filter(g => g !== grade) : [...prev, grade]
+    );
+  };
 
  const handlePrintWorksheet = (stationId: number) => {
  const station = STATIONEN.find(s => s.id === stationId);
@@ -266,147 +274,185 @@ export default function LessonMap({ progress, onSelectStation, activeStationId, 
  </button>
  </div>
 
- {/* SVG S-Curve Connection Path Line running behind the stations */}
- <div className="absolute inset-x-0 top-[110px] bottom-[80px] pointer-events-none z-0">
- <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
- <path
- d="M 50 5 Q 75 15, 75 30 T 25 60 T 75 90 L 50 100"
- fill="none"
- stroke="#a5c4d9"
- strokeWidth="4"
- strokeDasharray="6 6"
- className="stroke-cyan-300"
- />
- </svg>
- </div>
+ {/* Stations Stack Grouped by Grade */}
+ <div className="flex flex-col gap-6 relative z-10">
+   {[1, 2, 3, 4].map((gradeLevel) => {
+     const subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
+     const gradeStations = subjectStations.filter(s => s.grade === gradeLevel);
+     
+     if (gradeStations.length === 0) return null;
 
- {/* Stations Stack */}
- <div className="flex flex-col gap-10 relative z-10">
- {STATIONEN.filter(s => s.subject === activeSubject).map((station, index) => {
- const isCompleted = progress.completedStations.includes(station.id);
- // Unlock condition based on subject-filtered list
- const subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
- const isLocked = index > 0 && !progress.completedStations.includes(subjectStations[index - 1].id);
- const isActive = activeStationId === station.id;
+     const isExpanded = expandedGrades.includes(gradeLevel);
+     // Determine if all stations in this grade are completed
+     const isGradeCompleted = gradeStations.every(s => progress.completedStations.includes(s.id));
+     // Determine if this grade is completely locked (first station in grade is locked)
+     const firstStationInGradeIndex = subjectStations.findIndex(s => s.id === gradeStations[0].id);
+     const isGradeLocked = firstStationInGradeIndex > 0 && !progress.completedStations.includes(subjectStations[firstStationInGradeIndex - 1].id);
 
- const StationIcon = ICON_MAP[station.icon] || HelpCircle;
+     return (
+       <div key={`grade-${gradeLevel}`} className="bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-white shadow-soft-tactile overflow-hidden transition-all duration-300">
+         {/* Accordion Header */}
+         <button 
+           onClick={() => toggleGrade(gradeLevel)}
+           className={`w-full flex items-center justify-between p-4 sm:p-5 transition-colors cursor-pointer ${
+             isGradeCompleted ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900' :
+             isGradeLocked ? 'bg-slate-200/50 text-slate-500 hover:bg-slate-200' :
+             'bg-sky-100 hover:bg-sky-200 text-[#00639a]'
+           }`}
+         >
+           <div className="flex items-center gap-3">
+             <div className="text-2xl sm:text-3xl">
+               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : '🧮'}
+             </div>
+             <div className="text-left">
+               <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">
+                 Klasse {gradeLevel}
+               </h3>
+               <p className={`text-sm sm:text-base font-bold font-body ${isGradeCompleted ? 'text-emerald-700' : isGradeLocked ? 'text-slate-400' : 'text-[#004e76]'}`}>
+                 {gradeStations.length} Stationen
+               </p>
+             </div>
+           </div>
+           
+           <div className="flex items-center gap-2">
+             {isGradeCompleted && (
+               <span className="hidden sm:flex items-center gap-1 text-sm font-bold text-emerald-700 bg-white/50 px-2 py-1 rounded-full">
+                 <CheckCircle className="w-4 h-4" /> Geschafft
+               </span>
+             )}
+             <div className={`p-1.5 rounded-full bg-white/50 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+               <ChevronDown className="w-5 h-5" />
+             </div>
+           </div>
+         </button>
 
- // Alignment layout for S-curve
- const alignClass = 
- index % 2 === 0
- ? 'self-start ml-2 sm:ml-6'
- : 'self-end mr-2 sm:mr-6';
+         {/* Accordion Body */}
+         <div 
+           className={`transition-all duration-300 ease-in-out overflow-hidden relative ${isExpanded ? 'max-h-[3000px] opacity-100 py-10' : 'max-h-0 opacity-0 py-0'}`}
+         >
+           {/* SVG S-Curve for this specific grade section */}
+           <div className="absolute inset-x-0 top-10 bottom-10 pointer-events-none z-0">
+             <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+               <path
+                 d="M 50 0 Q 75 25, 75 50 T 25 75 T 50 100"
+                 fill="none"
+                 stroke="#a5c4d9"
+                 strokeWidth="4"
+                 strokeDasharray="6 6"
+                 className="stroke-cyan-300"
+               />
+             </svg>
+           </div>
 
- const getCardColorTheme = () => {
- if (isCompleted) {
- return 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-emerald-500/10';
- }
- if (isActive) {
- return 'bg-sky-50 border-sky-400 ring-4 ring-sky-200 text-sky-900 animate-wiggle-double';
- }
- if (isLocked) {
- return 'bg-slate-100 border-slate-300 text-slate-500 opacity-80';
- }
- return 'bg-white border-blue-200 text-slate-800 hover:border-blue-400';
- };
+           <div className="flex flex-col gap-10 relative z-10">
+             {gradeStations.map((station, index) => {
+               const absoluteIndex = subjectStations.findIndex(s => s.id === station.id);
+               const isCompleted = progress.completedStations.includes(station.id);
+               const isLocked = absoluteIndex > 0 && !progress.completedStations.includes(subjectStations[absoluteIndex - 1].id);
+               const isActive = activeStationId === station.id;
 
- return (
- <div 
- key={station.id} 
- className={`w-[85%] sm:w-[80%] ${alignClass} transition-transform duration-200`}
- >
- <div
- className={`w-full p-4 rounded-2xl border-2 shadow-soft-tactile transition-all duration-200 ${getCardColorTheme()} relative overflow-hidden flex flex-col gap-3`}
- style={{ transform: isActive ? 'scale(1.02)' : 'none' }}
- >
- {/* Clickable Card Body */}
- <div 
- onClick={() => handleStationClick(station, isLocked)}
- className="flex items-start gap-3.5 cursor-pointer flex-1 min-w-0"
- >
- {/* Visual tactile bottom border offset if not completed nor locked */}
- {!isLocked && !isCompleted && !isActive && (
- <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-200"></div>
- )}
+               const StationIcon = ICON_MAP[station.icon] || HelpCircle;
 
- {/* Left/Right Icon container */}
- <div className={`p-3 rounded-xl flex-shrink-0 ${
- isCompleted 
- ? 'bg-emerald-500 text-white' 
- : isActive 
- ? 'bg-sky-500 text-white animate-pulse'
- : isLocked 
- ? 'bg-slate-300 text-slate-500'
- : 'bg-[#00639a] text-white'
- }`}>
- {isLocked ? <Lock className="w-5 h-5" /> : <StationIcon className="w-5 h-5" />}
- </div>
+               const alignClass = 
+                 index % 2 === 0
+                   ? 'self-start ml-4 sm:ml-8'
+                   : 'self-end mr-4 sm:mr-8';
 
- <div className="flex-1 min-w-0">
- <div className="flex items-center justify-between gap-1">
- <span className={`text-[11px] font-bold ${
- isCompleted 
- ? 'text-emerald-600' 
- : isLocked 
- ? 'text-slate-400' 
- : 'text-[#00639a]'
- }`}>
- Klasse {station.grade} • {station.difficulty === 'leicht' ? '🟢 Leicht' : station.difficulty === 'mittel' ? '🟡 Mittel' : '🔴 Schwer'}
- </span>
- {isCompleted && (
- <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
- <CheckCircle className="w-3.5 h-3.5" /> Fertig!
- </span>
- )}
- {isLocked && (
- <span className="text-base font-bold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded-sm">
- Sperre
- </span>
- )}
- </div>
+               const getCardColorTheme = () => {
+                 if (isCompleted) return 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-emerald-500/10';
+                 if (isActive) return 'bg-sky-50 border-sky-400 ring-4 ring-sky-200 text-sky-900 animate-wiggle-double';
+                 if (isLocked) return 'bg-slate-100 border-slate-300 text-slate-500 opacity-80';
+                 return 'bg-white border-blue-200 text-slate-800 hover:border-blue-400';
+               };
 
- <h3 className="text-base sm:text-lg font-bold truncate leading-tight font-sans mt-0.5">
- {station.title.split(': ')[1] || station.title}
- </h3>
- <p className="text-base text-slate-500 line-clamp-1 font-body mt-0.5">
- {station.subtitle}
- </p>
- </div>
- </div>
+               return (
+                 <div 
+                   key={station.id} 
+                   className={`w-[85%] sm:w-[80%] ${alignClass} transition-transform duration-200`}
+                 >
+                   <div
+                     className={`w-full p-4 rounded-2xl border-2 shadow-soft-tactile transition-all duration-200 ${getCardColorTheme()} relative overflow-hidden flex flex-col gap-3`}
+                     style={{ transform: isActive ? 'scale(1.02)' : 'none' }}
+                   >
+                     <div 
+                       onClick={() => handleStationClick(station, isLocked)}
+                       className="flex items-start gap-3.5 cursor-pointer flex-1 min-w-0"
+                     >
+                       {!isLocked && !isCompleted && !isActive && (
+                         <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-200"></div>
+                       )}
 
- {/* Print button footer if not locked */}
- {!isLocked && (
- <div className="flex justify-end border-t pt-2 border-slate-200/50 mt-1">
- <button
- type="button"
- onClick={(e) => { e.stopPropagation(); playPop(); handlePrintWorksheet(station.id); }}
- className="text-base font-extrabold text-[#00639a] hover:bg-[#00639a]/5 hover:text-[#004e76] px-2.5 py-1.5 rounded-xl border border-dashed border-[#a5c4d9] flex items-center gap-1 transition-all cursor-pointer select-none"
- >
- <span>🖨️ Arbeitsblatt drucken</span>
- </button>
- </div>
- )}
+                       <div className={`p-3 rounded-xl flex-shrink-0 ${
+                         isCompleted ? 'bg-emerald-500 text-white' : 
+                         isActive ? 'bg-sky-500 text-white animate-pulse' : 
+                         isLocked ? 'bg-slate-300 text-slate-500' : 'bg-[#00639a] text-white'
+                       }`}>
+                         {isLocked ? <Lock className="w-5 h-5" /> : <StationIcon className="w-5 h-5" />}
+                       </div>
 
- {/* Tiny Star collection summary on station if done */}
- {isCompleted && (
- <div className="absolute right-2 top-2 flex gap-0.5 text-amber-500">
- <Star className="w-3.5 h-3.5 fill-amber-400" />
- <Star className="w-3.5 h-3.5 fill-amber-400" />
- <Star className="w-3.5 h-3.5 fill-amber-400" />
- </div>
- )}
- 
- {/* Pulse circle indicators for active Station */}
- {isActive && (
- <div className="absolute -top-1 -right-1 flex h-3 w-3">
- <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
- <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
- </div>
- )}
- </div>
- </div>
- );
- })}
+                       <div className="flex-1 min-w-0">
+                         <div className="flex items-center justify-between gap-1">
+                           <span className={`text-[11px] font-bold ${
+                             isCompleted ? 'text-emerald-600' : isLocked ? 'text-slate-400' : 'text-[#00639a]'
+                           }`}>
+                             Station {index + 1} • {station.difficulty === 'leicht' ? '🟢 Leicht' : station.difficulty === 'mittel' ? '🟡 Mittel' : '🔴 Schwer'}
+                           </span>
+                           {isCompleted && (
+                             <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                               <CheckCircle className="w-3.5 h-3.5" /> Fertig!
+                             </span>
+                           )}
+                           {isLocked && (
+                             <span className="text-base font-bold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded-sm">
+                               Sperre
+                             </span>
+                           )}
+                         </div>
+
+                         <h3 className="text-base sm:text-lg font-bold truncate leading-tight font-sans mt-0.5">
+                           {station.title.split(': ')[1] || station.title}
+                         </h3>
+                         <p className="text-base text-slate-500 line-clamp-1 font-body mt-0.5">
+                           {station.subtitle}
+                         </p>
+                       </div>
+                     </div>
+
+                     {!isLocked && (
+                       <div className="flex justify-end border-t pt-2 border-slate-200/50 mt-1">
+                         <button
+                           type="button"
+                           onClick={(e) => { e.stopPropagation(); playPop(); handlePrintWorksheet(station.id); }}
+                           className="text-base font-extrabold text-[#00639a] hover:bg-[#00639a]/5 hover:text-[#004e76] px-2.5 py-1.5 rounded-xl border border-dashed border-[#a5c4d9] flex items-center gap-1 transition-all cursor-pointer select-none"
+                         >
+                           <span>🖨️ Arbeitsblatt drucken</span>
+                         </button>
+                       </div>
+                     )}
+
+                     {isCompleted && (
+                       <div className="absolute right-2 top-2 flex gap-0.5 text-amber-500">
+                         <Star className="w-3.5 h-3.5 fill-amber-400" />
+                         <Star className="w-3.5 h-3.5 fill-amber-400" />
+                         <Star className="w-3.5 h-3.5 fill-amber-400" />
+                       </div>
+                     )}
+                     
+                     {isActive && (
+                       <div className="absolute -top-1 -right-1 flex h-3 w-3">
+                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                         <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               );
+             })}
+           </div>
+         </div>
+       </div>
+     );
+   })}
  </div>
 
  {/* Decorative Finish Banner */}
