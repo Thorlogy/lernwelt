@@ -189,7 +189,7 @@ export default function StationVerbTenses({
  onClick={() => { playPop(); setShowHint(!showHint); }}
  className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-300 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300 transition-colors cursor-pointer text-base sm:text-lg font-bold font-body"
  >
- <HelpCircle className="w-4 h-4" /> Worthilfe
+ <HelpCircle className="w-4 h-4" /> Hilfe
  </button>
 
  <div className="flex gap-2">
