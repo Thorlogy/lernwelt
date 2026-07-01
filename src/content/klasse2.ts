@@ -148,5 +148,33 @@ export const KLASSE_2: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 209,
+    subject: "mathe",
+    title: "Die Uhrzeit-Meister",
+    subtitle: "Uhrzeit ablesen",
+    grade: 2,
+    difficulty: "mittel",
+    description: "Wie spät ist es auf der Uhr?",
+    icon: "Clock",
+    color: "primary",
+    exercises: [
+      {
+        id: "209_1",
+        question: "Wie viel Uhr ist es, wenn der kleine Zeiger auf der 3 steht und der große Zeiger auf der 12?",
+        options: ["3:00 Uhr", "12:03 Uhr", "6:00 Uhr", "9:00 Uhr"],
+        correctAnswer: "3:00 Uhr",
+        hint: "Der kleine Zeiger zeigt die Stunden, der große die Minuten (12 bedeutet voll)."
+      },
+      {
+        id: "209_2",
+        question: "Suche eine echte Uhr im Haus. Wie spät ist es jetzt gerade? Stelle dich hin und stelle die Uhrzeit mit deinen Armen nach!",
+        correctAnswer: "done",
+        hint: "Dein einer Arm ist der Stundenzeiger, der andere der Minutenzeiger.",
+        imagePlaceholder: "⏰",
+        isAnalog: true
+      }
+    ]
   }
 ];

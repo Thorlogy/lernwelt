@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -21,10 +21,12 @@ const ICON_MAP: Record<string, any> = {
  Calculator: Calculator,
  Percent: Percent,
  Coins: Coins,
+ Sparkles: Sparkles,
+ Clock: Clock,
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst'>('deutsch');
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch'>('deutsch');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
   const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>('stack');
 
@@ -278,8 +280,8 @@ const ICON_MAP: Record<string, any> = {
     </div>
   </div>
 
- {/* Subject Switcher Tabs */}
- <div className="grid grid-cols-2 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
+  {/* Subject Switcher Tabs */}
+  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
  <button
  type="button"
  onClick={() => { playPop(); setActiveSubject('deutsch'); }}
@@ -323,6 +325,17 @@ const ICON_MAP: Record<string, any> = {
  }`}
  >
  <span>Kunst 🎨</span>
+ </button>
+ <button
+ type="button"
+ onClick={() => { playPop(); setActiveSubject('englisch'); }}
+ className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-2 sm:col-span-1 ${
+ activeSubject === 'englisch'
+ ? 'bg-white text-indigo-700 shadow-sm scale-102 border-b-2 border-slate-200'
+ : 'text-slate-500 hover:bg-slate-100/50'
+ }`}
+ >
+ <span>Englisch 🇬🇧</span>
  </button>
  </div>
 
@@ -381,7 +394,7 @@ const ICON_MAP: Record<string, any> = {
          >
            <div className="flex items-center gap-3">
              <div className="text-2xl sm:text-3xl">
-               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : '🎨'}
+               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : '🇬🇧'}
              </div>
              <div className="text-left">
                <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">

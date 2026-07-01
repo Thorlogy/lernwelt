@@ -156,5 +156,33 @@ export const SACHKUNDE: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 506,
+    subject: "sachkunde",
+    title: "Magnet-Detektive",
+    subtitle: "Technik & Magnetismus",
+    grade: 2,
+    difficulty: "mittel",
+    description: "Was zieht ein Magnet eigentlich an?",
+    icon: "Search",
+    color: "orange",
+    exercises: [
+      {
+        id: "506_1",
+        question: "Welchen dieser Gegenstände kann ein Magnet anziehen?",
+        options: ["Holzstift", "Eisennagel", "Plastikbecher", "Papierschnipsel"],
+        correctAnswer: "Eisennagel",
+        hint: "Er muss aus Metall (Eisen, Nickel oder Kobalt) bestehen."
+      },
+      {
+        id: "506_2",
+        question: "Hol dir einen echten Kühlschrankmagneten. Gehe durch dein Zimmer und teste 3 Dinge: Was bleibt haften?",
+        correctAnswer: "done",
+        hint: "Metallische Oberflächen wie Kühlschränke oder Magnettafeln klappen super!",
+        imagePlaceholder: "🧲",
+        isAnalog: true
+      }
+    ]
   }
 ];

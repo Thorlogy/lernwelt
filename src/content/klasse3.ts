@@ -173,5 +173,33 @@ export const KLASSE_3: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 309,
+    subject: "mathe",
+    title: "Das Eis-Café",
+    subtitle: "Daten & Kombinatorik",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Wie viele Kombinationen gibt es?",
+    icon: "Sparkles",
+    color: "secondary",
+    exercises: [
+      {
+        id: "309_1",
+        question: "Ein Eisladen hat 3 Sorten: Schokolade, Erdbeere und Vanille. Du darfst dir 2 verschiedene Kugeln aussuchen. Wie viele Möglichkeiten gibt es?",
+        options: ["3", "4", "6", "9"],
+        correctAnswer: "3",
+        hint: "Möglichkeiten: Schoko+Erdbeere, Schoko+Vanille, Erdbeere+Vanille (die Reihenfolge ist egal)."
+      },
+      {
+        id: "309_2",
+        question: "Male deinen Traum-Eisbecher auf ein Blatt Papier und schneide ihn aus. Welche Eissorten hast du gewählt?",
+        correctAnswer: "done",
+        hint: "Male gerne bunte Streusel oder Sahne dazu!",
+        imagePlaceholder: "🍨",
+        isAnalog: true
+      }
+    ]
   }
 ];

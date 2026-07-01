@@ -5,6 +5,7 @@ import { KLASSE_3 } from './content/klasse3';
 import { KLASSE_4 } from './content/klasse4';
 import { SACHKUNDE } from './content/sachkunde';
 import { KUNST } from './content/kunst';
+import { ENGLISCH } from './content/englisch';
 
 export const INITIAL_PROGRESS: UserProgress = {
   anonymousId: '',
@@ -23,7 +24,8 @@ export const STATIONEN: Station[] = [
   ...KLASSE_3,
   ...KLASSE_4,
   ...SACHKUNDE,
-  ...KUNST
+  ...KUNST,
+  ...ENGLISCH
 ];
 
 export const CHARACTER_AVATARS = [
