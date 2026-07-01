@@ -31,7 +31,7 @@ export default function StationAnalogTask({ exercise, onCorrectAnswer, onNext, i
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans drop-shadow-sm">
             {exercise.question}
           </h2>
-          <SpeakButton text={exercise.question} size={24} autoSpeak={true} />
+          <SpeakButton text={exercise.question} size={24} />
         </div>
         {exercise.hint && (
           <p className="text-base sm:text-lg text-slate-500 font-bold font-body bg-slate-100 p-3 rounded-2xl inline-block mt-2">

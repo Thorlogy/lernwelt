@@ -123,7 +123,7 @@ export default function StationSpellingDetective({
  <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
  <Search className="w-6 h-6 text-orange-500 animate-pulse" />
  <span>Finde den Rechtschreibfehler!</span>
- <SpeakButton text={exercise.sentenceWithMistakes} size={24} label="Satz vorlesen" autoSpeak={true} />
+ <SpeakButton text={exercise.sentenceWithMistakes} size={24} label="Satz vorlesen" />
  </h3>
  <p className="text-base text-orange-600 font-bold mt-1">
  🕵️‍♂️ Werde zum Rechtschreib-Detektiv!

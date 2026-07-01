@@ -104,7 +104,7 @@ export default function StationSingularPlural({
    <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 font-sans select-none">
      {exercise.word}
    </h2>
-   <SpeakButton text={exercise.word} size={26} autoSpeak={true} />
+   <SpeakButton text={exercise.word} size={26} />
  </div>
  </div>
 

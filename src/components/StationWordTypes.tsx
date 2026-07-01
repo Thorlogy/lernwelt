@@ -89,7 +89,7 @@ export default function StationWordTypes({
     <h2 className="text-4xl sm:text-5xl font-black text-amber-950 select-none drop-shadow-xs">
       {exercise.word}
     </h2>
-    <SpeakButton text={exercise.word} size={28} autoSpeak={true} />
+    <SpeakButton text={exercise.word} size={28} />
   </div>
 
  {/* Big, friendly clue for the child */}

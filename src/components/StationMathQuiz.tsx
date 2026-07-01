@@ -993,7 +993,7 @@ export default function StationMathQuiz({
      <h2 className="text-lg sm:text-xl font-bold text-slate-800 font-body leading-relaxed">
        {exercise.question}
      </h2>
-     <SpeakButton text={exercise.question} size={22} autoSpeak={true} />
+     <SpeakButton text={exercise.question} size={22} />
    </div>
  </div>
  
