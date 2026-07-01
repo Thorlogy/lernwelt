@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 import { auth } from '../utils/firebase';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { useSpeech } from '../lib/useSpeech';
+import welcomeHero from '../assets/welcome-hero.jpg';
 
 const EMOJIS = ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
 
@@ -102,7 +103,7 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
 
       <div className="mb-6 -mt-2 sm:-mt-4">
         <img 
-          src="/images/welcome-hero.jpg" 
+          src={welcomeHero} 
           alt="Lernwelt Kinder" 
           className="w-full h-48 sm:h-56 object-cover rounded-2xl shadow-inner border-4 border-sky-100"
         />
