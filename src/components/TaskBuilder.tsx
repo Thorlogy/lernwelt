@@ -15,10 +15,45 @@ export default function TaskBuilder({ progress, onSaveProgress, onClose }: TaskB
   const [question, setQuestion] = useState('Bilde das Wort für:');
   const [hint, setHint] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Einfache Blacklist für Schimpfwörter (erweiterbar)
+  const BAD_WORDS = ['SCHEISSE', 'MIST', 'DOOF', 'KACKE', 'BLÖD', 'DEPP', 'IDIOT', 'ARSCH'];
+
+  const validateInput = (): string | null => {
+    const upperWord = word.trim().toUpperCase();
+    const fullText = `${upperWord} ${question.toUpperCase()} ${hint.toUpperCase()}`;
+
+    // 1. Blacklist Check
+    if (BAD_WORDS.some(bad => fullText.includes(bad))) {
+      return "Hmm, das Wort kennen wir nicht. Bitte wähle ein anderes, schönes Wort!";
+    }
+
+    // 2. Konsistenz Check: Nur Buchstaben im Wort (keine Zahlen, keine Leerzeichen)
+    if (!/^[A-ZÄÖÜß]+$/.test(upperWord)) {
+      return "Das Lösungswort darf nur aus Buchstaben bestehen (keine Leerzeichen oder Zahlen).";
+    }
+
+    // 3. Emoji Check: Muss genau ein Zeichen lang sein (sehr einfache Emoji-Prüfung)
+    // Ein Emoji besteht in JS oft aus 2 UTF-16 Code Units, wir nutzen Array from um echte Zeichen zu zählen.
+    const emojiChars = Array.from(emoji.trim());
+    if (emojiChars.length !== 1) {
+      return "Bitte nutze genau 1 passendes Emoji!";
+    }
+
+    return null;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     if (!word.trim() || !emoji.trim()) return;
+
+    const validationError = validateInput();
+    if (validationError) {
+      setErrorMsg(validationError);
+      return;
+    }
 
     playSuccess();
 
@@ -82,6 +117,12 @@ export default function TaskBuilder({ progress, onSaveProgress, onClose }: TaskB
           Baue eine Aufgabe für die Klasse 1.
         </p>
       </div>
+
+      {errorMsg && (
+        <div className="bg-red-100 border-2 border-red-300 text-red-800 p-3 rounded-xl mb-6 font-bold text-sm">
+          🚨 {errorMsg}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
