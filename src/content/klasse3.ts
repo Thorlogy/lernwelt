@@ -49,6 +49,22 @@ export const KLASSE_3: Station[] = [
     ]
   },
   {
+    id: 307,
+    subject: "deutsch",
+    title: "Satz-Baumeister",
+    subtitle: "Satzglieder finden",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Finde das richtige Satzglied! Wer tut was, wann und wo?",
+    icon: "Layers",
+    color: "orange",
+    exercises: [
+      { id: "307_1", question: "Welches Wort ist das Prädikat (Tunwort)? 'Der Hund bellt laut.'", options: ["Der", "Hund", "bellt", "laut"], correctAnswer: "bellt", hint: "Was tut der Hund?" },
+      { id: "307_2", question: "Welches Wort ist das Subjekt (Wer oder was)? 'Die Katze fängt eine Maus.'", options: ["Die", "Katze", "fängt", "Maus"], correctAnswer: "Katze", hint: "Wer fängt die Maus?" },
+      { id: "307_3", question: "Finde die Ortsangabe (Wo?): 'Wir spielen auf dem Spielplatz Fußball.'", options: ["Wir", "spielen", "auf dem Spielplatz", "Fußball"], correctAnswer: "auf dem Spielplatz", hint: "Wo wird gespielt?" }
+    ]
+  },
+  {
     id: 304,
     subject: "mathe",
     title: "Rechnen mit Geld",
@@ -82,12 +98,12 @@ export const KLASSE_3: Station[] = [
   {
     id: 306,
     subject: "mathe",
-    title: "Erste Sachaufgaben",
-    subtitle: "Textaufgaben lösen",
+    title: "Detektiv-Aufgaben",
+    subtitle: "Sachrechnen & Fälle lösen",
     grade: 3,
     difficulty: "schwer",
-    description: "Lies genau und finde die richtige Rechnung!",
-    icon: "Calculator",
+    description: "Lies genau und finde die richtige Rechnung, wie ein echter Detektiv!",
+    icon: "Search",
     color: "tertiary",
     exercises: [
       { id: "306_1", question: "Mia läuft um 14:15 Uhr los. Sie läuft 45 Minuten. Wann ist sie da?", options: ["15:00 Uhr", "14:45 Uhr", "15:15 Uhr"], correctAnswer: "15:00 Uhr", hint: "15 Minuten + 45 Minuten = 60 Minuten (1 Stunde)." },

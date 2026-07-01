@@ -51,6 +51,22 @@ export const KLASSE_2: Station[] = [
     ]
   },
   {
+    id: 207,
+    subject: "deutsch",
+    title: "Leseverständnis",
+    subtitle: "Quatsch-Sätze finden",
+    grade: 2,
+    difficulty: "mittel",
+    description: "Lies dir die Sätze genau durch. Einer davon ist völliger Quatsch!",
+    icon: "HelpCircle",
+    color: "orange",
+    exercises: [
+      { id: "207_1", question: "Welcher Satz ist völliger Quatsch?", options: ["Der Hund bellt laut im Garten.", "Der Baum fliegt hoch in den Himmel.", "Die Katze schläft auf dem Sofa."], correctAnswer: "Der Baum fliegt hoch in den Himmel.", hint: "Können Pflanzen fliegen?" },
+      { id: "207_2", question: "Welcher Satz ergibt keinen Sinn?", options: ["Das Auto fährt auf der Straße.", "Ich trinke ein Glas kaltes Wasser.", "Der Stuhl isst einen Apfel."], correctAnswer: "Der Stuhl isst einen Apfel.", hint: "Können Möbelstücke etwas essen?" },
+      { id: "207_3", question: "Finde den Quatsch-Satz:", options: ["Die Fische schwimmen im trockenen Sand.", "Der Vogel baut ein Nest im Baum.", "Das Baby weint leise."], correctAnswer: "Die Fische schwimmen im trockenen Sand.", hint: "Wo leben Fische eigentlich?" }
+    ]
+  },
+  {
     id: 204,
     subject: "mathe",
     title: "Plus/Minus bis 50",

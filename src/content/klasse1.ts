@@ -101,5 +101,21 @@ export const KLASSE_1: Station[] = [
       { id: "106_3", question: "Rechne aus: 11 + 8 = __", options: ["18", "19", "20", "17"], correctAnswer: "19", hint: "Rechne 1 + 8." },
       { id: "106_4", question: "Rechne aus: 19 - 7 = __", options: ["12", "13", "11", "10"], correctAnswer: "12", hint: "Rechne 9 - 7." }
     ]
+  },
+  {
+    id: 107,
+    subject: "mathe",
+    title: "Lumi geht einkaufen",
+    subtitle: "Uhrzeit & Geld",
+    grade: 1,
+    difficulty: "mittel",
+    description: "Hilf Lumi beim Einkaufen und beim Ablesen der Uhr!",
+    icon: "Coins",
+    color: "orange",
+    exercises: [
+      { id: "107_1", question: "Ein Apfel kostet 2€. Du gibst 5€. Wie viel Rückgeld bekommst du?", options: ["2€", "3€", "4€", "1€"], correctAnswer: "3€", hint: "Rechne 5 - 2." },
+      { id: "107_2", question: "Du hast eine 2€ Münze und drei 1€ Münzen. Wie viel Geld ist das?", options: ["4€", "5€", "6€", "3€"], correctAnswer: "5€", hint: "Rechne 2 + 1 + 1 + 1." },
+      { id: "107_3", question: "Der kleine Zeiger steht auf 3. Der große auf 12. Wie spät ist es?", options: ["12 Uhr", "3 Uhr", "6 Uhr", "9 Uhr"], correctAnswer: "3 Uhr", hint: "Der kleine Zeiger zeigt die Stunden." }
+    ]
   }
 ];
