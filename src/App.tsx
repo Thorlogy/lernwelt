@@ -20,6 +20,7 @@ import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 
 import { db } from './utils/firebase';
 import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import LoginScreen from './components/LoginScreen';
+import TaskBuilder from './components/TaskBuilder';
 import { useSpeech } from './lib/useSpeech';
 
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
@@ -52,6 +53,7 @@ export default function App() {
  const [selectedAvatarId, setSelectedAvatarId] = useState('dragon');
  const [showCompletionCelebration, setShowCompletionCelebration] = useState(false);
  const [showResearch, setShowResearch] = useState(false);
+ const [showTaskBuilder, setShowTaskBuilder] = useState(false);
 
  const { unlock } = useSpeech();
 
@@ -146,11 +148,12 @@ export default function App() {
  localStorage.removeItem(LOCAL_STORAGE_KEY);
  setProgress(INITIAL_PROGRESS);
  setTempName('');
- setIsNewUser(true);
- setActiveStationId(null);
- setShowCertificate(false);
- setShowResearch(false);
- setShowCompletionCelebration(false);
+  setIsNewUser(true);
+  setActiveStationId(null);
+  setShowCertificate(false);
+  setShowResearch(false);
+  setShowTaskBuilder(false);
+  setShowCompletionCelebration(false);
  };
 
  // Performance A/B metrics save handler
@@ -207,9 +210,31 @@ export default function App() {
  saveProgress(resetProgress);
  };
 
- // Station exercise interactions
- const activeStation = STATIONEN.find(s => s.id === activeStationId);
- const currentExercise = activeStation ? activeStation.exercises[currentExerciseIndex] : null;
+  // Station exercise interactions
+  let activeStation = STATIONEN.find(s => s.id === activeStationId);
+  if (activeStationId === 999 && progress.createdTasks && progress.createdTasks.length > 0) {
+    activeStation = {
+      id: 999,
+      subject: 'deutsch',
+      grade: 1,
+      title: 'Community-Rätsel',
+      subtitle: 'Von Kindern für Kinder',
+      difficulty: 'leicht',
+      description: 'Rätsel aus der Aufgaben-Werkstatt.',
+      icon: 'Sparkles',
+      color: 'orange',
+      exercises: progress.createdTasks.map(t => ({
+        id: t.id,
+        question: `${t.question} (Tipp von ${t.creatorName}: ${t.hint || 'Viel Erfolg!'})`,
+        word: t.word,
+        imagePlaceholder: t.emoji,
+        correctAnswer: t.word.split(''),
+        hint: t.hint,
+        scrambledLetters: t.word.split('').sort(() => Math.random() - 0.5)
+      }))
+    };
+  }
+  const currentExercise = activeStation ? activeStation.exercises[currentExerciseIndex] : null;
 
  const handleCorrectAnswer = (starsGained: number) => {
  setMascotExpression('correct');
@@ -370,23 +395,39 @@ export default function App() {
  onClose={() => { playPop(); setShowCertificate(false); }}
  />
  </div>
- ) : activeStationId === null ? (
+  ) : showTaskBuilder ? (
+  /* 2c. TASK BUILDER ROUTE */
+  <div className="space-y-6">
+  <TaskBuilder
+    progress={progress}
+    onSaveProgress={saveProgress}
+    onClose={() => { playPop(); setShowTaskBuilder(false); }}
+  />
+  </div>
+  ) : activeStationId === null ? (
  /* 3. PROGRESS MAP LANDING PAGE */
  <div className="space-y-8">
  <LessonMap
  progress={progress}
  activeStationId={activeStationId}
- onSelectStation={(id) => {
- setActiveStationId(id);
- setCurrentExerciseIndex(0);
- setMascotExpression('idle');
- }}
- onOpenResearch={() => {
- setActiveStationId(null);
- setShowResearch(true);
- setShowCertificate(false);
- }}
- />
+  onSelectStation={(id) => {
+  setActiveStationId(id);
+  setCurrentExerciseIndex(0);
+  setMascotExpression('idle');
+  }}
+  onOpenResearch={() => {
+  setActiveStationId(null);
+  setShowResearch(true);
+  setShowCertificate(false);
+  setShowTaskBuilder(false);
+  }}
+  onOpenTaskBuilder={() => {
+  setActiveStationId(null);
+  setShowTaskBuilder(true);
+  setShowResearch(false);
+  setShowCertificate(false);
+  }}
+  />
 
  {/* Quicklink Ribbons Container */}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mt-4 px-2">
@@ -505,7 +546,19 @@ export default function App() {
             />
           )}
 
-          {![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406].includes(activeStationId as number) && currentExercise && (
+          {/* 999 is the community station, let's use the spelling layout for it as well */}
+          {activeStationId === 999 && currentExercise && (
+            <StationLetterSpelling
+              exercise={currentExercise as any}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          )}
+
+          {![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406, 999].includes(activeStationId as number) && currentExercise && (
             <StationGenericQuiz
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}

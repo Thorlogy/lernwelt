@@ -51,6 +51,17 @@ export interface Station {
   exercises: Exercise[];
 }
 
+export interface CreatedTask {
+  id: string;
+  creatorName: string;
+  question: string;
+  word: string;
+  emoji: string;
+  hint: string;
+  status: 'pending' | 'approved';
+  timestamp: number;
+}
+
 export interface UserProgress {
   anonymousId: string;
   childName: string;
@@ -64,4 +75,5 @@ export interface UserProgress {
     methodA: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };
     methodB: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };
   };
+  createdTasks?: CreatedTask[];
 }

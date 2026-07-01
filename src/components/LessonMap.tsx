@@ -9,6 +9,7 @@ interface LessonMapProps {
  onSelectStation: (stationId: number) => void;
  activeStationId: number | null;
  onOpenResearch: () => void;
+ onOpenTaskBuilder: () => void;
 }
 
 const ICON_MAP: Record<string, any> = {
@@ -22,7 +23,7 @@ const ICON_MAP: Record<string, any> = {
  Coins: Coins,
 };
 
- export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch }: LessonMapProps) {
+ export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
   const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
 
@@ -235,18 +236,37 @@ const ICON_MAP: Record<string, any> = {
  <div className="absolute bottom-6 right-16 text-3xl opacity-25 select-none animate-wiggle-soft" style={{ animationDelay: '1.5s' }}>🌳</div>
  <div className="absolute top-1/2 left-4 text-2xl opacity-15 select-none text-brand-secondary">🌈</div>
 
- {/* Map Header */}
- <div className="text-center mb-6 relative z-10">
- <span className="inline-block bg-[#fdd758] text-[#725c00] text-base font-bold px-3 py-1 rounded-full mb-2 border border-yellow-400">
- Dein Abenteuer-Pfad
- </span>
- <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans">
- Lern-Landkarte
- </h2>
- <p className="text-base text-slate-500 font-body mt-1">
- Wähle ein Fach und starte dein Lernspiel!
- </p>
- </div>
+  {/* Map Header */}
+  <div className="text-center mb-6 relative z-10">
+  <span className="inline-block bg-[#fdd758] text-[#725c00] text-base font-bold px-3 py-1 rounded-full mb-2 border border-yellow-400">
+  Dein Abenteuer-Pfad
+  </span>
+  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans">
+  Lern-Landkarte
+  </h2>
+  <p className="text-base text-slate-500 font-body mt-1">
+  Wähle ein Fach und starte dein Lernspiel!
+  </p>
+  </div>
+
+  {/* Aufgaben-Werkstatt Banner (Unlocks if Grade 1 is done, or just show it as a sneak peek) */}
+  <div 
+    onClick={() => { playPop(); onOpenTaskBuilder(); }}
+    className="bg-amber-100 hover:bg-amber-200 border-4 border-amber-300 p-4 rounded-3xl mb-8 relative z-10 cursor-pointer shadow-soft-tactile transition-transform hover:scale-102 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left"
+  >
+    <div className="text-5xl drop-shadow-sm">🛠️</div>
+    <div className="flex-1">
+      <h3 className="font-sans font-black text-xl text-amber-900 leading-tight">
+        Neu: Die Aufgaben-Werkstatt!
+      </h3>
+      <p className="text-amber-800 font-bold font-body text-base mt-1">
+        Lernen durch Lehren: Baue hier eigene Rätsel für die 1. Klasse!
+      </p>
+    </div>
+    <div className="bg-amber-500 text-white font-black px-4 py-2 rounded-xl text-lg shadow-sm whitespace-nowrap">
+      Los geht's!
+    </div>
+  </div>
 
  {/* Subject Switcher Tabs */}
  <div className="flex gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 max-w-[280px] mx-auto">
@@ -274,11 +294,38 @@ const ICON_MAP: Record<string, any> = {
  </button>
  </div>
 
- {/* Stations Stack Grouped by Grade */}
- <div className="flex flex-col gap-6 relative z-10">
-   {[1, 2, 3, 4].map((gradeLevel) => {
-     const subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
-     const gradeStations = subjectStations.filter(s => s.grade === gradeLevel);
+  {/* Stations Stack Grouped by Grade */}
+  <div className="flex flex-col gap-6 relative z-10">
+    {[1, 2, 3, 4].map((gradeLevel) => {
+      let subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
+      
+      // Inject Community Station into Deutsch Grade 1
+      if (activeSubject === 'deutsch' && progress.createdTasks && progress.createdTasks.length > 0) {
+        const communityStation: Station = {
+          id: 999,
+          subject: 'deutsch',
+          grade: 1,
+          title: 'Community-Rätsel',
+          subtitle: 'Von Kindern für Kinder',
+          difficulty: 'leicht',
+          description: 'Rätsel aus der Aufgaben-Werkstatt.',
+          icon: 'Sparkles',
+          color: 'orange',
+          exercises: progress.createdTasks.map(t => ({
+            id: t.id,
+            question: `${t.question} (Tipp von ${t.creatorName}: ${t.hint || 'Viel Erfolg!'})`,
+            word: t.word,
+            imagePlaceholder: t.emoji,
+            correctAnswer: t.word.split(''),
+            hint: t.hint,
+            scrambledLetters: t.word.split('').sort(() => Math.random() - 0.5)
+          }))
+        };
+        // Add to the end of Grade 1 or start of it
+        subjectStations = [...subjectStations, communityStation];
+      }
+
+      const gradeStations = subjectStations.filter(s => s.grade === gradeLevel);
      
      if (gradeStations.length === 0) return null;
 
