@@ -95,13 +95,21 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
     <div className="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative">
       <button 
         onClick={onCancel}
-        className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+        className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10 bg-white/80 rounded-full p-1"
       >
         <X size={28} />
       </button>
 
+      <div className="mb-6 -mt-2 sm:-mt-4">
+        <img 
+          src="/images/welcome-hero.jpg" 
+          alt="Lernwelt Kinder" 
+          className="w-full h-48 sm:h-56 object-cover rounded-2xl shadow-inner border-4 border-sky-100"
+        />
+      </div>
+
       <div className="text-center mb-8 relative">
-        <h2 className="text-3xl font-black text-[#00639a] mb-2 font-sans tracking-tight mt-6">Anmelden</h2>
+        <h2 className="text-3xl font-black text-[#00639a] mb-2 font-sans tracking-tight">Anmelden</h2>
         <div className="flex items-center justify-center gap-3">
           <p className="text-slate-500 font-bold cursor-pointer hover:text-slate-700" onClick={() => speak("Gib deinen Namen ein und wähle deinen 3-Bilder-Code!")}>
             Gib deinen Namen ein und wähle deinen 3-Bilder-Code!
