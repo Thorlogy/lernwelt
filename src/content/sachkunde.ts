@@ -184,5 +184,40 @@ export const SACHKUNDE: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 507,
+    subject: "sachkunde",
+    title: "Die Riesen-Bäume",
+    subtitle: "Sachkunde & Mathe",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Natur und Rechnen verbinden.",
+    icon: "Search",
+    color: "tertiary",
+    exercises: [
+      {
+        id: "507_1",
+        question: "Ein Mammutbaum wächst jedes Jahr um 2 Meter. Wie hoch ist der Baum nach 10 Jahren, wenn er am Anfang 5 Meter hoch war?",
+        options: ["25 Meter", "20 Meter", "15 Meter", "50 Meter"],
+        correctAnswer: "25 Meter",
+        hint: "Rechne erst aus, wie viel er in 10 Jahren wächst: 10 mal 2 Meter. Zähle dann die Anfangshöhe dazu!"
+      },
+      {
+        id: "507_2",
+        question: "Der Riesen-Kaktus speichert Wasser. 1 Liter Wasser wiegt genau 1 kg. Der Kaktus speichert 200 Liter. Wie viele 10-kg-Eimer Wasser sind das?",
+        options: ["20 Eimer", "200 Eimer", "2 Eimer", "10 Eimer"],
+        correctAnswer: "20 Eimer",
+        hint: "Teile das Gesamtgewicht von 200 kg durch das Gewicht eines Eimers (10 kg)."
+      },
+      {
+        id: "507_3",
+        question: "Suche einen Baum oder eine Pflanze in deiner Nähe. Schätze, wie viele Schritte du brauchst, um einmal um den Stamm zu laufen. Probiere es dann aus!",
+        correctAnswer: "done",
+        hint: "Gehe vorsichtig und zähle deine Schritte laut mit!",
+        imagePlaceholder: "🌳",
+        isAnalog: true
+      }
+    ]
   }
 ];

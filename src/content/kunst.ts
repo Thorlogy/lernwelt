@@ -100,5 +100,43 @@ export const KUNST: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 604,
+    subject: "kunst",
+    title: "Die Symmetrie-Werkstatt",
+    subtitle: "Kunst & Logik",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Formen spiegeln und Bilder falten.",
+    icon: "Layers",
+    color: "tertiary",
+    exercises: [
+      {
+        id: "604_1",
+        question: "Eine gemalte Blume ist spiegel-symmetrisch (beide Hälften sehen genau gleich aus). Wenn links 3 rote Blätter sind, wie viele Blätter müssen rechts sein?",
+        options: ["3 rote Blätter", "6 rote Blätter", "2 rote Blätter", "Keine Blätter"],
+        correctAnswer: "3 rote Blätter",
+        hint: "Wenn etwas spiegelsymmetrisch ist, ist es auf beiden Seiten genau gleich!"
+      },
+      {
+        id: "604_2",
+        question: "Lumi spiegelt das Muster an der Spiegelwand ( | ). Welches Muster entsteht auf der rechten Seite?",
+        grid2D: [
+          ["🔴", "🔵", " | ", "❓", "❓"]
+        ],
+        options: ["🔵 🔴", "🔴 🔵", "🟡 🟢", "🔴 🔴"],
+        correctAnswer: "🔵 🔴",
+        hint: "Der Spiegel dreht die Reihenfolge um: Die blaue Perle (🔵) ist näher am Spiegel, also kommt sie auf der anderen Seite auch zuerst!"
+      },
+      {
+        id: "604_3",
+        question: "Falte ein Blatt Papier in der Mitte. Male auf die linke Seite mit dicken Farbklecksen ein halbes Bild (z.B. einen halben Schmetterling). Falte das Blatt zusammen und drücke es fest an. Was passiert?",
+        correctAnswer: "done",
+        hint: "Die Farbe spiegelt sich auf die andere Seite und das Bild wird symmetrisch!",
+        imagePlaceholder: "🦋",
+        isAnalog: true
+      }
+    ]
   }
 ];

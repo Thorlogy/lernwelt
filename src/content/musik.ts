@@ -70,5 +70,40 @@ export const MUSIK: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 903,
+    subject: "musik",
+    title: "Der Takt-Bäcker",
+    subtitle: "Musik & Mathe",
+    grade: 4,
+    difficulty: "schwer",
+    description: "Takte backen und Noten teilen.",
+    icon: "Music",
+    color: "secondary",
+    exercises: [
+      {
+        id: "903_1",
+        question: "Eine halbe Note (1/2) ist so lang wie zwei Viertelnoten (1/4 + 1/4). Wie viele Achtelnoten (1/8) brauchst du, um eine ganze Note (1) voll zu machen?",
+        options: ["8 Achtelnoten", "4 Achtelnoten", "2 Achtelnoten", "16 Achtelnoten"],
+        correctAnswer: "8 Achtelnoten",
+        hint: "Teile das Ganze (1) durch ein Achtel (1/8) - genau wie beim Pizza schneiden!"
+      },
+      {
+        id: "903_2",
+        question: "Der Takt-Bäcker backt einen 4/4-Takt-Kuchen. Er hat schon eine halbe Note (2/4) und eine Viertelnote (1/4) hineingetan. Welches Stück fehlt noch?",
+        options: ["Eine Viertelnote (1/4)", "Eine halbe Note (2/4)", "Eine Achtelnote (1/8)", "Ein ganzer Takt (4/4)"],
+        correctAnswer: "Eine Viertelnote (1/4)",
+        hint: "Addiere die Notenwerte: 2/4 + 1/4 = 3/4. Wie viel fehlt noch bis zum vollen 4/4-Kuchen?"
+      },
+      {
+        id: "903_3",
+        question: "Klatsche einen Takt vor: Klatsche 1-mal lang (halbe Note) und dann 2-mal kurz (zwei Viertelnoten). Wiederhole das 4-mal hintereinander!",
+        correctAnswer: "done",
+        hint: "Zähle laut mit: '1... 2... (Klatschen) | 3 (Klatsch) | 4 (Klatsch)'. Viel Spaß!",
+        imagePlaceholder: "👏",
+        isAnalog: true
+      }
+    ]
   }
 ];

@@ -70,5 +70,40 @@ export const ENGLISCH: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 703,
+    subject: "englisch",
+    title: "Animal Habitats",
+    subtitle: "Englisch & Sachkunde",
+    grade: 4,
+    difficulty: "mittel",
+    description: "Tiere und ihre Lebensräume auf Englisch.",
+    icon: "Search",
+    color: "secondary",
+    exercises: [
+      {
+        id: "703_1",
+        question: "Where does the 'whale' (Wal) live? Select the correct habitat.",
+        options: ["In the ocean 🌊", "In the desert 🌵", "In the forest 🌲", "In the sky ☁️"],
+        correctAnswer: "In the ocean 🌊",
+        hint: "Wale sind riesige Meeressäuger. Sie brauchen sehr viel Salzwasser!"
+      },
+      {
+        id: "703_2",
+        question: "Which animal is a 'predator' (Fleischfresser) and lives in the forest?",
+        options: ["wolf 🐺", "squirrel 🐿️", "rabbit 🐰", "cow 🐮"],
+        correctAnswer: "wolf 🐺",
+        hint: "Dieses Tier jagt im Rudel und heult manchmal den Mond an."
+      },
+      {
+        id: "703_3",
+        question: "Draw your favorite animal and write three English words on your drawing to describe its home (e.g., 'forest', 'water', 'hot', 'cold')!",
+        correctAnswer: "done",
+        hint: "Zeige das Bild stolz vor und lies die englischen Wörter laut vor!",
+        imagePlaceholder: "🎨",
+        isAnalog: true
+      }
+    ]
   }
 ];
