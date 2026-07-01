@@ -41,7 +41,7 @@ export interface DetectiveExercise extends Exercise {
 
 export interface Station {
   id: number;
-  subject: 'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch';
+  subject: 'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik';
   title: string;
   subtitle: string;
   grade: number; // Klasse 1-4

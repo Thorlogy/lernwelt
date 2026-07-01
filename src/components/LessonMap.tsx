@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock, Cpu } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -23,10 +23,11 @@ const ICON_MAP: Record<string, any> = {
  Coins: Coins,
  Sparkles: Sparkles,
  Clock: Clock,
+ Cpu: Cpu,
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch'>('deutsch');
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik'>('deutsch');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
   const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>('stack');
 
@@ -281,63 +282,85 @@ const ICON_MAP: Record<string, any> = {
   </div>
 
   {/* Subject Switcher Tabs */}
-  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
- <button
- type="button"
- onClick={() => { playPop(); setActiveSubject('deutsch'); }}
- className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
- activeSubject === 'deutsch'
- ? 'bg-white text-[#00639a] shadow-sm scale-102 border-b-2 border-slate-200'
- : 'text-slate-500 hover:bg-slate-100/50'
- }`}
- >
- <span>Deutsch 🎒</span>
- </button>
- <button
- type="button"
- onClick={() => { playPop(); setActiveSubject('mathe'); }}
- className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
- activeSubject === 'mathe'
- ? 'bg-white text-emerald-700 shadow-sm scale-102 border-b-2 border-slate-200'
- : 'text-slate-500 hover:bg-slate-100/50'
- }`}
- >
- <span>Mathe 🧮</span>
- </button>
- <button
- type="button"
- onClick={() => { playPop(); setActiveSubject('sachkunde'); }}
- className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
- activeSubject === 'sachkunde'
- ? 'bg-white text-orange-700 shadow-sm scale-102 border-b-2 border-slate-200'
- : 'text-slate-500 hover:bg-slate-100/50'
- }`}
- >
- <span>Sachkunde 🌍</span>
- </button>
- <button
- type="button"
- onClick={() => { playPop(); setActiveSubject('kunst'); }}
- className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
- activeSubject === 'kunst'
- ? 'bg-white text-fuchsia-700 shadow-sm scale-102 border-b-2 border-slate-200'
- : 'text-slate-500 hover:bg-slate-100/50'
- }`}
- >
- <span>Kunst 🎨</span>
- </button>
- <button
- type="button"
- onClick={() => { playPop(); setActiveSubject('englisch'); }}
- className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-2 sm:col-span-1 ${
- activeSubject === 'englisch'
- ? 'bg-white text-indigo-700 shadow-sm scale-102 border-b-2 border-slate-200'
- : 'text-slate-500 hover:bg-slate-100/50'
- }`}
- >
- <span>Englisch 🇬🇧</span>
- </button>
- </div>
+  <div className="grid grid-cols-2 md:grid-cols-7 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('deutsch'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+        activeSubject === 'deutsch'
+        ? 'bg-white text-[#00639a] shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Deutsch 🎒</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('mathe'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+        activeSubject === 'mathe'
+        ? 'bg-white text-emerald-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Mathe 🧮</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('sachkunde'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+        activeSubject === 'sachkunde'
+        ? 'bg-white text-orange-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Sachkunde 🌍</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('kunst'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+        activeSubject === 'kunst'
+        ? 'bg-white text-fuchsia-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Kunst 🎨</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('englisch'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-1 ${
+        activeSubject === 'englisch'
+        ? 'bg-white text-indigo-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Englisch 🇬🇧</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('logik'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-1 ${
+        activeSubject === 'logik'
+        ? 'bg-white text-cyan-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Logik 🧩</span>
+    </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('musik'); }}
+      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-2 md:col-span-1 ${
+        activeSubject === 'musik'
+        ? 'bg-white text-rose-700 shadow-sm scale-102 border-b-2 border-slate-200'
+        : 'text-slate-500 hover:bg-slate-100/50'
+      }`}
+    >
+      <span>Musik 🎵</span>
+    </button>
+  </div>
 
   {/* Stations Stack Grouped by Grade */}
   <div className={`relative z-10 gap-6 ${layoutMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2' : 'flex flex-col'}`}>
@@ -394,7 +417,7 @@ const ICON_MAP: Record<string, any> = {
          >
            <div className="flex items-center gap-3">
              <div className="text-2xl sm:text-3xl">
-               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : '🇬🇧'}
+                {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : activeSubject === 'englisch' ? '🇬🇧' : activeSubject === 'logik' ? '🧩' : '🎵'}
              </div>
              <div className="text-left">
                <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">
