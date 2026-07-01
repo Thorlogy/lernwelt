@@ -282,83 +282,83 @@ const ICON_MAP: Record<string, any> = {
   </div>
 
   {/* Subject Switcher Tabs */}
-  <div className="grid grid-cols-2 md:grid-cols-7 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
+  <div className="flex flex-wrap justify-center gap-2.5 mb-8 relative z-10 w-full mx-auto px-1">
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('deutsch'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'deutsch'
-        ? 'bg-white text-[#00639a] shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-sky-500 text-white border-b-4 border-sky-700 hover:bg-sky-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Deutsch 🎒</span>
+      <span>🎒 Deutsch</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('mathe'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'mathe'
-        ? 'bg-white text-emerald-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-emerald-500 text-white border-b-4 border-emerald-700 hover:bg-emerald-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Mathe 🧮</span>
+      <span>🧮 Mathe</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('sachkunde'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'sachkunde'
-        ? 'bg-white text-orange-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-orange-500 text-white border-b-4 border-orange-700 hover:bg-orange-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Sachkunde 🌍</span>
+      <span>🌍 Sachkunde</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('kunst'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'kunst'
-        ? 'bg-white text-fuchsia-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-fuchsia-500 text-white border-b-4 border-fuchsia-700 hover:bg-fuchsia-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Kunst 🎨</span>
+      <span>🎨 Kunst</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('englisch'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-1 ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'englisch'
-        ? 'bg-white text-indigo-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-indigo-500 text-white border-b-4 border-indigo-700 hover:bg-indigo-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Englisch 🇬🇧</span>
+      <span>🇬🇧 Englisch</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('logik'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-1 ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'logik'
-        ? 'bg-white text-cyan-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-cyan-500 text-white border-b-4 border-cyan-700 hover:bg-cyan-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Logik 🧩</span>
+      <span>🧩 Logik</span>
     </button>
     <button
       type="button"
       onClick={() => { playPop(); setActiveSubject('musik'); }}
-      className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-2 md:col-span-1 ${
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
         activeSubject === 'musik'
-        ? 'bg-white text-rose-700 shadow-sm scale-102 border-b-2 border-slate-200'
-        : 'text-slate-500 hover:bg-slate-100/50'
+        ? 'bg-rose-500 text-white border-b-4 border-rose-700 hover:bg-rose-600 hover:text-white -translate-y-0.5 shadow-md'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
       }`}
     >
-      <span>Musik 🎵</span>
+      <span>🎵 Musik</span>
     </button>
   </div>
 
