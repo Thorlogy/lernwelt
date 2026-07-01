@@ -45,6 +45,47 @@ export const LOGIK: Station[] = [
     ]
   },
   {
+    id: 803,
+    subject: "logik",
+    title: "Lumis Schleifen-Reise",
+    subtitle: "Muster & Wiederholungen",
+    grade: 2,
+    difficulty: "mittel",
+    description: "Finde Perlenmuster und benutze Programmier-Schleifen.",
+    icon: "Cpu",
+    color: "primary",
+    exercises: [
+      {
+        id: "803_1",
+        question: "Lumi fädelt Perlen auf: 🔴, 🔵, 🟢, 🔴, 🔵, 🟢, 🔴... Welche Perlenfolge wiederholt sich immer wieder (Schleife)?",
+        options: ["🔴, 🔵, 🟢", "🔴, 🔵", "🔵, 🟢", "🔴, 🟢"],
+        correctAnswer: "🔴, 🔵, 🟢",
+        hint: "Schau, wo das Muster wieder von vorne mit Rot anfängt!"
+      },
+      {
+        id: "803_2",
+        question: "Lumi (🦖) soll 3-mal hintereinander diesen Code laufen: [Erst ➡️, dann ⬆️]. Wo kommt er an, wenn er bei 🦖 startet?",
+        grid2D: [
+          ["🌳", "🌳", "🌳", "💎"],
+          ["🌳", "🌳", "🌸", "🌳"],
+          ["🌳", "🍄", "🌳", "🌳"],
+          ["🦖", "🌳", "🌳", "🌳"]
+        ],
+        options: ["Beim Diamant 💎", "Beim Pilz 🍄", "Bei der Blume 🌸", "Im Wald 🌳"],
+        correctAnswer: "Beim Diamant 💎",
+        hint: "Führe die Schritte [Rechts, Hoch] dreimal nacheinander aus und ziehe mit dem Finger mit!"
+      },
+      {
+        id: "803_3",
+        question: "Finde in deiner Wohnung 3 Dinge mit einem wiederkehrenden Muster (z. B. Streifen auf Socken, Kacheln im Bad, Muster auf einer Decke). Zeige sie jemandem!",
+        correctAnswer: "done",
+        hint: "Muster wiederholen sich immer wieder, genau wie Schleifen im Computer!",
+        imagePlaceholder: "🌀",
+        isAnalog: true
+      }
+    ]
+  },
+  {
     id: 802,
     subject: "logik",
     title: "Die Sortier-Rutsche",
@@ -75,6 +116,46 @@ export const LOGIK: Station[] = [
         correctAnswer: "done",
         hint: "Zeige dein Bild und den Code stolz vor!",
         imagePlaceholder: "💡",
+        isAnalog: true
+      }
+    ]
+  },
+  {
+    id: 804,
+    subject: "logik",
+    title: "Codes & Netzwerke",
+    subtitle: "Kryptographie & Graphen",
+    grade: 4,
+    difficulty: "schwer",
+    description: "Verschlüssele Geheimsprachen und zähle Wege in Netzwerken.",
+    icon: "Cpu",
+    color: "secondary",
+    exercises: [
+      {
+        id: "804_1",
+        question: "Biber verschlüsseln Wörter, indem sie jeden Buchstaben im Alphabet um 1 Stelle nach hinten verschieben (A ➡️ B, B ➡️ C, ..., Z ➡️ A). Wie heißt das Wort 'HUND'?",
+        options: ["IVOE", "GPMC", "JWPFE", "HUND"],
+        correctAnswer: "IVOE",
+        hint: "Verschiebe jeden Buchstaben im Alphabet um einen Schritt weiter: H wird zu I, U wird zu V, und so weiter!"
+      },
+      {
+        id: "804_2",
+        question: "Lumi möchte vom braunen Blatt (🍂) zum Pilz (🍄) springen. Er darf nur den Pfeilen (➡️ und ⬇️) folgen. Wie viele verschiedene Wege gibt es?",
+        grid2D: [
+          ["🍂", "➡️", "🍃"],
+          ["⬇️", " ", "⬇️"],
+          ["🍁", "➡️", "🍄"]
+        ],
+        options: ["2 Wege", "1 Weg", "3 Wege", "Kein Weg"],
+        correctAnswer: "2 Wege",
+        hint: "Finde alle Pfade! Pfad 1 geht über das obere grüne Blatt (🍃). Pfad 2 geht über das untere rote Blatt (🍁)."
+      },
+      {
+        id: "804_3",
+        question: "Schreibe eine geheime Biber-Nachricht (jeder Buchstabe um 1 Stelle nach hinten verschoben) auf einen Zettel und lass jemanden in deiner Familie das Wort entschlüsseln!",
+        correctAnswer: "done",
+        hint: "Gib der Person einen Tipp, dass das Alphabet verschoben ist!",
+        imagePlaceholder: "🔑",
         isAnalog: true
       }
     ]
