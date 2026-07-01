@@ -4,31 +4,31 @@ export const LOGIK: Station[] = [
   {
     id: 801,
     subject: "logik",
-    title: "Roboter-Steuerung",
-    subtitle: "Algorithmen",
+    title: "Lumi im Zauberwald",
+    subtitle: "Wege & Algorithmen",
     grade: 1,
     difficulty: "leicht",
-    description: "Wie steuert man eine Maschine?",
+    description: "Hilf Lumi, den richtigen Weg zu finden!",
     icon: "Cpu",
     color: "primary",
     exercises: [
       {
         id: "801_1",
-        question: "Du möchtest Lumibot 3 Schritte nach vorne bewegen. Welchen Befehl nutzt du?",
-        options: ["1 Schritt vorwärts", "3 Schritte vorwärts", "Geh zurück", "Drehe dich im Kreis"],
-        correctAnswer: "3 Schritte vorwärts",
-        hint: "Es sollen genau 3 Schritte sein."
+        question: "Lumi (🦖) möchte zum Stern (🌟). Er steht direkt darunter:\n\n[🌳]  [🌟]  [🌳]\n[🌳]  [🦖]  [🌳]\n\nWelchen Befehl muss Lumi ausführen?",
+        options: ["Gehe 1 Schritt nach oben", "Gehe 1 Schritt nach rechts", "Gehe 1 Schritt nach unten"],
+        correctAnswer: "Gehe 1 Schritt nach oben",
+        hint: "Schau dir an, wo der Stern im Vergleich zu Lumi liegt!"
       },
       {
         id: "801_2",
-        question: "Lumibot soll nach rechts abbiegen. Welcher Pfeil zeigt nach rechts?",
-        options: ["⬅️ Links", "➡️ Rechts", "⬆️ Oben", "⬇️ Unten"],
-        correctAnswer: "➡️ Rechts",
-        hint: "Der Pfeil muss in Schreibrichtung zeigen."
+        question: "Lumi startet bei [🦖]. Er läuft erst nach links (⬅️) und dann nach oben (⬆️). Wo kommt er an?\n\n[💎]  [🌳]\n[🌻]  [🦖]",
+        options: ["Beim Diamant 💎", "Bei der Sonnenblume 🌻", "Beim Baum 🌳"],
+        correctAnswer: "Beim Diamant 💎",
+        hint: "Gehe gedanklich erst einen Schritt nach links zur Blume, und von dort einen Schritt nach oben."
       },
       {
         id: "801_3",
-        question: "Roboter-Spiel: Lass dich von deinen Eltern oder Geschwistern wie einen Roboter programmieren! Mache genau die Befehle, die sie dir sagen (z.B. '2 Schritte vor, einmal umdrehen')!",
+        question: "Roboter-Spiel: Programmiere jemanden in deiner Wohnung! Gib ihm genaue Befehle (z. B. 'Gehe 3 Schritte vorwärts, drehe dich nach links, mache einen Hüpfer'), um ein Ziel zu erreichen.",
         correctAnswer: "done",
         hint: "Bewege dich steif und mechanisch wie ein echter Roboter!",
         imagePlaceholder: "🤖",
@@ -39,33 +39,33 @@ export const LOGIK: Station[] = [
   {
     id: 802,
     subject: "logik",
-    title: "Wenn-Dann-Maschine",
-    subtitle: "Bedingungen",
+    title: "Die Sortier-Rutsche",
+    subtitle: "Daten & Algorithmen",
     grade: 3,
     difficulty: "mittel",
-    description: "Löse die logischen Programmier-Rätsel.",
+    description: "Murmeln sortieren und Geheimsprachen entschlüsseln.",
     icon: "Cpu",
     color: "secondary",
     exercises: [
       {
         id: "802_1",
-        question: "Wenn die Ampel ROT ist, musst du warten. Wenn sie GRÜN ist, darfst du gehen. Die Ampel wird ROT. Was tust du?",
-        options: ["Warten", "Gehen", "Schnell rennen", "Singen"],
-        correctAnswer: "Warten",
-        hint: "Halte dich genau an die Wenn-Dann-Regel!"
+        question: "Drei Murmeln mit den Zahlen 8, 3 und 5 rollen in eine Sortier-Rutsche. Die Rutsche lässt die kleinste Zahl zuerst durch, dann die mittlere, dann die größte. In welcher Reihenfolge kommen sie unten an?",
+        options: ["3, 5, 8", "8, 5, 3", "3, 8, 5", "5, 3, 8"],
+        correctAnswer: "3, 5, 8",
+        hint: "Sortiere die Zahlen von klein nach groß."
       },
       {
         id: "802_2",
-        question: "WENN die Sonne scheint, setze eine Mütze auf. Ansonsten lass sie weg. Die Sonne scheint HEUTE NICHT. Was tust du?",
-        options: ["Mütze aufsetzen", "Mütze weglassen", "Eis essen", "Im Regen spielen"],
-        correctAnswer: "Mütze weglassen",
-        hint: "'Ansonsten' bedeutet, dass die Bedingung nicht erfüllt ist."
+        question: "Computer zeichnen Bilder mit Nullen und Einsen. Eine 0 steht für weiß (⚪), eine 1 für schwarz (⚫). Was zeichnet der Computer bei dem Code '0 - 1 - 0 - 1'?",
+        options: ["⚪ ⚫ ⚪ ⚫", "⚫ ⚪ ⚫ ⚪", "⚪ ⚪ ⚫ ⚫", "⚫ ⚫ ⚪ ⚪"],
+        correctAnswer: "⚪ ⚫ ⚪ ⚫",
+        hint: "Ersetze jede 0 durch ein weißes Feld und jede 1 durch ein schwarzes Feld."
       },
       {
         id: "802_3",
-        question: "Überlege dir eine eigene Wenn-Dann-Regel für dein Zimmer (z.B. 'Wenn ich den Stuhl berühre, klatsche ich in die Hände') und führe sie 3-mal aus!",
+        question: "Male dein eigenes 3x3 Gitter-Bild auf ein Blatt Papier (mit ausgemalten und leeren Kästchen). Schreibe den Code dafür als Zahlenreihe auf (0 für leer, 1 für ausgemalt)!",
         correctAnswer: "done",
-        hint: "Mach eine Regel, die Spaß macht!",
+        hint: "Zeige dein Bild und den Code stolz vor!",
         imagePlaceholder: "💡",
         isAnalog: true
       }
