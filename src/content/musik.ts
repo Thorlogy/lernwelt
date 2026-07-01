@@ -74,11 +74,11 @@ export const MUSIK: Station[] = [
   {
     id: 903,
     subject: "musik",
-    title: "Der Takt-Bäcker",
+    title: "Beethovens Ton-Maschine",
     subtitle: "Musik & Mathe",
     grade: 4,
     difficulty: "schwer",
-    description: "Takte backen und Noten teilen.",
+    description: "Geheime Noten-Codes und gespiegelte Melodien.",
     icon: "Music",
     color: "secondary",
     exercises: [
@@ -91,17 +91,24 @@ export const MUSIK: Station[] = [
       },
       {
         id: "903_2",
-        question: "Der Takt-Bäcker backt einen 4/4-Takt-Kuchen. Er hat schon eine halbe Note (2/4) und eine Viertelnote (1/4) hineingetan. Welches Stück fehlt noch?",
-        options: ["Eine Viertelnote (1/4)", "Eine halbe Note (2/4)", "Eine Achtelnote (1/8)", "Ein ganzer Takt (4/4)"],
-        correctAnswer: "Eine Viertelnote (1/4)",
-        hint: "Addiere die Notenwerte: 2/4 + 1/4 = 3/4. Wie viel fehlt noch bis zum vollen 4/4-Kuchen?"
+        question: "In einer Fuge (wie bei Beethoven) wird eine Melodie oft gespiegelt (Umkehrung). Geht das Original nach oben: [Ton hoch ⬆️, Ton hoch ⬆️]. Was macht die Spiegelung?",
+        options: ["Ton runter ⬇️, Ton runter ⬇️", "Ton hoch ⬆️, Ton hoch ⬆️", "Ton bleibt gleich ➡️", "Ton runter ⬇️, Ton hoch ⬆️"],
+        correctAnswer: "Ton runter ⬇️, Ton runter ⬇️",
+        hint: "Ein Spiegel dreht Richtungen um. Aus Hoch (⬆️) wird Runter (⬇️)!"
       },
       {
         id: "903_3",
-        question: "Klatsche einen Takt vor: Klatsche 1-mal lang (halbe Note) und dann 2-mal kurz (zwei Viertelnoten). Wiederhole das 4-mal hintereinander!",
+        question: "Beim 'Krebsgang' wird eine Melodie mathematisch rückwärts abgespielt. Die Noten lauten: C - D - E. Wie klingt der Krebsgang?",
+        options: ["E - D - C", "C - D - E", "C - E - D", "D - E - C"],
+        correctAnswer: "E - D - C",
+        hint: "Lies das Notenmuster einfach von hinten nach vorne!"
+      },
+      {
+        id: "903_4",
+        question: "Singe oder summe eine einfache Melodie aus 3 Tönen vorwärts (z. B. C - D - E). Versuche sie nun rückwärts zu singen! Gelingt es dir beim ersten Mal?",
         correctAnswer: "done",
-        hint: "Zähle laut mit: '1... 2... (Klatschen) | 3 (Klatsch) | 4 (Klatsch)'. Viel Spaß!",
-        imagePlaceholder: "👏",
+        hint: "Nimm dir Zeit. Singe erst 'Do - Re - Mi' und dann 'Mi - Re - Do'!",
+        imagePlaceholder: "🎶",
         isAnalog: true
       }
     ]
