@@ -23,7 +23,11 @@ function generateFilename(text: string): string {
   if (clean.endsWith('_')) clean = clean.slice(0, -1);
   if (clean.startsWith('_')) clean = clean.slice(1);
   
-  if (clean.length > 50) {
+  if (clean.replace(/_/g, '').length === 0) {
+    // If no letters/digits remain, hash the original text
+    const hash = btoa(unescape(encodeURIComponent(text))).replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    clean = 'hash_' + hash;
+  } else if (clean.length > 50) {
     // Basic base64 hash function for client side
     const hash = btoa(unescape(encodeURIComponent(text))).replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
     clean = clean.substring(0, 40) + '_' + hash;

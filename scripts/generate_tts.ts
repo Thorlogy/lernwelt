@@ -23,8 +23,12 @@ export function generateFilename(text: string): string {
   if (clean.endsWith('_')) clean = clean.slice(0, -1);
   if (clean.startsWith('_')) clean = clean.slice(1);
   
-  // Truncate if too long and append hash to avoid collisions if truncated
-  if (clean.length > 50) {
+  // If clean is empty or has only underscores, generate a hash of the original text
+  if (clean.replace(/_/g, '').length === 0) {
+    const hash = Buffer.from(text).toString('base64').replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    clean = 'hash_' + hash;
+  } else if (clean.length > 50) {
+    // Truncate if too long and append hash to avoid collisions if truncated
     const hash = Buffer.from(text).toString('base64').replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
     clean = clean.substring(0, 40) + '_' + hash;
   }
