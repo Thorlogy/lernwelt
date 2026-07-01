@@ -217,7 +217,7 @@ export default function StationLetterSpelling({
  <div className="text-center mb-4">
  <h3 className="font-sans font-extrabold text-xl sm:text-2xl text-[#00639a] flex items-center justify-center gap-2">
  <span>{exercise.question}</span>
- <SpeakButton text={exercise.question} size={24} label="Aufgabe vorlesen" />
+ <SpeakButton text={exercise.question} size={24} label="Aufgabe vorlesen" autoSpeak={true} />
  </h3>
  </div>
 

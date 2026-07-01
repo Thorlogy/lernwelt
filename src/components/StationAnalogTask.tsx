@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserProgress } from '../types';
 import { CheckCircle } from 'lucide-react';
 import { playSuccess } from '../utils/audio';
+import { SpeakButton } from './SpeakButton';
 
 interface StationAnalogTaskProps {
   exercise: any;
@@ -26,9 +27,12 @@ export default function StationAnalogTask({ exercise, onCorrectAnswer, onNext, i
   return (
     <div className="w-full max-w-lg mx-auto p-4 sm:p-6 bg-white/80 backdrop-blur-md rounded-3xl border-4 border-white shadow-soft-tactile mt-6 sm:mt-10 mb-8 sm:mb-12">
       <div className="text-center mb-6">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans drop-shadow-sm mb-2">
-          {exercise.question}
-        </h2>
+        <div className="flex items-center justify-center gap-3 mb-2 flex-wrap">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#00639a] leading-tight font-sans drop-shadow-sm">
+            {exercise.question}
+          </h2>
+          <SpeakButton text={exercise.question} size={24} autoSpeak={true} />
+        </div>
         {exercise.hint && (
           <p className="text-base sm:text-lg text-slate-500 font-bold font-body bg-slate-100 p-3 rounded-2xl inline-block mt-2">
             💡 Tipp: {exercise.hint}

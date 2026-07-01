@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 /**
  * @file StationSingularPlural.tsx
@@ -99,9 +100,12 @@ export default function StationSingularPlural({
  <span className="text-base font-bold text-blue-700 block mb-1 font-sans">
  Einzahl (Singular)
  </span>
- <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 font-sans select-none">
- {exercise.word}
- </h2>
+ <div className="flex items-center justify-center gap-3">
+   <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 font-sans select-none">
+     {exercise.word}
+   </h2>
+   <SpeakButton text={exercise.word} size={26} autoSpeak={true} />
+ </div>
  </div>
 
  {/* Options grid */}

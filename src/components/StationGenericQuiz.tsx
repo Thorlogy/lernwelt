@@ -105,7 +105,7 @@ export default function StationGenericQuiz({
      <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 font-sans leading-snug">
        {exercise.question}
      </h2>
-     <SpeakButton text={exercise.question} size={24} />
+     <SpeakButton text={exercise.question} size={24} autoSpeak={true} />
    </div>
 
    {/* Render 2D Grid if available */}
@@ -177,7 +177,7 @@ export default function StationGenericQuiz({
  <div className="space-y-4">
  {hasChecked && isCorrect === true && (
  <div className="bg-emerald-100 text-emerald-800 p-3 rounded-2xl border-2 border-emerald-300 text-center font-bold text-lg sm:text-base flex items-center justify-center gap-2">
- <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Super gemacht! Das ist die richtige Mehrzahlform! 🌟
+ <CheckCircle className="w-5 h-5 text-emerald-600 animate-bounce" /> Super gemacht! Das ist die richtige Antwort! 🌟
  </div>
  )}
 
@@ -192,7 +192,7 @@ export default function StationGenericQuiz({
  onClick={() => { playPop(); setShowHint(!showHint); }}
  className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-300 text-slate-500 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-base sm:text-lg font-bold font-body"
  >
- <HelpCircle className="w-4 h-4" /> Worthilfe
+ <HelpCircle className="w-4 h-4" /> Hilfe
  </button>
 
  <div className="flex gap-2">
@@ -213,7 +213,7 @@ export default function StationGenericQuiz({
  onClick={onNext}
  className="btn-tactile-primary text-white px-7 py-3 rounded-xl text-lg sm:text-base font-black flex items-center gap-2 cursor-pointer shadow-lg hover:brightness-105"
  >
- Nächstes Wort! <ArrowRight className="w-5 h-5 animate-pulse" />
+ Nächste Aufgabe! <ArrowRight className="w-5 h-5 animate-pulse" />
  </button>
  ) : (
  <button

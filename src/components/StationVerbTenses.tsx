@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Exercise, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { Star, HelpCircle, ArrowRight, CheckCircle, Award } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 /**
  * @file StationVerbTenses.tsx
@@ -122,7 +123,10 @@ export default function StationVerbTenses({
  </div>
 
  {/* Promoted sentence with gap */}
- <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 p-6 rounded-2xl border-2 border-emerald-200 shadow-sm text-center mb-8 relative">
+ <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 p-6 rounded-2xl border-2 border-emerald-200 shadow-sm text-center mb-8 relative flex flex-col items-center gap-1">
+ <div className="absolute top-2 right-2">
+ <SpeakButton text={exercise.question.replace('______', '...')} size={20} autoSpeak={true} />
+ </div>
  <span className="text-base font-bold text-emerald-700 block mb-3 font-sans">
  Satz ergänzen
  </span>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { WordTypeExercise, WordType, UserProgress } from '../types';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
-import { Star, HelpCircle, ArrowRight, CheckCircle } from 'lucide-react';
+import { Star, HelpCircle, ArrowRight, CheckCircle, Package } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 interface StationWordTypesProps {
  exercise: WordTypeExercise;
@@ -84,9 +85,12 @@ export default function StationWordTypes({
  Gesuchtes Wort
  </span>
  
- <h2 className="text-4xl sm:text-5xl font-black text-amber-950 select-none drop-shadow-xs">
- {exercise.word}
- </h2>
+ <div className="flex items-center justify-center gap-3">
+    <h2 className="text-4xl sm:text-5xl font-black text-amber-950 select-none drop-shadow-xs">
+      {exercise.word}
+    </h2>
+    <SpeakButton text={exercise.word} size={28} autoSpeak={true} />
+  </div>
 
  {/* Big, friendly clue for the child */}
  <p className="text-lg sm:text-base font-extrabold text-amber-900 mt-2">

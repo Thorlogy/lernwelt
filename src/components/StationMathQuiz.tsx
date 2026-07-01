@@ -6,6 +6,7 @@ import {
  Star, HelpCircle, ArrowRight, CheckCircle, Calculator, Coins, 
  Camera, Trash2, ShieldAlert, Award, Smile, Info 
 } from 'lucide-react';
+import { SpeakButton } from './SpeakButton';
 
 interface StationMathQuizProps {
  exercise: Exercise;
@@ -984,15 +985,18 @@ export default function StationMathQuiz({
  </div>
 
  {/* Question Card */}
- <div className="bg-gradient-to-r from-cyan-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border-2 border-cyan-200 shadow-sm text-center mb-6 relative">
- <span className="text-base font-bold text-cyan-700 block mb-2 font-sans">
- Rechne im Kopf
- </span>
- <h2 className="text-lg sm:text-xl font-bold text-slate-800 font-body leading-relaxed">
- {exercise.question}
- </h2>
+ <div className="bg-gradient-to-r from-cyan-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border-2 border-cyan-200 shadow-sm text-center mb-6 relative flex flex-col items-center gap-2">
+   <span className="text-base font-bold text-cyan-700 block font-sans">
+     Rechne im Kopf
+   </span>
+   <div className="flex items-center justify-center gap-3">
+     <h2 className="text-lg sm:text-xl font-bold text-slate-800 font-body leading-relaxed">
+       {exercise.question}
+     </h2>
+     <SpeakButton text={exercise.question} size={22} autoSpeak={true} />
+   </div>
  </div>
-
+ 
  {/* Dynamic Didactical Visual Aid */}
  {stationId === 7 && didacticMethod === 'A' && renderZwanzigerfeld()}
  {stationId === 7 && didacticMethod === 'B' && renderNumberBonds()}
