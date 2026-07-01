@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -24,8 +24,9 @@ const ICON_MAP: Record<string, any> = {
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe'>('deutsch');
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst'>('deutsch');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
+  const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>('stack');
 
   const toggleGrade = (grade: number) => {
     playPop();
@@ -227,14 +228,23 @@ const ICON_MAP: Record<string, any> = {
  }
  };
 
- return (
- <div className="relative py-10 px-4 max-w-lg mx-auto bg-gradient-to-b from-[#f2f6fa] to-[#e4eaf0] rounded-3xl border-4 border-white shadow-high-tactile overflow-hidden">
+  return (
+  <div className={`relative py-10 px-4 mx-auto bg-gradient-to-b from-[#f2f6fa] to-[#e4eaf0] rounded-3xl border-4 border-white shadow-high-tactile overflow-hidden transition-all duration-300 ${layoutMode === 'grid' ? 'max-w-4xl' : 'max-w-lg'}`}>
  {/* Background Graphic Landmarks */}
  <div className="absolute top-4 left-6 text-4xl opacity-25 select-none animate-wiggle-soft">☁️</div>
  <div className="absolute top-24 right-8 text-3xl opacity-20 select-none animate-wiggle-soft" style={{ animationDelay: '1s' }}>☁️</div>
  <div className="absolute bottom-20 left-10 text-4xl opacity-20 select-none animate-wiggle-soft" style={{ animationDelay: '2s' }}>🌲</div>
  <div className="absolute bottom-6 right-16 text-3xl opacity-25 select-none animate-wiggle-soft" style={{ animationDelay: '1.5s' }}>🌳</div>
- <div className="absolute top-1/2 left-4 text-2xl opacity-15 select-none text-brand-secondary">🌈</div>
+  <div className="absolute top-1/2 left-4 text-2xl opacity-15 select-none text-brand-secondary">🌈</div>
+  
+  {/* Layout Toggle Button */}
+  <button
+    onClick={() => { playPop(); setLayoutMode(prev => prev === 'stack' ? 'grid' : 'stack'); }}
+    className="absolute top-4 right-4 z-20 bg-white/80 backdrop-blur border-2 border-slate-200 hover:border-slate-300 text-slate-600 p-2 rounded-xl shadow-sm cursor-pointer transition-transform hover:scale-105"
+    title="Ansicht wechseln"
+  >
+    {layoutMode === 'stack' ? <LayoutGrid className="w-5 h-5" /> : <LayoutList className="w-5 h-5" />}
+  </button>
 
   {/* Map Header */}
   <div className="text-center mb-6 relative z-10">
@@ -269,11 +279,11 @@ const ICON_MAP: Record<string, any> = {
   </div>
 
  {/* Subject Switcher Tabs */}
- <div className="flex gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 max-w-[280px] mx-auto">
+ <div className="grid grid-cols-2 gap-2 p-1 bg-slate-200/80 rounded-2xl border border-slate-300/40 mb-8 relative z-10 w-full mx-auto">
  <button
  type="button"
  onClick={() => { playPop(); setActiveSubject('deutsch'); }}
- className={`flex-1 py-2 px-3 rounded-xl font-sans font-black text-base sm:text-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+ className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
  activeSubject === 'deutsch'
  ? 'bg-white text-[#00639a] shadow-sm scale-102 border-b-2 border-slate-200'
  : 'text-slate-500 hover:bg-slate-100/50'
@@ -284,7 +294,7 @@ const ICON_MAP: Record<string, any> = {
  <button
  type="button"
  onClick={() => { playPop(); setActiveSubject('mathe'); }}
- className={`flex-1 py-2 px-3 rounded-xl font-sans font-black text-base sm:text-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+ className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
  activeSubject === 'mathe'
  ? 'bg-white text-emerald-700 shadow-sm scale-102 border-b-2 border-slate-200'
  : 'text-slate-500 hover:bg-slate-100/50'
@@ -292,10 +302,32 @@ const ICON_MAP: Record<string, any> = {
  >
  <span>Mathe 🧮</span>
  </button>
+ <button
+ type="button"
+ onClick={() => { playPop(); setActiveSubject('sachkunde'); }}
+ className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+ activeSubject === 'sachkunde'
+ ? 'bg-white text-orange-700 shadow-sm scale-102 border-b-2 border-slate-200'
+ : 'text-slate-500 hover:bg-slate-100/50'
+ }`}
+ >
+ <span>Sachkunde 🌍</span>
+ </button>
+ <button
+ type="button"
+ onClick={() => { playPop(); setActiveSubject('kunst'); }}
+ className={`py-2 px-2 rounded-xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+ activeSubject === 'kunst'
+ ? 'bg-white text-fuchsia-700 shadow-sm scale-102 border-b-2 border-slate-200'
+ : 'text-slate-500 hover:bg-slate-100/50'
+ }`}
+ >
+ <span>Kunst 🎨</span>
+ </button>
  </div>
 
   {/* Stations Stack Grouped by Grade */}
-  <div className="flex flex-col gap-6 relative z-10">
+  <div className={`relative z-10 gap-6 ${layoutMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2' : 'flex flex-col'}`}>
     {[1, 2, 3, 4].map((gradeLevel) => {
       let subjectStations = STATIONEN.filter(s => s.subject === activeSubject);
       
@@ -337,7 +369,7 @@ const ICON_MAP: Record<string, any> = {
      const isGradeLocked = firstStationInGradeIndex > 0 && !progress.completedStations.includes(subjectStations[firstStationInGradeIndex - 1].id);
 
      return (
-       <div key={`grade-${gradeLevel}`} className="bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-white shadow-soft-tactile overflow-hidden transition-all duration-300">
+       <div key={`grade-${gradeLevel}`} className="bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-white shadow-soft-tactile overflow-hidden transition-all duration-300 h-fit">
          {/* Accordion Header */}
          <button 
            onClick={() => toggleGrade(gradeLevel)}
@@ -349,7 +381,7 @@ const ICON_MAP: Record<string, any> = {
          >
            <div className="flex items-center gap-3">
              <div className="text-2xl sm:text-3xl">
-               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : '🧮'}
+               {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : '🎨'}
              </div>
              <div className="text-left">
                <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">

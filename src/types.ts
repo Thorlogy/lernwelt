@@ -12,6 +12,7 @@ export interface Exercise {
   mathOp?: '+' | '-' | '*' | '/'; // operator
   mathFractionSegments?: number; // visual segments for fractions (denominator)
   mathFractionColored?: number; // colored segments for fractions (numerator)
+  isAnalog?: boolean; // flag for offline tasks (Medienbruch)
 }
 
 export type WordType = 'NOMEN' | 'VERB' | 'ADJEKTIV';
@@ -40,7 +41,7 @@ export interface DetectiveExercise extends Exercise {
 
 export interface Station {
   id: number;
-  subject: 'deutsch' | 'mathe';
+  subject: 'deutsch' | 'mathe' | 'sachkunde' | 'kunst';
   title: string;
   subtitle: string;
   grade: number; // Klasse 1-4

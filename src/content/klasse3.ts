@@ -76,7 +76,43 @@ export const KLASSE_3: Station[] = [
     color: "primary",
     exercises: [
       { id: "304_1", question: "Du kaufst ein Buch für 3€ und einen Stift für 1,50€. Wie viel zahlst du?", options: ["4,50€", "4,00€", "5,00€"], correctAnswer: "4,50€", hint: "3 Euro plus 1,50 Euro." },
-      { id: "304_2", question: "Du hast 10€. Dein Eis kostet 3€. Wie viel Geld bekommst du zurück?", options: ["7€", "8€", "6€", "5€"], correctAnswer: "7€", hint: "10 minus 3." }
+      { id: "304_2", question: "Du hast 10€. Dein Eis kostet 3€. Wie viel Geld bekommst du zurück?", options: ["7€", "8€", "6€", "5€"], correctAnswer: "7€", hint: "10 minus 3." },
+      { id: "304_3", question: "Rechne aus: 55 : 5 = __", options: ["11", "10", "12", "9"], correctAnswer: "11", hint: "Wie oft passt die 5 in die 50? 10 mal. Und in die 5? 1 mal." }
+    ]
+  },
+  {
+    id: 308,
+    subject: "deutsch",
+    title: "Märchen-Werkstatt",
+    subtitle: "Märchen erkennen",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Kennst du die Merkmale eines Märchens?",
+    icon: "Sparkles",
+    color: "primary",
+    exercises: [
+      {
+        id: "308_1",
+        question: "Wie fangen die meisten klassischen Märchen an?",
+        options: ["Es war einmal...", "Gestern geschah...", "Hallo Kinder...", "In ferner Zukunft..."],
+        correctAnswer: "Es war einmal...",
+        hint: "Denk an Aschenputtel oder Rotkäppchen."
+      },
+      {
+        id: "308_2",
+        question: "Welche magische Zahl kommt im Märchen besonders oft vor?",
+        options: ["3", "10", "2", "42"],
+        correctAnswer: "3",
+        hint: "Denk an Wünsche oder Brüder."
+      },
+      {
+        id: "308_3",
+        question: "Nimm dein Lieblingsbuch (oder denk dir eins aus) und lies den ersten Satz laut mit einer lustig verstellten Stimme vor!",
+        correctAnswer: "done",
+        hint: "Vielleicht wie eine alte Hexe oder ein mutiger Ritter?",
+        imagePlaceholder: "📖",
+        isAnalog: true
+      }
     ]
   },
   {
@@ -108,6 +144,34 @@ export const KLASSE_3: Station[] = [
     exercises: [
       { id: "306_1", question: "Mia läuft um 14:15 Uhr los. Sie läuft 45 Minuten. Wann ist sie da?", options: ["15:00 Uhr", "14:45 Uhr", "15:15 Uhr"], correctAnswer: "15:00 Uhr", hint: "15 Minuten + 45 Minuten = 60 Minuten (1 Stunde)." },
       { id: "306_2", question: "Ein Bauer hat 5 Kühe. Jede Kuh gibt 4 Liter Milch. Wie viel Milch ist das?", options: ["20 Liter", "9 Liter", "24 Liter"], correctAnswer: "20 Liter", hint: "5 mal 4." }
+    ]
+  },
+  {
+    id: 307,
+    subject: "mathe",
+    title: "Die Waage",
+    subtitle: "Gewichte wiegen",
+    grade: 3,
+    difficulty: "schwer",
+    description: "Gramm und Kilogramm.",
+    icon: "Calculator",
+    color: "orange",
+    exercises: [
+      {
+        id: "307_1",
+        question: "Was wiegt am meisten?",
+        options: ["1 Kilogramm Eisen", "1 Kilogramm Federn", "Beides gleich", "Kann man nicht wissen"],
+        correctAnswer: "Beides gleich",
+        hint: "Ein Kilogramm ist immer ein Kilogramm, egal woraus es besteht!"
+      },
+      {
+        id: "307_2",
+        question: "Geh in die Küche und suche eine 1-Kilogramm-Packung (z.B. Mehl oder Zucker). Hebe sie hoch und merke dir, wie schwer sie ist!",
+        correctAnswer: "done",
+        hint: "Ein Liter Wasser wiegt auch ungefähr 1 Kilogramm.",
+        imagePlaceholder: "⚖️",
+        isAnalog: true
+      }
     ]
   }
 ];

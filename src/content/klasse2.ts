@@ -113,5 +113,40 @@ export const KLASSE_2: Station[] = [
       { id: "206_2", question: "Rechne aus: 6 • 7 = __", mathNum1: 6, mathNum2: 7, mathOp: "*", options: ["42", "48", "36", "49"], correctAnswer: "42", hint: "5 mal 7 ist 35. Und dann noch eine 7 dazu." },
       { id: "206_3", question: "Rechne aus: 9 • 9 = __", mathNum1: 9, mathNum2: 9, mathOp: "*", options: ["81", "90", "72", "88"], correctAnswer: "81", hint: "10 mal 9 ist 90. Davon einmal 9 abziehen." }
     ]
+  },
+  {
+    id: 208,
+    subject: "mathe",
+    title: "Formen & Körper",
+    subtitle: "Geometrie in 3D",
+    grade: 2,
+    difficulty: "mittel",
+    description: "Kennst du die geometrischen Körper?",
+    icon: "Layers",
+    color: "orange",
+    exercises: [
+      {
+        id: "208_1",
+        question: "Welcher Körper sieht aus wie ein Spielwürfel?",
+        options: ["Kugel", "Würfel", "Zylinder", "Pyramide"],
+        correctAnswer: "Würfel",
+        hint: "Er hat überall die gleichen Ecken und Kanten."
+      },
+      {
+        id: "208_2",
+        question: "Welcher Körper ist ganz rund und kann in alle Richtungen rollen?",
+        options: ["Kugel", "Quader", "Würfel", "Pyramide"],
+        correctAnswer: "Kugel",
+        hint: "Ein Fußball ist eine..."
+      },
+      {
+        id: "208_3",
+        question: "Geh in die Küche und suche etwas, das die Form eines Zylinders hat (z.B. eine Konservendose)!",
+        correctAnswer: "done",
+        hint: "Ein Zylinder ist rund wie ein Rohr, aber oben und unten flach.",
+        imagePlaceholder: "🥫",
+        isAnalog: true
+      }
+    ]
   }
 ];

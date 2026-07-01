@@ -12,6 +12,7 @@ import StationVerbTenses from './components/StationVerbTenses';
 import StationMathQuiz from './components/StationMathQuiz';
 import StationMathFractions from './components/StationMathFractions';
 import StationGenericQuiz from './components/StationGenericQuiz';
+import StationAnalogTask from './components/StationAnalogTask';
 import ResearchDashboard from './components/ResearchDashboard';
 import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
@@ -26,13 +27,14 @@ import { useSpeech } from './lib/useSpeech';
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
 
 const INITIAL_PROGRESS: UserProgress = {
- childName: '',
- avatarId: 'dragon',
- avatarColor: 'bg-emerald-100 border-emerald-300 text-emerald-700',
- completedStations: [],
- starsCount: 0,
- stationTrophies: {},
- score: 0,
+  anonymousId: '',
+  childName: '',
+  avatarId: 'dragon',
+  avatarColor: 'bg-emerald-100 border-emerald-300 text-emerald-700',
+  completedStations: [],
+  starsCount: 0,
+  stationTrophies: {},
+  score: 0,
 };
 
 export default function App() {
@@ -558,7 +560,17 @@ export default function App() {
             />
           )}
 
-          {![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406, 999].includes(activeStationId as number) && currentExercise && (
+          {currentExercise?.isAnalog && (
+            <StationAnalogTask
+              exercise={currentExercise}
+              onCorrectAnswer={handleCorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          )}
+
+          {!currentExercise?.isAnalog && ![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406, 999].includes(activeStationId as number) && currentExercise && (
             <StationGenericQuiz
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
