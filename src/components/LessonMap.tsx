@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
-import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock, Cpu } from 'lucide-react';
+import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock, Cpu, Rocket } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
 interface LessonMapProps {
@@ -24,10 +24,11 @@ const ICON_MAP: Record<string, any> = {
  Sparkles: Sparkles,
  Clock: Clock,
  Cpu: Cpu,
+ Rocket: Rocket,
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik'>('deutsch');
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos'>('deutsch');
   const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
   const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>('stack');
 
@@ -360,6 +361,17 @@ const ICON_MAP: Record<string, any> = {
     >
       <span>🎵 Musik</span>
     </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('kosmos'); }}
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
+        activeSubject === 'kosmos'
+        ? 'bg-indigo-950 text-yellow-300 border-b-4 border-slate-900 hover:bg-indigo-900 hover:text-yellow-200 -translate-y-0.5 shadow-md shadow-indigo-950/20'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
+      }`}
+    >
+      <span>🚀 Kosmos</span>
+    </button>
   </div>
 
   {/* Stations Stack Grouped by Grade */}
@@ -417,7 +429,7 @@ const ICON_MAP: Record<string, any> = {
          >
            <div className="flex items-center gap-3">
              <div className="text-2xl sm:text-3xl">
-                {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : activeSubject === 'englisch' ? '🇬🇧' : activeSubject === 'logik' ? '🧩' : '🎵'}
+                {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : activeSubject === 'englisch' ? '🇬🇧' : activeSubject === 'logik' ? '🧩' : activeSubject === 'musik' ? '🎵' : '🚀'}
              </div>
              <div className="text-left">
                <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">

@@ -8,6 +8,7 @@ import { KUNST } from './content/kunst';
 import { ENGLISCH } from './content/englisch';
 import { LOGIK } from './content/logik';
 import { MUSIK } from './content/musik';
+import { KOSMOS } from './content/kosmos';
 
 export const INITIAL_PROGRESS: UserProgress = {
   anonymousId: '',
@@ -29,7 +30,8 @@ export const STATIONEN: Station[] = [
   ...KUNST,
   ...ENGLISCH,
   ...LOGIK,
-  ...MUSIK
+  ...MUSIK,
+  ...KOSMOS
 ];
 
 export const CHARACTER_AVATARS = [
