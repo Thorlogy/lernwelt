@@ -7,16 +7,11 @@ import { Star, HelpCircle, ArrowRight, CheckCircle, Award, Volume2 } from 'lucid
 import { getEmojiForWord } from '../utils/emojis';
 
 /**
- * @file StationSingularPlural.tsx
- * @description Station 5 component of Lernwelt. Focuses on Singular and Plural formations.
- *
- * Curriculum Alignment:
- * Aligns with the "Lehrplan Deutsch Grundschule NRW" (Competency area: "Sprache und Sprachgebrauch untersuchen").
- * Specifically targets Plural building, umlaut changes (Umlautung/Ableitung, e.g., Baum -> Bäume)
- * and inflection rules commonly taught in Grade 2.
+ * @file StationGenericQuiz.tsx
+ * @description General multiple-choice quiz station of Lernwelt.
  */
 
-interface StationSingularPluralProps {
+interface StationGenericQuizProps {
  /** The current exercise containing options, hint, word, and correctAnswer */
  exercise: Exercise;
  /** Callback fired when the child selects the correct answer */
@@ -38,7 +33,7 @@ export default function StationGenericQuiz({
  onNext,
  progress,
  isLastExercise,
-}: StationSingularPluralProps) {
+}: StationGenericQuizProps) {
  const [selectedOption, setSelectedOption] = useState<string | null>(null);
  const [hasChecked, setHasChecked] = useState(false);
  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);

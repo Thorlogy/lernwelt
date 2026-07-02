@@ -11,6 +11,7 @@ export const KOSMOS: Station[] = [
     description: "Reise mit Astronaut Lumi durch die riesigen Weiten des Weltalls.",
     icon: "Rocket",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "1001_1",
@@ -50,6 +51,7 @@ export const KOSMOS: Station[] = [
     icon: "Rocket",
     color: "secondary",
     isExcellence: true,
+    renderer: "generic",
     exercises: [
       {
         id: "1002_1",

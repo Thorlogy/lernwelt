@@ -11,6 +11,7 @@ export const KUNST: Station[] = [
     description: "Hol deine Wasserfarben und mische mit!",
     icon: "Sparkles",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "601_1",
@@ -47,6 +48,7 @@ export const KUNST: Station[] = [
     description: "Wie Kandinsky und Mondrian: Wir zeichnen Kunst aus Formen.",
     icon: "Layers",
     color: "orange",
+    renderer: "generic",
     exercises: [
       {
         id: "602_1",
@@ -83,6 +85,7 @@ export const KUNST: Station[] = [
     description: "Lerne die Frottage-Technik kennen.",
     icon: "Sparkles",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "603_1",
@@ -111,6 +114,7 @@ export const KUNST: Station[] = [
     description: "Formen spiegeln und Bilder falten.",
     icon: "Layers",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "604_1",

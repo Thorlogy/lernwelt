@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserProgress, Station, Exercise } from './types';
-import { STATIONEN, CHARACTER_AVATARS } from './data';
+import { STATIONEN, CHARACTER_AVATARS, INITIAL_PROGRESS } from './data';
 import Mascot from './components/Mascot';
 import LessonMap from './components/LessonMap';
 import StationLetterSpelling from './components/StationLetterSpelling';
@@ -23,27 +23,21 @@ import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import LoginScreen from './components/LoginScreen';
 import TaskBuilder from './components/TaskBuilder';
 import { useSpeech } from './lib/useSpeech';
+import { createCommunityStation } from './lib/communityStation';
 
 const LOCAL_STORAGE_KEY = 'lernwelt_progress_v2';
-
-const INITIAL_PROGRESS: UserProgress = {
-  anonymousId: '',
-  childName: '',
-  avatarId: 'dragon',
-  avatarColor: 'bg-emerald-100 border-emerald-300 text-emerald-700',
-  completedStations: [],
-  starsCount: 0,
-  stationTrophies: {},
-  score: 0,
-};
 
 export default function App() {
  // Application state
  const [progress, setProgress] = useState<UserProgress>(INITIAL_PROGRESS);
 
-  const isDeutschDone = STATIONEN.filter(s => s.subject === 'deutsch').every(s => progress.completedStations.includes(s.id));
-  const isMatheDone = STATIONEN.filter(s => s.subject === 'mathe').every(s => progress.completedStations.includes(s.id));
- const hasWonSubject = isDeutschDone || isMatheDone;
+  const subjectsList: ('deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos' | 'knobeln')[] = [
+    'deutsch', 'mathe', 'sachkunde', 'kunst', 'englisch', 'logik', 'musik', 'kosmos', 'knobeln'
+  ];
+  const hasWonSubject = subjectsList.some(subject => {
+    const subjectStations = STATIONEN.filter(s => s.subject === subject);
+    return subjectStations.length > 0 && subjectStations.every(s => progress.completedStations.includes(s.id));
+  });
 
  const [activeStationId, setActiveStationId] = useState<number | null>(null);
  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number>(0);
@@ -215,26 +209,7 @@ export default function App() {
   // Station exercise interactions
   let activeStation = STATIONEN.find(s => s.id === activeStationId);
   if (activeStationId === 999 && progress.createdTasks && progress.createdTasks.length > 0) {
-    activeStation = {
-      id: 999,
-      subject: 'deutsch',
-      grade: 1,
-      title: 'Community-Rätsel',
-      subtitle: 'Von Kindern für Kinder',
-      difficulty: 'leicht',
-      description: 'Rätsel aus der Aufgaben-Werkstatt.',
-      icon: 'Sparkles',
-      color: 'orange',
-      exercises: progress.createdTasks.map(t => ({
-        id: t.id,
-        question: `${t.question} (Tipp von ${t.creatorName}: ${t.hint || 'Viel Erfolg!'})`,
-        word: t.word,
-        imagePlaceholder: t.emoji,
-        correctAnswer: t.word.split(''),
-        hint: t.hint,
-        scrambledLetters: t.word.split('').sort(() => Math.random() - 0.5)
-      }))
-    };
+    activeStation = createCommunityStation(progress.createdTasks);
   }
   const currentExercise = activeStation ? activeStation.exercises[currentExerciseIndex] : null;
 
@@ -497,7 +472,7 @@ export default function App() {
 
   {/* Show Excellence Banner if applicable */}
   {activeStation?.isExcellence && (
-    <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-955 px-4 py-2.5 rounded-2xl border border-amber-300 shadow-md flex items-center justify-center gap-2 text-center select-none">
+    <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 px-4 py-2.5 rounded-2xl border border-amber-300 shadow-md flex items-center justify-center gap-2 text-center select-none">
       <span className="text-xl sm:text-2xl">👑</span>
       <span className="font-sans font-black text-xs sm:text-sm tracking-wide uppercase">
         Exzellenz-Herausforderung: Für echte Knobel-Profis!
@@ -512,7 +487,16 @@ export default function App() {
  )}
 
           {/* Load correct game station depending on station ID */}
-          {activeStationId === 103 && currentExercise && (
+          {/* Load correct game station depending on renderer type */}
+          {currentExercise?.isAnalog ? (
+            <StationAnalogTask
+              exercise={currentExercise}
+              onCorrectAnswer={handleCorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          ) : activeStation?.renderer === 'spelling' && currentExercise ? (
             <StationLetterSpelling
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
@@ -521,9 +505,7 @@ export default function App() {
               progress={progress}
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
             />
-          )}
-
-          {activeStationId === 102 && currentExercise && (
+          ) : activeStation?.renderer === 'syllables' && currentExercise ? (
             <StationSyllables
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
@@ -532,9 +514,7 @@ export default function App() {
               progress={progress}
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
             />
-          )}
-
-          {activeStationId === 405 && currentExercise && (
+          ) : activeStation?.renderer === 'fractions' && currentExercise ? (
             <StationMathFractions
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
@@ -544,9 +524,7 @@ export default function App() {
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
               onSaveMetrics={handleSaveMetrics}
             />
-          )}
-
-          {[104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 406].includes(activeStationId as number) && currentExercise && (
+          ) : activeStation?.renderer === 'math' && currentExercise ? (
             <StationMathQuiz
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
@@ -557,31 +535,7 @@ export default function App() {
               stationId={activeStationId as number}
               onSaveMetrics={handleSaveMetrics}
             />
-          )}
-
-          {/* 999 is the community station, let's use the spelling layout for it as well */}
-          {activeStationId === 999 && currentExercise && (
-            <StationLetterSpelling
-              exercise={currentExercise as any}
-              onCorrectAnswer={handleCorrectAnswer}
-              onIncorrectAnswer={handleIncorrectAnswer}
-              onNext={handleNextExercise}
-              progress={progress}
-              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
-            />
-          )}
-
-          {currentExercise?.isAnalog && (
-            <StationAnalogTask
-              exercise={currentExercise}
-              onCorrectAnswer={handleCorrectAnswer}
-              onNext={handleNextExercise}
-              progress={progress}
-              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
-            />
-          )}
-
-          {!currentExercise?.isAnalog && ![102, 103, 104, 105, 106, 204, 205, 206, 304, 305, 306, 404, 405, 406, 999].includes(activeStationId as number) && currentExercise && (
+          ) : currentExercise ? (
             <StationGenericQuiz
               exercise={currentExercise as any}
               onCorrectAnswer={handleCorrectAnswer}
@@ -590,7 +544,7 @@ export default function App() {
               progress={progress}
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
             />
-          )}
+          ) : null}
         </div>
       )}
  </main>
@@ -633,7 +587,7 @@ export default function App() {
 
  {/* Bottom Footer Credits block */}
  <footer className="text-center py-10 px-4 text-base text-slate-400 font-bold font-body">
- <p>© 2026 Lernwelt • Das spielerische Deutschabenteuer.</p>
+ <p>© 2026 Lernwelt • Das spielerische Lernabenteuer.</p>
  <p className="mt-1 text-base text-slate-300">Mit Liebe für kleine Lerner und kluge Köpfe gebaut.</p>
  </footer>
  </div>

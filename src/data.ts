@@ -14,12 +14,10 @@ import { KNOBELN } from './content/knobeln';
 export const INITIAL_PROGRESS: UserProgress = {
   anonymousId: '',
   childName: '',
-  avatarId: '',
-  avatarColor: '',
+  avatarId: 'dragon',
+  avatarColor: 'bg-emerald-100 border-emerald-300 text-emerald-700',
   completedStations: [],
   starsCount: 0,
-  stationTrophies: {},
-  score: 0
 };
 
 export const STATIONEN: Station[] = [

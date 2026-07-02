@@ -11,6 +11,7 @@ export const KLASSE_1: Station[] = [
     description: "Höre genau hin! Finde Wörter, die mit dem gleichen Buchstaben anfangen.",
     icon: "Music",
     color: "primary",
+    renderer: "generic",
     exercises: [
       { id: "101_1", question: "Welches Wort fängt wie APFEL an?", options: ["Affe", "Hund", "Maus", "Sonne"], correctAnswer: "Affe", hint: "Das gesuchte Wort muss mit 'A' beginnen." },
       { id: "101_2", question: "Welches Wort fängt wie TISCH an?", options: ["Bär", "Tasse", "Auto", "Katze"], correctAnswer: "Tasse", hint: "Das Wort muss mit 'T' beginnen." },
@@ -28,6 +29,7 @@ export const KLASSE_1: Station[] = [
     description: "Klicke die Silben in der richtigen Reihenfolge an, um das ganze Wort zusammenzusetzen!",
     icon: "Music",
     color: "secondary",
+    renderer: "syllables",
     exercises: [
       { id: "102_1", question: "Zerteile das Wort: HOSE", word: "HOSE", correctAnswer: ["HO", "SE"], hint: "Ho-se." },
       { id: "102_2", question: "Zerteile das Wort: DOSE", word: "DOSE", correctAnswer: ["DO", "SE"], hint: "Do-se." },
@@ -45,6 +47,7 @@ export const KLASSE_1: Station[] = [
     description: "Bringe die Buchstaben in die richtige Reihenfolge!",
     icon: "Keyboard",
     color: "tertiary",
+    renderer: "spelling",
     exercises: [
       { id: "103_1", question: "Bilde das gesuchte Wort:", word: "HUND", correctAnswer: "HUND", hint: "Macht Wau." },
       { id: "103_2", question: "Bilde das gesuchte Wort:", word: "OMA", correctAnswer: "OMA", hint: "Die Mama von Mama oder Papa." },
@@ -62,6 +65,7 @@ export const KLASSE_1: Station[] = [
     description: "Muster-Detektiv und Mengen erkennen.",
     icon: "Sparkles",
     color: "primary",
+    renderer: "math",
     exercises: [
       { id: "104_1", question: "Wie geht die Reihe weiter? 🔴 🔵 🔴 🔵 🔴 __", options: ["🔴", "🔵", "🟡", "🟢"], correctAnswer: "🔵", hint: "Abwechselnd Rot und Blau." },
       { id: "104_2", question: "Welche Form hat ein Rad (Reifen)?", options: ["Kreis", "Dreieck", "Quadrat", "Rechteck"], correctAnswer: "Kreis", hint: "Rund ohne Ecken." },
@@ -78,6 +82,7 @@ export const KLASSE_1: Station[] = [
     description: "Rechne Plus und Minus im kleinen Rahmen.",
     icon: "Calculator",
     color: "secondary",
+    renderer: "math",
     exercises: [
       { id: "105_1", question: "Die 10 zerlegen! 10 = 6 + __", options: ["3", "4", "5", "6"], correctAnswer: "4", hint: "10 Finger, 6 klappst du ein. Wie viele stehen noch?" },
       { id: "105_2", question: "Rechne aus: 5 + 3 = __", options: ["7", "8", "9", "6"], correctAnswer: "8", hint: "5 Finger und 3 dazu." },
@@ -95,6 +100,7 @@ export const KLASSE_1: Station[] = [
     description: "Rechne bis 20!",
     icon: "Calculator",
     color: "tertiary",
+    renderer: "math",
     exercises: [
       { id: "106_1", question: "Rechne aus: 12 + 5 = __", options: ["16", "17", "18", "15"], correctAnswer: "17", hint: "Rechne erst 2 + 5 und hänge die 10 davor." },
       { id: "106_2", question: "Rechne aus: 18 - 4 = __", options: ["13", "14", "15", "12"], correctAnswer: "14", hint: "Rechne erst 8 - 4." },
@@ -112,6 +118,7 @@ export const KLASSE_1: Station[] = [
     description: "Hilf Lumi beim Einkaufen und beim Ablesen der Uhr!",
     icon: "Coins",
     color: "orange",
+    renderer: "math",
     exercises: [
       { id: "107_1", question: "Ein Apfel kostet 2€. Du gibst 5€. Wie viel Rückgeld bekommst du?", options: ["2€", "3€", "4€", "1€"], correctAnswer: "3€", hint: "Rechne 5 - 2." },
       { id: "107_2", question: "Du hast eine 2€ Münze und drei 1€ Münzen. Wie viel Geld ist das?", options: ["4€", "5€", "6€", "3€"], correctAnswer: "5€", hint: "Rechne 2 + 1 + 1 + 1." },

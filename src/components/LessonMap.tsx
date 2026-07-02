@@ -3,6 +3,7 @@ import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
 import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock, Cpu, Rocket } from 'lucide-react';
 import { playPop } from '../utils/audio';
+import { createCommunityStation } from '../lib/communityStation';
 
 interface LessonMapProps {
  progress: UserProgress;
@@ -245,15 +246,22 @@ const ICON_MAP: Record<string, any> = {
  printWindow.document.close();
  };
  
- const handleStationClick = (station: Station, isLocked: boolean) => {
+ const handleStationClick = (station: Station) => {
  playPop();
- if (isLocked) {
- // Allow overriding or playing anyway to ensure smooth tester experience, but with a warning or visual unlock
  onSelectStation(station.id);
- } else {
- onSelectStation(station.id);
- }
  };
+
+  const SUBJECT_TABS = [
+    { key: 'deutsch', label: '🎒 Deutsch', activeClass: 'bg-sky-500 text-white border-b-4 border-sky-700 hover:bg-sky-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'mathe', label: '🧮 Mathe', activeClass: 'bg-emerald-500 text-white border-b-4 border-emerald-700 hover:bg-emerald-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'sachkunde', label: '🌍 Sachkunde', activeClass: 'bg-orange-500 text-white border-b-4 border-orange-700 hover:bg-orange-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'kunst', label: '🎨 Kunst', activeClass: 'bg-fuchsia-500 text-white border-b-4 border-fuchsia-700 hover:bg-fuchsia-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'englisch', label: '🇬🇧 Englisch', activeClass: 'bg-indigo-500 text-white border-b-4 border-indigo-700 hover:bg-indigo-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'logik', label: '🧩 Logik', activeClass: 'bg-cyan-500 text-white border-b-4 border-cyan-700 hover:bg-cyan-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'musik', label: '🎵 Musik', activeClass: 'bg-rose-500 text-white border-b-4 border-rose-700 hover:bg-rose-600 hover:text-white -translate-y-0.5 shadow-md' },
+    { key: 'kosmos', label: '🚀 Kosmos', activeClass: 'bg-indigo-950 text-yellow-300 border-b-4 border-slate-900 hover:bg-indigo-900 hover:text-yellow-200 -translate-y-0.5 shadow-md shadow-indigo-950/20' },
+    { key: 'knobeln', label: '👑 Knobeln', activeClass: 'bg-purple-900 text-amber-300 border-b-4 border-purple-950 hover:bg-purple-950 hover:text-amber-200 -translate-y-0.5 shadow-md shadow-purple-950/20' },
+  ] as const;
 
   return (
   <div className={`relative py-10 px-4 mx-auto bg-gradient-to-b from-[#f2f6fa] to-[#e4eaf0] rounded-3xl border-4 border-white shadow-high-tactile overflow-hidden transition-all duration-300 ${layoutMode === 'grid' ? 'max-w-4xl' : 'max-w-lg'}`}>
@@ -307,105 +315,20 @@ const ICON_MAP: Record<string, any> = {
 
   {/* Subject Switcher Tabs */}
   <div className="flex flex-wrap justify-center gap-2.5 mb-8 relative z-10 w-full mx-auto px-1">
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('deutsch'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'deutsch'
-        ? 'bg-sky-500 text-white border-b-4 border-sky-700 hover:bg-sky-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🎒 Deutsch</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('mathe'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'mathe'
-        ? 'bg-emerald-500 text-white border-b-4 border-emerald-700 hover:bg-emerald-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🧮 Mathe</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('sachkunde'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'sachkunde'
-        ? 'bg-orange-500 text-white border-b-4 border-orange-700 hover:bg-orange-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🌍 Sachkunde</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('kunst'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'kunst'
-        ? 'bg-fuchsia-500 text-white border-b-4 border-fuchsia-700 hover:bg-fuchsia-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🎨 Kunst</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('englisch'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'englisch'
-        ? 'bg-indigo-500 text-white border-b-4 border-indigo-700 hover:bg-indigo-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🇬🇧 Englisch</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('logik'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'logik'
-        ? 'bg-cyan-500 text-white border-b-4 border-cyan-700 hover:bg-cyan-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🧩 Logik</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('musik'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'musik'
-        ? 'bg-rose-500 text-white border-b-4 border-rose-700 hover:bg-rose-600 hover:text-white -translate-y-0.5 shadow-md'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🎵 Musik</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('kosmos'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'kosmos'
-        ? 'bg-indigo-950 text-yellow-300 border-b-4 border-slate-900 hover:bg-indigo-900 hover:text-yellow-200 -translate-y-0.5 shadow-md shadow-indigo-950/20'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>🚀 Kosmos</span>
-    </button>
-    <button
-      type="button"
-      onClick={() => { playPop(); setActiveSubject('knobeln'); }}
-      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
-        activeSubject === 'knobeln'
-        ? 'bg-purple-900 text-amber-300 border-b-4 border-purple-950 hover:bg-purple-950 hover:text-amber-200 -translate-y-0.5 shadow-md shadow-purple-950/20'
-        : 'bg-white/80 text-slate-600 hover:bg-white'
-      }`}
-    >
-      <span>👑 Knobeln</span>
-    </button>
+    {SUBJECT_TABS.map((tab) => (
+      <button
+        key={tab.key}
+        type="button"
+        onClick={() => { playPop(); setActiveSubject(tab.key); }}
+        className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
+          activeSubject === tab.key
+            ? tab.activeClass
+            : 'bg-white/80 text-slate-600 hover:bg-white'
+        }`}
+      >
+        <span>{tab.label}</span>
+      </button>
+    ))}
   </div>
 
   {/* Stations Stack Grouped by Grade */}
@@ -415,27 +338,7 @@ const ICON_MAP: Record<string, any> = {
       
       // Inject Community Station into Deutsch Grade 1
       if (activeSubject === 'deutsch' && progress.createdTasks && progress.createdTasks.length > 0) {
-        const communityStation: Station = {
-          id: 999,
-          subject: 'deutsch',
-          grade: 1,
-          title: 'Community-Rätsel',
-          subtitle: 'Von Kindern für Kinder',
-          difficulty: 'leicht',
-          description: 'Rätsel aus der Aufgaben-Werkstatt.',
-          icon: 'Sparkles',
-          color: 'orange',
-          exercises: progress.createdTasks.map(t => ({
-            id: t.id,
-            question: `${t.question} (Tipp von ${t.creatorName}: ${t.hint || 'Viel Erfolg!'})`,
-            word: t.word,
-            imagePlaceholder: t.emoji,
-            correctAnswer: t.word.split(''),
-            hint: t.hint,
-            scrambledLetters: t.word.split('').sort(() => Math.random() - 0.5)
-          }))
-        };
-        // Add to the end of Grade 1 or start of it
+        const communityStation = createCommunityStation(progress.createdTasks);
         subjectStations = [...subjectStations, communityStation];
       }
 
@@ -536,7 +439,7 @@ const ICON_MAP: Record<string, any> = {
                      style={{ transform: isActive ? 'scale(1.02)' : 'none' }}
                    >
                      <div 
-                       onClick={() => handleStationClick(station, isLocked)}
+                       onClick={() => handleStationClick(station)}
                        className="flex items-start gap-3.5 cursor-pointer flex-1 min-w-0"
                      >
                        {!isLocked && !isCompleted && !isActive && (
@@ -627,7 +530,7 @@ const ICON_MAP: Record<string, any> = {
  <div className="mt-12 text-center p-4 bg-yellow-50 rounded-2xl border-2 border-dashed border-yellow-300">
  <span className="text-3xl">🏆</span>
  <h4 className="text-lg font-bold text-yellow-800 font-sans mt-1">Lernkönig Urkunde</h4>
- <p className="text-base text-slate-500 font-body">Schließe alle 12 Deutsch-Stationen oder alle 12 Mathe-Stationen ab, um deine goldene Urkunde freizuschalten!</p>
+ <p className="text-base text-slate-500 font-body">Schließe alle Stationen eines beliebigen Faches ab, um deine goldene Urkunde freizuschalten!</p>
  </div>
 
  {/* A/B Test Dashboard shortcut */}

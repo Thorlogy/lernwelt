@@ -11,6 +11,7 @@ export const MUSIK: Station[] = [
     description: "Wie gut spürst du den Takt?",
     icon: "Music",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "901_1",
@@ -46,6 +47,7 @@ export const MUSIK: Station[] = [
     description: "Kennst du dich mit Instrumenten aus?",
     icon: "Music",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "902_1",
@@ -82,6 +84,7 @@ export const MUSIK: Station[] = [
     icon: "Music",
     color: "secondary",
     isExcellence: true,
+    renderer: "generic",
     exercises: [
       {
         id: "903_1",

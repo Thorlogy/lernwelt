@@ -12,6 +12,7 @@ export const KNOBELN: Station[] = [
     icon: "Award",
     color: "primary",
     isExcellence: true,
+    renderer: "generic",
     exercises: [
       {
         id: "1101_1",
@@ -53,6 +54,7 @@ export const KNOBELN: Station[] = [
     icon: "Award",
     color: "secondary",
     isExcellence: true,
+    renderer: "generic",
     exercises: [
       {
         id: "1102_1",

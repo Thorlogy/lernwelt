@@ -52,6 +52,7 @@ export interface Station {
   color: 'primary' | 'secondary' | 'tertiary' | 'orange';
   exercises: Exercise[];
   isExcellence?: boolean;
+  renderer?: 'generic' | 'math' | 'spelling' | 'syllables' | 'fractions';
 }
 
 export interface CreatedTask {
@@ -72,8 +73,6 @@ export interface UserProgress {
   avatarColor: string;
   completedStations: number[]; // ids of completed stations
   starsCount: number; // collected stars
-  stationTrophies: Record<number, boolean>; // stationId -> completed
-  score: number;
   experimentMetrics?: {
     methodA: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };
     methodB: { correctFirstTry: number; totalAttempts: number; totalTimeSeconds: number; questionsAnswered: number };

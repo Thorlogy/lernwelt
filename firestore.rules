@@ -2,6 +2,11 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // User progress: only the authenticated owner may read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     match /metrics/{document} {
       // Allow anyone to read the aggregated metrics and write/create new results
       allow read, create: if true;

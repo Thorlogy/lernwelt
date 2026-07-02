@@ -11,6 +11,7 @@ export const SACHKUNDE: Station[] = [
     description: "Erkunde dein Zimmer! Hol echte Dinge, die zu den Aufgaben passen.",
     icon: "Search",
     color: "orange",
+    renderer: "generic",
     exercises: [
       {
         id: "501_1",
@@ -48,6 +49,7 @@ export const SACHKUNDE: Station[] = [
     description: "Welche Tiere leben bei uns im Wald?",
     icon: "Search",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "502_1",
@@ -83,6 +85,7 @@ export const SACHKUNDE: Station[] = [
     description: "Was ziehen wir an, wenn es kalt ist?",
     icon: "HelpCircle",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "503_1",
@@ -111,6 +114,7 @@ export const SACHKUNDE: Station[] = [
     description: "Sicher über die Straße kommen.",
     icon: "Search",
     color: "orange",
+    renderer: "generic",
     exercises: [
       {
         id: "504_1",
@@ -139,6 +143,7 @@ export const SACHKUNDE: Station[] = [
     description: "Was tut unserem Körper gut?",
     icon: "HelpCircle",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "505_1",
@@ -167,6 +172,7 @@ export const SACHKUNDE: Station[] = [
     description: "Was zieht ein Magnet eigentlich an?",
     icon: "Search",
     color: "orange",
+    renderer: "generic",
     exercises: [
       {
         id: "506_1",
@@ -195,6 +201,7 @@ export const SACHKUNDE: Station[] = [
     description: "Natur und Rechnen verbinden.",
     icon: "Search",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "507_1",

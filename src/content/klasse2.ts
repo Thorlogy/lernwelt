@@ -11,6 +11,7 @@ export const KLASSE_2: Station[] = [
     description: "Nomen sind Namenwörter. Sie bezeichnen Menschen, Tiere, Pflanzen und Dinge. Man schreibt sie immer groß!",
     icon: "FolderGit",
     color: "primary",
+    renderer: "generic",
     exercises: [
       { id: "201_1", question: "Welches Wort ist ein Nomen?", options: ["schnell", "Hund", "laufen", "schön"], correctAnswer: "Hund", hint: "Ein Tier, das man anfassen kann." },
       { id: "201_2", question: "Welches Wort ist ein Nomen?", options: ["Haus", "gehen", "klein", "laut"], correctAnswer: "Haus", hint: "Ein Ding, das man bauen kann." },
@@ -27,6 +28,7 @@ export const KLASSE_2: Station[] = [
     description: "Sortiere die Wörter: Tuwörter (Verben) oder Wiewörter (Adjektive)?",
     icon: "Award",
     color: "secondary",
+    renderer: "generic",
     exercises: [
       { id: "202_1", question: "Ist 'rennen' ein Verb oder Adjektiv?", options: ["Verb", "Adjektiv"], correctAnswer: "Verb", hint: "Es ist etwas, das du tust." },
       { id: "202_2", question: "Ist 'süß' ein Verb oder Adjektiv?", options: ["Verb", "Adjektiv"], correctAnswer: "Adjektiv", hint: "Es beschreibt, wie etwas ist." },
@@ -44,6 +46,7 @@ export const KLASSE_2: Station[] = [
     description: "Finde das falsch geschriebene Wort!",
     icon: "Search",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       { id: "203_1", question: "Welches Wort ist FALSCH geschrieben?", options: ["spielen", "schpielen", "Stein", "Stern"], correctAnswer: "schpielen", hint: "Man spricht 'schp', aber schreibt 'sp'." },
       { id: "203_2", question: "Welches Wort ist RICHTIG geschrieben?", options: ["Meuse", "Mäuse", "Moise", "Möise"], correctAnswer: "Mäuse", hint: "Kommt von Maus, also mit äu." },
@@ -60,6 +63,7 @@ export const KLASSE_2: Station[] = [
     description: "Lies dir die Sätze genau durch. Einer davon ist völliger Quatsch!",
     icon: "HelpCircle",
     color: "orange",
+    renderer: "generic",
     exercises: [
       { id: "207_1", question: "Welcher Satz ist völliger Quatsch?", options: ["Der Hund bellt laut im Garten.", "Der Baum fliegt hoch in den Himmel.", "Die Katze schläft auf dem Sofa."], correctAnswer: "Der Baum fliegt hoch in den Himmel.", hint: "Können Pflanzen fliegen?" },
       { id: "207_2", question: "Welcher Satz ergibt keinen Sinn?", options: ["Das Auto fährt auf der Straße.", "Ich trinke ein Glas kaltes Wasser.", "Der Stuhl isst einen Apfel."], correctAnswer: "Der Stuhl isst einen Apfel.", hint: "Können Möbelstücke etwas essen?" },
@@ -76,6 +80,7 @@ export const KLASSE_2: Station[] = [
     description: "Löse die Aufgaben bis zur Zahl 50.",
     icon: "Calculator",
     color: "primary",
+    renderer: "math",
     exercises: [
       { id: "204_1", question: "Rechne aus: 20 + 15 = __", options: ["35", "45", "25", "30"], correctAnswer: "35", hint: "Rechne erst die Zehner: 20 + 10 = 30." },
       { id: "204_2", question: "Rechne aus: 45 - 10 = __", options: ["25", "30", "35", "40"], correctAnswer: "35", hint: "Nimm einfach einen Zehner weg." },
@@ -92,6 +97,7 @@ export const KLASSE_2: Station[] = [
     description: "Werde zum Einmaleins-Meister!",
     icon: "Sparkles",
     color: "secondary",
+    renderer: "math",
     exercises: [
       { id: "205_1", question: "Rechne aus: 4 • 2 = __", mathNum1: 4, mathNum2: 2, mathOp: "*", options: ["6", "8", "10", "12"], correctAnswer: "8", hint: "Vier mal die Zwei: 2 + 2 + 2 + 2." },
       { id: "205_2", question: "Rechne aus: 3 • 5 = __", mathNum1: 3, mathNum2: 5, mathOp: "*", options: ["10", "15", "20", "25"], correctAnswer: "15", hint: "Drei mal die Fünf: 5, 10, 15." },
@@ -108,6 +114,7 @@ export const KLASSE_2: Station[] = [
     description: "Kannst du auch die schwierigen Einmaleins-Reihen?",
     icon: "Award",
     color: "tertiary",
+    renderer: "math",
     exercises: [
       { id: "206_1", question: "Rechne aus: 4 • 8 = __", mathNum1: 4, mathNum2: 8, mathOp: "*", options: ["32", "24", "36", "28"], correctAnswer: "32", hint: "Tipp: 2 mal 8 = 16. Und das Doppelte ist?" },
       { id: "206_2", question: "Rechne aus: 6 • 7 = __", mathNum1: 6, mathNum2: 7, mathOp: "*", options: ["42", "48", "36", "49"], correctAnswer: "42", hint: "5 mal 7 ist 35. Und dann noch eine 7 dazu." },
@@ -124,6 +131,7 @@ export const KLASSE_2: Station[] = [
     description: "Kennst du die geometrischen Körper?",
     icon: "Layers",
     color: "orange",
+    renderer: "math",
     exercises: [
       {
         id: "208_1",
@@ -159,6 +167,7 @@ export const KLASSE_2: Station[] = [
     description: "Wie spät ist es auf der Uhr?",
     icon: "Clock",
     color: "primary",
+    renderer: "math",
     exercises: [
       {
         id: "209_1",

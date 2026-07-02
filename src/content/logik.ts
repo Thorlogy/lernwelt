@@ -11,6 +11,7 @@ export const LOGIK: Station[] = [
     description: "Hilf Lumi, den richtigen Weg zu finden!",
     icon: "Cpu",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "801_1",
@@ -54,6 +55,7 @@ export const LOGIK: Station[] = [
     description: "Finde Perlenmuster und benutze Programmier-Schleifen.",
     icon: "Cpu",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "803_1",
@@ -95,6 +97,7 @@ export const LOGIK: Station[] = [
     description: "Murmeln sortieren und Geheimsprachen entschlüsseln.",
     icon: "Cpu",
     color: "secondary",
+    renderer: "generic",
     exercises: [
       {
         id: "802_1",
@@ -131,6 +134,7 @@ export const LOGIK: Station[] = [
     icon: "Cpu",
     color: "secondary",
     isExcellence: true,
+    renderer: "generic",
     exercises: [
       {
         id: "804_1",

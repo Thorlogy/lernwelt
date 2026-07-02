@@ -11,6 +11,7 @@ export const ENGLISCH: Station[] = [
     description: "Lerne die Farben auf Englisch kennen.",
     icon: "Sparkles",
     color: "primary",
+    renderer: "generic",
     exercises: [
       {
         id: "701_1",
@@ -46,6 +47,7 @@ export const ENGLISCH: Station[] = [
     description: "Wie heißen die Tiere auf Englisch?",
     icon: "Search",
     color: "tertiary",
+    renderer: "generic",
     exercises: [
       {
         id: "702_1",
@@ -81,6 +83,7 @@ export const ENGLISCH: Station[] = [
     description: "Tiere und ihre Lebensräume auf Englisch.",
     icon: "Search",
     color: "secondary",
+    renderer: "generic",
     exercises: [
       {
         id: "703_1",
