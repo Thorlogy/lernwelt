@@ -9,6 +9,7 @@ import { ENGLISCH } from './content/englisch';
 import { LOGIK } from './content/logik';
 import { MUSIK } from './content/musik';
 import { KOSMOS } from './content/kosmos';
+import { KNOBELN } from './content/knobeln';
 
 export const INITIAL_PROGRESS: UserProgress = {
   anonymousId: '',
@@ -31,7 +32,8 @@ export const STATIONEN: Station[] = [
   ...ENGLISCH,
   ...LOGIK,
   ...MUSIK,
-  ...KOSMOS
+  ...KOSMOS,
+  ...KNOBELN
 ];
 
 export const CHARACTER_AVATARS = [

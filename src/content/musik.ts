@@ -81,6 +81,7 @@ export const MUSIK: Station[] = [
     description: "Geheime Noten-Codes und gespiegelte Melodien.",
     icon: "Music",
     color: "secondary",
+    isExcellence: true,
     exercises: [
       {
         id: "903_1",

@@ -495,6 +495,17 @@ export default function App() {
  </div>
  </div>
 
+  {/* Show Excellence Banner if applicable */}
+  {activeStation?.isExcellence && (
+    <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-955 px-4 py-2.5 rounded-2xl border border-amber-300 shadow-md flex items-center justify-center gap-2 text-center select-none">
+      <span className="text-xl sm:text-2xl">👑</span>
+      <span className="font-sans font-black text-xs sm:text-sm tracking-wide uppercase">
+        Exzellenz-Herausforderung: Für echte Knobel-Profis!
+      </span>
+      <span className="text-xl sm:text-2xl">👑</span>
+    </div>
+  )}
+
  {/* Show Pen Grip Guide for writing/grammar exercises */}
  {activeStationId !== null && activeStationId >= 1 && activeStationId <= 6 && (
  <PenGripGuide />

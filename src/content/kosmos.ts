@@ -49,6 +49,7 @@ export const KOSMOS: Station[] = [
     description: "Erforsche die Geheimnisse der Lichtstrahlen und der Spiegelung.",
     icon: "Rocket",
     color: "secondary",
+    isExcellence: true,
     exercises: [
       {
         id: "1002_1",

@@ -28,7 +28,7 @@ const ICON_MAP: Record<string, any> = {
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos'>(() => {
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos' | 'knobeln'>(() => {
     return (sessionStorage.getItem('map_activeSubject') as any) || 'deutsch';
   });
   const [expandedGrades, setExpandedGrades] = useState<number[]>(() => {
@@ -395,6 +395,17 @@ const ICON_MAP: Record<string, any> = {
     >
       <span>🚀 Kosmos</span>
     </button>
+    <button
+      type="button"
+      onClick={() => { playPop(); setActiveSubject('knobeln'); }}
+      className={`py-2 px-3 sm:px-4 rounded-2xl font-sans font-black text-sm sm:text-base flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm border border-slate-200 hover:border-slate-300 hover:scale-102 ${
+        activeSubject === 'knobeln'
+        ? 'bg-purple-900 text-amber-300 border-b-4 border-purple-950 hover:bg-purple-950 hover:text-amber-200 -translate-y-0.5 shadow-md shadow-purple-950/20'
+        : 'bg-white/80 text-slate-600 hover:bg-white'
+      }`}
+    >
+      <span>👑 Knobeln</span>
+    </button>
   </div>
 
   {/* Stations Stack Grouped by Grade */}
@@ -452,7 +463,7 @@ const ICON_MAP: Record<string, any> = {
          >
            <div className="flex items-center gap-3">
              <div className="text-2xl sm:text-3xl">
-                {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : activeSubject === 'englisch' ? '🇬🇧' : activeSubject === 'logik' ? '🧩' : activeSubject === 'musik' ? '🎵' : '🚀'}
+                 {isGradeCompleted ? '🏆' : isGradeLocked ? '🔒' : activeSubject === 'deutsch' ? '🎒' : activeSubject === 'mathe' ? '🧮' : activeSubject === 'sachkunde' ? '🌍' : activeSubject === 'kunst' ? '🎨' : activeSubject === 'englisch' ? '🇬🇧' : activeSubject === 'logik' ? '🧩' : activeSubject === 'musik' ? '🎵' : activeSubject === 'kosmos' ? '🚀' : '👑'}
              </div>
              <div className="text-left">
                <h3 className="font-sans font-black text-lg sm:text-xl leading-tight">
@@ -547,11 +558,18 @@ const ICON_MAP: Record<string, any> = {
                            }`}>
                              Station {index + 1} • {station.difficulty === 'leicht' ? '🟢 Leicht' : station.difficulty === 'mittel' ? '🟡 Mittel' : '🔴 Schwer'}
                            </span>
-                           {isCompleted && (
-                             <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
-                               <CheckCircle className="w-3.5 h-3.5" /> Fertig!
-                             </span>
-                           )}
+                           <div className="flex gap-1.5 items-center">
+                              {station.isExcellence && (
+                                <span className="flex items-center gap-0.5 text-[10px] font-black text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+                                  👑 Exzellenz-Aufgabe
+                                </span>
+                              )}
+                              {isCompleted && (
+                                <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                  <CheckCircle className="w-3.5 h-3.5" /> Fertig!
+                                </span>
+                              )}
+                            </div>
                            {isLocked && (
                              <span className="text-base font-bold text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded-sm">
                                Sperre

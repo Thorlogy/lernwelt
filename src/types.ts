@@ -42,7 +42,7 @@ export interface DetectiveExercise extends Exercise {
 
 export interface Station {
   id: number;
-  subject: 'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos';
+  subject: 'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos' | 'knobeln';
   title: string;
   subtitle: string;
   grade: number; // Klasse 1-4
@@ -51,6 +51,7 @@ export interface Station {
   icon: string; // Lucide icon identifier
   color: 'primary' | 'secondary' | 'tertiary' | 'orange';
   exercises: Exercise[];
+  isExcellence?: boolean;
 }
 
 export interface CreatedTask {

@@ -130,6 +130,7 @@ export const LOGIK: Station[] = [
     description: "Verschlüssele Geheimsprachen und zähle Wege in Netzwerken.",
     icon: "Cpu",
     color: "secondary",
+    isExcellence: true,
     exercises: [
       {
         id: "804_1",
