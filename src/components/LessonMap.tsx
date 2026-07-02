@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { STATIONEN } from '../data';
 import { Station, UserProgress } from '../types';
 import { BookOpen, Music, Layers, Search, Lock, CheckCircle, Star, Sparkles, HelpCircle, Award, Calculator, Percent, Coins, ChevronDown, ChevronUp, LayoutList, LayoutGrid, Clock, Cpu, Rocket } from 'lucide-react';
@@ -28,9 +28,32 @@ const ICON_MAP: Record<string, any> = {
 };
 
  export default function LessonMap({ progress, onSelectStation, activeStationId, onOpenResearch, onOpenTaskBuilder }: LessonMapProps) {
-  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos'>('deutsch');
-  const [expandedGrades, setExpandedGrades] = useState<number[]>([1]);
-  const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>('stack');
+  const [activeSubject, setActiveSubject] = useState<'deutsch' | 'mathe' | 'sachkunde' | 'kunst' | 'englisch' | 'logik' | 'musik' | 'kosmos'>(() => {
+    return (sessionStorage.getItem('map_activeSubject') as any) || 'deutsch';
+  });
+  const [expandedGrades, setExpandedGrades] = useState<number[]>(() => {
+    try {
+      const saved = sessionStorage.getItem('map_expandedGrades');
+      return saved ? JSON.parse(saved) : [1];
+    } catch {
+      return [1];
+    }
+  });
+  const [layoutMode, setLayoutMode] = useState<'stack' | 'grid'>(() => {
+    return (sessionStorage.getItem('map_layoutMode') as 'stack' | 'grid') || 'stack';
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('map_activeSubject', activeSubject);
+  }, [activeSubject]);
+
+  useEffect(() => {
+    sessionStorage.setItem('map_expandedGrades', JSON.stringify(expandedGrades));
+  }, [expandedGrades]);
+
+  useEffect(() => {
+    sessionStorage.setItem('map_layoutMode', layoutMode);
+  }, [layoutMode]);
 
   const toggleGrade = (grade: number) => {
     playPop();
