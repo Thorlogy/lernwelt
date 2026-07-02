@@ -14,6 +14,7 @@ export interface Exercise {
   mathFractionColored?: number; // colored segments for fractions (numerator)
   isAnalog?: boolean; // flag for offline tasks (Medienbruch)
   grid2D?: string[][]; // e.g. [["🌳", "🌟", "🌳"], ["🌳", "🦖", "🌳"]]
+  targetWords?: string[]; // words to search for in a wordsearch grid
 }
 
 export type WordType = 'NOMEN' | 'VERB' | 'ADJEKTIV';
@@ -52,7 +53,7 @@ export interface Station {
   color: 'primary' | 'secondary' | 'tertiary' | 'orange';
   exercises: Exercise[];
   isExcellence?: boolean;
-  renderer?: 'generic' | 'math' | 'spelling' | 'syllables' | 'fractions';
+  renderer?: 'generic' | 'math' | 'spelling' | 'syllables' | 'fractions' | 'wordsearch';
 }
 
 export interface CreatedTask {

@@ -14,6 +14,7 @@ import StationMathFractions from './components/StationMathFractions';
 import StationGenericQuiz from './components/StationGenericQuiz';
 import StationAnalogTask from './components/StationAnalogTask';
 import ResearchDashboard from './components/ResearchDashboard';
+import StationWordSearch from './components/StationWordSearch';
 import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
@@ -534,6 +535,14 @@ export default function App() {
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
               stationId={activeStationId as number}
               onSaveMetrics={handleSaveMetrics}
+            />
+          ) : activeStation?.renderer === 'wordsearch' && currentExercise ? (
+            <StationWordSearch
+              exercise={currentExercise}
+              onCorrectAnswer={handleCorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
             />
           ) : currentExercise ? (
             <StationGenericQuiz

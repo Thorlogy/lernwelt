@@ -84,6 +84,13 @@ async function run() {
       // Add target word
       if ((ex as any).word) uniqueTexts.add((ex as any).word);
 
+      // Add target words (for Word Search)
+      if ((ex as any).targetWords) {
+        for (const w of (ex as any).targetWords) {
+          uniqueTexts.add(w);
+        }
+      }
+
       // Add options (for Generic Quiz)
       if ((ex as any).options) {
         for (const opt of (ex as any).options) {

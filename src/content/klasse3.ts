@@ -211,5 +211,59 @@ export const KLASSE_3: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 310,
+    subject: "deutsch",
+    title: "Wortgitter-Detektiv",
+    subtitle: "Wörter mit Q & X suchen",
+    grade: 3,
+    difficulty: "mittel",
+    description: "Finde die versteckten Wörter mit Q oder X in der Buchstabenmatrix!",
+    icon: "Search",
+    color: "orange",
+    renderer: "wordsearch",
+    exercises: [
+      {
+        id: "310_1",
+        question: "Finde alle 4 Wörter mit dem Buchstaben Q im Wortgitter!",
+        grid2D: [
+          ["Q", "U", "A", "L", "L", "E", "S"],
+          ["X", "X", "B", "M", "R", "T", "P"],
+          ["Q", "U", "A", "T", "S", "C", "H"],
+          ["U", "P", "W", "Z", "S", "P", "J"],
+          ["A", "Q", "U", "E", "L", "L", "E"],
+          ["R", "A", "K", "J", "S", "G", "D"],
+          ["K", "Z", "W", "Y", "B", "M", "N"]
+        ],
+        targetWords: ["QUALLE", "QUATSCH", "QUELLE", "QUARK"],
+        correctAnswer: "done",
+        hint: "Tipp: Drei Wörter liegen waagerecht (von links nach rechts) und ein Wort liegt senkrecht ganz links!"
+      },
+      {
+        id: "310_2",
+        question: "Finde alle 4 Wörter mit dem Buchstaben X im Wortgitter!",
+        grid2D: [
+          ["H", "E", "X", "E", "L", "U", "M"],
+          ["T", "A", "X", "I", "R", "O", "P"],
+          ["Y", "W", "N", "I", "X", "E", "S"],
+          ["B", "O", "X", "E", "N", "Z", "J"],
+          ["F", "J", "K", "L", "T", "G", "W"],
+          ["P", "H", "N", "M", "Q", "V", "D"],
+          ["S", "R", "A", "B", "C", "E", "F"]
+        ],
+        targetWords: ["HEXE", "TAXI", "NIXE", "BOXEN"],
+        correctAnswer: "done",
+        hint: "Tipp: Alle gesuchten Wörter liegen waagerecht von links nach rechts."
+      },
+      {
+        id: "310_3",
+        question: "Zeichne auf ein Karopapier dein eigenes 5x5 Wortgitter. Verstecke ein Wort darin (z.B. dein Name oder KATZE) und fülle die restlichen Kästchen mit anderen Buchstaben. Lass jemanden das Wort suchen!",
+        correctAnswer: "done",
+        hint: "Schreibe zuerst das geheime Wort auf und befülle erst danach die leeren Felder.",
+        imagePlaceholder: "📝",
+        isAnalog: true
+      }
+    ]
   }
 ];
