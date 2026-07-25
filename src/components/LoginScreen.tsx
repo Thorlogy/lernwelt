@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Sparkles, AlertCircle, X, Volume2 } from 'lucide-react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../utils/firebase';
+import { auth, USE_FIREBASE } from '../utils/firebase';
 import { playPop, playSuccess, playFailure } from '../utils/audio';
 import { useSpeech } from '../lib/useSpeech';
 import welcomeHero from '../assets/welcome-hero.jpg';
@@ -63,6 +63,15 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
 
     const email = `${safeName}@lernwelt.local`;
     const password = `${selectedEmojis.join('')}-geheim123`; // Requires 6+ chars
+
+    if (!USE_FIREBASE) {
+      // Local Offline test mode bypass
+      playSuccess();
+      const localUid = `local_${name.trim().toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+      onLoginSuccess(localUid, name.trim());
+      setLoading(false);
+      return;
+    }
 
     try {
       // 1. Try to login

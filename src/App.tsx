@@ -20,7 +20,7 @@ import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
 import { Star, Trophy, Sparkles, User, ArrowLeft, RotateCcw, Home, Award } from 'lucide-react';
-import { db } from './utils/firebase';
+import { db, USE_FIREBASE } from './utils/firebase';
 import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import LoginScreen from './components/LoginScreen';
 import TaskBuilder from './components/TaskBuilder';
@@ -71,20 +71,23 @@ export default function App() {
  }
  }, []);
 
- // Sync progress to localStorage and Firebase
- const saveProgress = async (newProgress: UserProgress) => {
-   setProgress(newProgress);
-   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newProgress));
-   
-   if (newProgress.anonymousId && newProgress.anonymousId.length > 20) {
-     // It's a Firebase UID, save it to Firestore
-     try {
-       await setDoc(doc(db, 'users', newProgress.anonymousId), newProgress);
-     } catch (err) {
-       console.error("Failed to sync progress to cloud:", err);
-     }
-   }
- };
+  // Sync progress to localStorage and Firebase
+  const saveProgress = async (newProgress: UserProgress) => {
+    setProgress(newProgress);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newProgress));
+    if (newProgress.anonymousId) {
+      localStorage.setItem(`${LOCAL_STORAGE_KEY}_${newProgress.anonymousId}`, JSON.stringify(newProgress));
+    }
+    
+    if (USE_FIREBASE && db && newProgress.anonymousId && newProgress.anonymousId.length > 20) {
+      // It's a Firebase UID, save it to Firestore
+      try {
+        await setDoc(doc(db, 'users', newProgress.anonymousId), newProgress);
+      } catch (err) {
+        console.error("Failed to sync progress to cloud:", err);
+      }
+    }
+  };
 
  // Dynamic Mascot guidance text controller
  useEffect(() => {
@@ -114,32 +117,51 @@ export default function App() {
  }, [activeStationId, currentExerciseIndex, isNewUser, showCertificate, progress.childName, progress.completedStations]);
 
  // Handle new profile registration or login
- const handleLoginSuccess = async (uid: string, name: string) => {
-   unlock(); // Unlock TTS on iOS/Safari
-   
-   try {
-     const userDoc = await getDoc(doc(db, 'users', uid));
-     if (userDoc.exists()) {
-       const cloudProgress = userDoc.data() as UserProgress;
-       saveProgress(cloudProgress);
-     } else {
-       // New user
-       const chosenAvatar = CHARACTER_AVATARS[Math.floor(Math.random() * CHARACTER_AVATARS.length)];
-       const newProgress: UserProgress = {
-         ...INITIAL_PROGRESS,
-         anonymousId: uid, // Use Firebase UID
-         childName: name,
-         avatarId: chosenAvatar.id,
-         avatarColor: chosenAvatar.color,
-       };
-       await saveProgress(newProgress);
-     }
-   } catch (err) {
-     console.error("Error loading user profile:", err);
-   }
-   
-   setIsNewUser(false);
- };
+  const handleLoginSuccess = async (uid: string, name: string) => {
+    unlock(); // Unlock TTS on iOS/Safari
+    
+    // 1. Try to load local progress first
+    const savedLocal = localStorage.getItem(`${LOCAL_STORAGE_KEY}_${uid}`);
+    if (savedLocal) {
+      try {
+        const parsed = JSON.parse(savedLocal);
+        if (parsed) {
+          saveProgress(parsed);
+          setIsNewUser(false);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse local user progress:", e);
+      }
+    }
+
+    // 2. Load from Firebase if enabled
+    if (USE_FIREBASE && db) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+          const cloudProgress = userDoc.data() as UserProgress;
+          saveProgress(cloudProgress);
+          setIsNewUser(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Error loading user profile:", err);
+      }
+    }
+    
+    // 3. New user
+    const chosenAvatar = CHARACTER_AVATARS[Math.floor(Math.random() * CHARACTER_AVATARS.length)];
+    const newProgress: UserProgress = {
+      ...INITIAL_PROGRESS,
+      anonymousId: uid,
+      childName: name,
+      avatarId: chosenAvatar.id,
+      avatarColor: chosenAvatar.color,
+    };
+    await saveProgress(newProgress);
+    setIsNewUser(false);
+  };
 
  // Reset overall children data
  const handleResetProgress = () => {
@@ -180,21 +202,23 @@ export default function App() {
  };
  saveProgress(updatedProgress);
 
- // Asynchronously write to Cloud Firestore database
- try {
- addDoc(collection(db, 'metrics'), {
- anonymousId: progress.anonymousId || 'Anonym',
- method,
- timeSeconds,
- attempts: attemptsCount,
- isFirstTryCorrect,
- stationId: activeStationId || 0,
- timestamp: new Date().toISOString(),
- });
- } catch (err) {
- console.warn("Failed to upload metric to Firestore:", err);
- }
- };
+  // Asynchronously write to Cloud Firestore database if enabled
+  if (USE_FIREBASE && db) {
+    try {
+      addDoc(collection(db, 'metrics'), {
+        anonymousId: progress.anonymousId || 'Anonym',
+        method,
+        timeSeconds,
+        attempts: attemptsCount,
+        isFirstTryCorrect,
+        stationId: activeStationId || 0,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.warn("Failed to upload metric to Firestore:", err);
+    }
+  }
+  };
 
  // Reset performance metrics
  const handleResetMetrics = () => {
