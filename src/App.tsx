@@ -15,6 +15,7 @@ import StationGenericQuiz from './components/StationGenericQuiz';
 import StationAnalogTask from './components/StationAnalogTask';
 import ResearchDashboard from './components/ResearchDashboard';
 import StationWordSearch from './components/StationWordSearch';
+import StationRhymes from './components/StationRhymes';
 import PenGripGuide from './components/PenGripGuide';
 import Certificate from './components/Certificate';
 import { playPop, playSuccess, playTrophy } from './utils/audio';
@@ -540,6 +541,15 @@ export default function App() {
             <StationWordSearch
               exercise={currentExercise}
               onCorrectAnswer={handleCorrectAnswer}
+              onNext={handleNextExercise}
+              progress={progress}
+              isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}
+            />
+          ) : activeStation?.renderer === 'rhymes' && currentExercise ? (
+            <StationRhymes
+              exercise={currentExercise}
+              onCorrectAnswer={handleCorrectAnswer}
+              onIncorrectAnswer={handleIncorrectAnswer}
               onNext={handleNextExercise}
               progress={progress}
               isLastExercise={currentExerciseIndex === activeStation.exercises.length - 1}

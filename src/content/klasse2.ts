@@ -185,5 +185,43 @@ export const KLASSE_2: Station[] = [
         isAnalog: true
       }
     ]
+  },
+  {
+    id: 210,
+    subject: "deutsch",
+    title: "Lustige Reimwörter",
+    subtitle: "Reime finden",
+    grade: 2,
+    difficulty: "leicht",
+    description: "Höre genau hin! Finde alle Wörter, die sich auf das Vorgabewort reimen.",
+    icon: "Music",
+    color: "primary",
+    renderer: "rhymes",
+    exercises: [
+      {
+        id: "210_1",
+        question: "Welche Wörter reimen sich auf TISCH?",
+        word: "Tisch",
+        options: ["Fisch", "Haus", "Maus", "Frisch", "Baum", "Misch"],
+        correctAnswer: ["Fisch", "Frisch", "Misch"],
+        hint: "Sprich die Wörter laut vor. Hörst du den gleichen Endklang? Tisch, Fisch..."
+      },
+      {
+        id: "210_2",
+        question: "Welche Wörter reimen sich auf WAND?",
+        word: "Wand",
+        options: ["Hand", "Rand", "Land", "Sand", "Hund", "Wind", "Wald"],
+        correctAnswer: ["Hand", "Rand", "Land", "Sand"],
+        hint: "Die gesuchten Wörter enden alle auf den gleichen Reimklang: -and."
+      },
+      {
+        id: "210_3",
+        question: "Erfinde ein eigenes kleines Reim-Gedicht mit Wörtern wie MAUS, HAUS, LAUS, RAUS. Sprich es laut vor!",
+        correctAnswer: "done",
+        hint: "Z. B. Eine kleine Maus schaut aus dem Haus und geht schnell raus!",
+        imagePlaceholder: "🎤",
+        isAnalog: true
+      }
+    ]
   }
 ];

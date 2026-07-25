@@ -53,7 +53,7 @@ export interface Station {
   color: 'primary' | 'secondary' | 'tertiary' | 'orange';
   exercises: Exercise[];
   isExcellence?: boolean;
-  renderer?: 'generic' | 'math' | 'spelling' | 'syllables' | 'fractions' | 'wordsearch';
+  renderer?: 'generic' | 'math' | 'spelling' | 'syllables' | 'fractions' | 'wordsearch' | 'rhymes';
 }
 
 export interface CreatedTask {

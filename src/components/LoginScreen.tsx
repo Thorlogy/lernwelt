@@ -70,21 +70,25 @@ export default function LoginScreen({ onLoginSuccess, onCancel }: LoginScreenPro
       playSuccess();
       onLoginSuccess(userCredential.user.uid, name.trim());
     } catch (err: any) {
-      // 2. If user doesn't exist, create account
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+      // 2. If user doesn't exist, create account or check if credentials are wrong
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
         try {
           const newUserCredential = await createUserWithEmailAndPassword(auth, email, password);
           playSuccess();
           onLoginSuccess(newUserCredential.user.uid, name.trim());
         } catch (createErr: any) {
           console.error('Registration error:', createErr);
-          setError('Ups, das Passwort war leider falsch. Versuche es nochmal!');
+          if (createErr.code === 'auth/email-already-in-use') {
+            setError('Ups, dein Bilder-Code war leider falsch. Versuche es nochmal!');
+          } else {
+            setError(`Registrierungsfehler (${createErr.code || 'Unbekannt'}). Bitte versuche es später.`);
+          }
           playFailure();
           setSelectedEmojis([]);
         }
       } else {
         console.error('Login error:', err);
-        setError('Ein Fehler ist aufgetreten. Bitte versuche es später.');
+        setError(`Ein Fehler ist aufgetreten (${err.code || 'Unbekannt'}). Bitte versuche es später.`);
         playFailure();
       }
     } finally {
